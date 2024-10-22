@@ -50,7 +50,7 @@ export const Edit = () => {
             }),
             redirect: "follow"
         })
-        .then((response) => response.text())
+        .then((response) => response.text());
     }
 
     const handleSubmit = (e) => {
@@ -63,40 +63,90 @@ export const Edit = () => {
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="Email" className="form-label">Email</label>
-                    <input type="email" className="form-control" id="Email" placeholder="Email"
-                        onChange={(e) => setInputEmail(e.target.value)} value={inputEmail} />
+                    <input
+                        type="email"
+                        className="form-control"
+                        id="Email"
+                        placeholder="Email"
+                        onChange={(e) => setInputEmail(e.target.value)}
+                        value={inputEmail}
+                    />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="guestscapacity" className="form-label">Guests capacity</label>
-                    <input type="text" className="form-control" id="guestscapacity" placeholder="Guests capacity"
-                        onChange={(e) => setInputGuestCapacity(e.target.value)} value={inputGuestCapacity} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="guestscapacity"
+                        placeholder="Guests capacity"
+                        onChange={(e) => setInputGuestCapacity(e.target.value)}
+                        value={inputGuestCapacity}
+                    />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="Adress" className="form-label">Address</label>
-                    <input type="text" className="form-control" id="Adress" placeholder="Address"
-                        onChange={(e) => setInputAddress(e.target.value)} value={inputAddress} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="Adress"
+                        placeholder="Address"
+                        onChange={(e) => setInputAddress(e.target.value)}
+                        value={inputAddress}
+                    />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="name" className="form-label">Name</label>
-                    <input type="text" className="form-control" id="name" placeholder="Name"
-                        onChange={(e) => setInputName(e.target.value)} value={inputName} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="name"
+                        placeholder="Name"
+                        onChange={(e) => setInputName(e.target.value)}
+                        value={inputName}
+                    />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="Phone" className="form-label">Phone</label>
-                    <input type="text" className="form-control" id="Phone" placeholder="Phone"
-                        onChange={(e) => setInputPhone(e.target.value)} value={inputPhone} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="Phone"
+                        placeholder="Phone"
+                        onChange={(e) => setInputPhone(e.target.value)}
+                        value={inputPhone}
+                    />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="username" className="form-label">User name</label>
-                    <input type="text" className="form-control" id="username" placeholder="User name"
-                        onChange={(e) => setInputUserName(e.target.value)} value={inputUserName} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="username"
+                        placeholder="User name"
+                        onChange={(e) => setInputUserName(e.target.value)}
+                        value={inputUserName}
+                    />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Password</label>
-                    <input type="text" className="form-control" id="password" placeholder="Password"
-                        onChange={(e) => setInputPassword(e.target.value)} value={inputPassword} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="password"
+                        placeholder="Password"
+                        onChange={(e) => setInputPassword(e.target.value)}
+                        value={inputPassword}
+                    />
                 </div>
-                <button  onClick={() =>putContact(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword)} type="submit" className="btn btn-primary w-100 mb-4">Save</button>
+                <Link to={"/restaurants"}>
+                    <button
+                        onClick={() => putContact(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword)}
+                        type="submit"
+                        className="btn btn-primary w-100 mb-4"
+                    >
+                        Save
+                    </button>
+                </Link>
             </form>
         </div>
     );
