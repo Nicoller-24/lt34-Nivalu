@@ -63,6 +63,6 @@ class Admin1(db.Model):
             "name": self.name,
             "email": self.email,
             "is_active": self.is_active
-            # do not serialize the password, it's a security breach
+            # do not serialize the password, it's a  security breach
         }
 

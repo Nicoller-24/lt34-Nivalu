@@ -118,6 +118,81 @@ def delete_planeta(restaurant_id):
 @api.route('/admins', methods=['GET'])
 def get_admins():
     all_admins = list(Admin1.query.all()) 
-    results = list(map(lambda Admin1: Admin1.serialize(), all_admins)) 
+    results = list(map(lambda admin1: admin1.serialize(), all_admins)) 
 
     return jsonify(results), 200
+
+@api.route('/admins/<int:admin_id>', methods=['GET'])
+def get_admin(admin_id):
+    admin = Admin1.query.filter_by(id=admin_id).first()
+    
+    if admin is None:
+        return jsonify({"error": "Usuario admin no encontrado"}), 404
+    
+    return jsonify(admin.serialize()), 200
+
+@api.route("/signup/admins", methods=["POST"])
+def signup_admins():
+
+    body = request.get_json()
+    print(body)
+    admin = Admin1.query.filter_by(user_name=body["user_name"]).first()
+    print(admin)
+    if admin == None:
+        admin = Admin1(email=body["email"],name=body["name"],user_name=body["user_name"],password=body["password"], is_active=True)
+        db.session.add(admin)
+        db.session.commit()
+        response_body = {
+            "msg" : "Usuario admin creado"
+         }
+        return jsonify(response_body), 200
+    else:
+       return jsonify({"msg" : "el usuario admin ya existe"}), 401
+    
+@api.route('/admins/<int:admin_id>', methods=['PUT'])
+def update_admin(admin_id):
+    body = request.get_json()
+
+    admin = Admin1.query.filter_by(id=admin_id).first()
+
+    if admin is None:
+        return jsonify({"error": "Usuario admin no encontrado"}), 404
+
+    if "user_name" in body:
+        existing_admin = Admin1.query.filter_by(user_name=body["user_name"]).first()
+
+        if existing_admin and existing_admin.id != admin_id:
+            return jsonify({"error": "El nombre de usuario ya está en uso"}), 400
+        else:
+            admin.user_name = body["user_name"]
+
+    if "name" in body:
+        admin.name = body["name"]
+    if "email" in body:
+        admin.email = body["email"]
+    if "password" in body:
+        admin.password = body["password"]
+
+    db.session.commit()
+
+    return jsonify({"msg": "Uusario Admin actualizado con éxito", "admin": admin.serialize()}), 200
+
+@api.route('/admins/<int:admin_id>', methods=['DELETE'])
+def delete_admin(admin_id):
+    admin_to_delete = Admin1.query.filter_by(id=admin_id).all()
+
+    def delete_admin(item):
+        return item.id == admin_id
+    
+    seleccion_de_admin = list(filter(delete_admin, admin_to_delete))
+
+    if len(seleccion_de_admin) > 0:
+        admin_to_delete = seleccion_de_admin[0]
+        db.session.delete(admin_to_delete)
+        db.session.commit()
+
+        response_body = {"msg": "Se eliminó correctamente"}
+    else:
+        response_body = {"msg": "No se encontró el usuario de admin"}
+
+    return jsonify(response_body), 200
