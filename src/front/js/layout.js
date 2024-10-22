@@ -10,6 +10,7 @@ import injectContext from "./store/appContext";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
+import { Crearrestaurante } from "./component/crearrestaurante";
 import { Edit } from "./component/edit";
 
 import { Navbar } from "./component/navbar";
@@ -32,6 +33,7 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Crudrestaurante />} path="/restaurants" />
+                        <Route element={<Crearrestaurante />} path="/signup/restaurants" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Singlerestaurant />} path="/restaurant/:id" />
                         <Route element={<Edit />} path="/edit/restaurant/:id" />

@@ -91,6 +91,12 @@ export const Crudrestaurante = () => {
 
     return (
         <>
+            <Link to={"/signup/restaurants"}>
+                <button type="button" className="btn btn-primary" >
+                    crear nuevo restaurante
+                </button>
+            </Link>
+
             <ul className="list-group">
                 {restaurants.map((item, index) => {
                     return (
@@ -150,86 +156,6 @@ export const Crudrestaurante = () => {
                     );
                 })}
             </ul>
-
-            <div className="container">
-                <h1 style={{ marginTop: "100px" }}>Crea un nuevo restaurante</h1>
-
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="name">Nombre del Restaurante</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="name"
-                            value={inputName}
-                            onChange={(e) => setInputname(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="email"
-                            value={inputEmail}
-                            onChange={(e) => setInputEmail(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="phone">Número de teléfono</label>
-                        <input
-                            type="tel"
-                            className="form-control"
-                            id="phone"
-                            value={inputPhone}
-                            onChange={(e) => setInputPhone(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="address">Dirección</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="address"
-                            value={inputAddress}
-                            onChange={(e) => setInputAddress(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="guests_capacity">Capacidad de invitados</label>
-                        <input
-                            type="number"
-                            className="form-control"
-                            id="guests_capacity"
-                            value={inputGuestCapacity}
-                            onChange={(e) => setInputGuestCapacity(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="user_name">Usuario</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="user_name"
-                            value={inputUserName}
-                            onChange={(e) => setInputUserName(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Contraseña</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="password"
-                            value={inputPassword}
-                            onChange={(e) => setInputPassword(e.target.value)}
-                        />
-                    </div>
-                    <button type="button" className="btn btn-primary" onClick={() => addNewContact(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword)}>
-                        Crear Restaurante
-                    </button>
-                </form>
-            </div>
         </>
     );
 };

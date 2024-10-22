@@ -140,12 +140,16 @@ export const Edit = () => {
                 </div>
                 <Link to={"/restaurants"}>
                     <button
+                        style={{"marginRight": "10px"}}
                         onClick={() => putContact(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword)}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >
                         Save
                     </button>
+                </Link>
+                <Link to={"/restaurants"}>
+                    O deseas volver
                 </Link>
             </form>
         </div>
