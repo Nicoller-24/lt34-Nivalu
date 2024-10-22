@@ -46,7 +46,7 @@ export const Edit = () => {
                 name: name || restaurantData?.name,
                 phone_number: phone_number || restaurantData?.phone_number,
                 user_name: user_name || restaurantData?.user_name,
-                password: password || restaurantData?.password
+                //password: password || restaurantData?.password
             }),
             redirect: "follow"
         })
@@ -127,17 +127,7 @@ export const Edit = () => {
                         value={inputUserName}
                     />
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="password"
-                        placeholder="Password"
-                        onChange={(e) => setInputPassword(e.target.value)}
-                        value={inputPassword}
-                    />
-                </div>
+                
                 <Link to={"/restaurants"}>
                     <button
                         style={{"marginRight": "10px"}}
