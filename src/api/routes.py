@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Restaurant
+from api.models import db, User, Restaurant, Admin1
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
@@ -114,3 +114,10 @@ def delete_planeta(restaurant_id):
         response_body = {"msg": "No se encontró el restaurante"}
 
     return jsonify(response_body), 200
+
+@api.route('/admins', methods=['GET'])
+def get_admins():
+    all_admins = list(Admin1.query.all()) 
+    results = list(map(lambda Admin1: Admin1.serialize(), all_admins)) 
+
+    return jsonify(results), 200
