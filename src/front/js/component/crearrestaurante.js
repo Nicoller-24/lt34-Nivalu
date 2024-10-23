@@ -13,11 +13,6 @@ export const Crearrestaurante = () => {
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
 
     const { store, actions } = useContext(Context);
-    const [restaurants, setRestaurants] = useState([]);
-    const [contactId, setContactId] = useState([]);
-
-
-
 
     function addNewRestaurant(email, guests_capacity, location, name, phone_number, user_name, password) {
         fetch('https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/signup/restaurant', {

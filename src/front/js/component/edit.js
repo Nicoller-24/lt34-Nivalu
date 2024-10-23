@@ -15,7 +15,6 @@ export const Edit = () => {
     const { store, actions } = useContext(Context);
     const params = useParams();
 
-    // Función para traer los datos del restaurante
     function traer_restaurante() {
         fetch(`https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/restaurant/${params.id}`)
             .then((response) => response.json())
@@ -34,7 +33,6 @@ export const Edit = () => {
         traer_restaurante();
     }, [params.id]);
 
-    // Función para hacer la solicitud PUT
     function putContact(email, guests_capacity, location, name, phone_number, user_name, password) {
         fetch(`https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/restaurant/${params.id}`, {
             method: 'PUT',
