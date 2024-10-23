@@ -13,22 +13,17 @@ export const Singlerestaurant = () => {
 
     const params = useParams();
     console.log(params)
-	const [restaurantData, setRestaurantData] = useState ([])
-	function traer_restaurante () {
-		fetch("https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/restaurant/" + params.id)
-			.then((response) => response.json())
-			.then((data) => setRestaurantData(data))
-	}
 
     useEffect(()=> 
-		traer_restaurante()
+		actions.traer_restaurante(params.id)
 		
 		,[])
 
     return (<>
-       <h1>{restaurantData.name}</h1>
-    </>
-
-        
+       <h1>{store.restaurante.name}</h1>
+	   	<Link to={"/restaurants"}>
+			O deseas volver
+		</Link>
+    </>        
     );
 };
