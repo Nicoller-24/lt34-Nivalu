@@ -4,18 +4,10 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 
 export const Crudrestaurante = () => {
-    const [inputName, setInputname] = useState("");
-    const [inputEmail, setInputEmail] = useState("");
-    const [inputPhone, setInputPhone] = useState("");
-    const [inputAddress, setInputAddress] = useState("");
-    const [inputUserName, setInputUserName] = useState("");
-    const [inputPassword, setInputPassword] = useState("");
-    const [inputGuestCapacity, setInputGuestCapacity] = useState("");
-
     const { store, actions } = useContext(Context);
     const [restaurants, setRestaurants] = useState([]);
-    const [contactId, setContactId] = useState([]);
 
+    
     const loadSomeData = () => {
         console.log("Se cargó la página");
         fetch("https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/restaurants")
@@ -44,51 +36,6 @@ export const Crudrestaurante = () => {
             .then((response) => response.text())
             .then(() => loadSomeData());
     }
-
-    function addNewContact(email, guests_capacity, location, name, phone_number, user_name, password) {
-        fetch('https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/signup/restaurant', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                "email": email,
-                "guests_capacity": guests_capacity,
-                "location": location,
-                "name": name,
-                "phone_number": phone_number,
-                "user_name": user_name,
-                "password": password,
-            }),
-            redirect: "follow",
-        })
-            .then((response) => response.text())
-            .then(() => loadSomeData());
-    }
-
-    function idContactToPost(id) {
-        setContactId(id);
-        console.log("se editará " + id);
-    }
-
-    function putContact(email, guests_capacity, location, name, phone_number, user_name, password) {
-        console.log("el array tiene " + contactId);
-        fetch("https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/restaurant/" + contactId, {
-            method: 'PUT',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                "email": email,
-                "guests_capacity": guests_capacity,
-                "location": location,
-                "name": name,
-                "phone_number": phone_number,
-                "user_name": user_name,
-                "password": password,
-            }),
-            redirect: "follow",
-        })
-            .then((response) => response.text())
-            .then(() => loadSomeData());
-    }
-
     return (
         <>
             <Link to={"/signup/restaurants"}>
@@ -140,7 +87,7 @@ export const Crudrestaurante = () => {
                                     </button>
                                 </Link>
                                 <Link to={"/edit/restaurant/" + item.id}>
-                                    <button onClick={() => idContactToPost(item.id)} style={{ backgroundColor: "white", border: "0px" }}>
+                                    <button style={{ backgroundColor: "white", border: "0px" }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" className="bi bi-pencil-fill" viewBox="0 0 16 16" style={{ marginRight: "25px" }}>
                                             <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H2v1.293l6.5-6.5L14.5 7.5z" />
                                         </svg>
