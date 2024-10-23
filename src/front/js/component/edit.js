@@ -16,7 +16,7 @@ export const Edit = () => {
     const params = useParams();
 
     function traer_restaurante() {
-        fetch(`https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/restaurant/${params.id}`)
+        fetch(process.env.BACKEND_URL+ `api/restaurant/${params.id}`)
             .then((response) => response.json())
             .then((data) => {
                 setRestaurantData(data);
@@ -33,23 +33,7 @@ export const Edit = () => {
         traer_restaurante();
     }, [params.id]);
 
-    function putContact(email, guests_capacity, location, name, phone_number, user_name, password) {
-        fetch(`https://cuddly-waffle-5g9r4r6qrjxf7p45-3001.app.github.dev/api/restaurant/${params.id}`, {
-            method: 'PUT',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: email || restaurantData?.email,
-                guests_capacity: guests_capacity || restaurantData?.guests_capacity,
-                location: location || restaurantData?.location,
-                name: name || restaurantData?.name,
-                phone_number: phone_number || restaurantData?.phone_number,
-                user_name: user_name || restaurantData?.user_name,
-                //password: password || restaurantData?.password
-            }),
-            redirect: "follow"
-        })
-        .then((response) => response.text());
-    }
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -129,7 +113,7 @@ export const Edit = () => {
                 <Link to={"/restaurants"}>
                     <button
                         style={{"marginRight": "10px"}}
-                        onClick={() => putContact(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword)}
+                        onClick={() => actions.putRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword, params.id)}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >

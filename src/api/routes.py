@@ -30,9 +30,9 @@ def get_restaurant(restaurant_id):
 @api.route("/signup/restaurant", methods=["POST"])
 def signup():
     body = request.get_json()
-    restaurant = Restaurant.query.filter_by(user_name=body["user_name"]).first()
+    restaurant = Restaurant.query.filter_by(email=body["email"]).first()
     if restaurant == None:
-        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], user_name=body["user_name"], password=body["password"], is_active=True)
+        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"], is_active=True)
         db.session.add(restaurant)
         db.session.commit()
         response_body = {"msg": "Restaurante creado"}
@@ -49,13 +49,6 @@ def update_restaurant(restaurant_id):
     if restaurant is None:
         return jsonify({"error": "Restaurante no encontrado"}), 404
 
-    if "user_name" in body:
-        existing_restaurant = Restaurant.query.filter_by(user_name=body["user_name"]).first()
-        if existing_restaurant and existing_restaurant["id"] != restaurant_id:
-            return jsonify({"error": "El nombre de usuario ya está en uso"}), 400
-        else:
-            restaurant.user_name = body["user_name"]
-
     if "name" in body:
         restaurant.name = body["name"]
     if "location" in body:
@@ -63,7 +56,11 @@ def update_restaurant(restaurant_id):
     if "phone_number" in body:
         restaurant.phone_number = body["phone_number"]
     if "email" in body:
-        restaurant.email = body["email"]
+        existing_restaurant = Restaurant.query.filter_by(email=body["email"]).first()
+        if existing_restaurant and existing_restaurant["id"] != restaurant_id:
+            return jsonify({"error": "El email ya está en uso"}), 400
+        else:
+            restaurant.email = body["email"]
     if "guests_capacity" in body:
         restaurant.guests_capacity = body["guests_capacity"]
     if "password" in body:
