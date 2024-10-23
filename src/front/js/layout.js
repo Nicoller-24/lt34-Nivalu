@@ -8,6 +8,8 @@ import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 import { AddClients } from "./pages/addClients.js";
+import { UserList } from "./pages/userList.js";
+import { EditClient } from "./pages/editClient.js";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -29,6 +31,8 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<AddClients/>} path="/adduser"/>
+                        <Route element={<UserList/>} path="/userList"/>
+                        <Route element={<EditClient/>} path="/updateInfo"/>
                         
                         
                         

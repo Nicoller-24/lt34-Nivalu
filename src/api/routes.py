@@ -114,6 +114,7 @@ def delete_client_user(client_id):
     else:
         response_body = {"msg": "No se encontró usuario"}
 
-    return jsonify(response_body), 200
+    return jsonify(response_body), 200 
+
 
 

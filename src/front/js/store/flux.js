@@ -14,6 +14,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
+
+		
+			users:[],
 			auth: false
 		},
 		actions: {
@@ -25,52 +28,52 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			loadUsers: () => {
 				fetch('https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/clients')
-        		.then(response => response.json())
-        		.then(data => {
-					console.log(data);
-					const store = getStore();
-					setStore({users:data})
-					console.log(store.users)
-				});
+					.then(response => response.json())
+					.then(data => {
+						console.log(data);
+						setStore({ users: data });
+					})
+					.catch(error => console.error("Error loading users:", error));
 			},
 
+			// Add a user
 			addUser: (newUserData) => {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify( 
-						newUserData
-					   )
+					body: JSON.stringify(newUserData)
 				};
-				fetch('https://solid-rotary-phone-rp7r7vgjg6vhp6-3001.app.github.dev/api/usuario', requestOptions)
+				fetch('https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/client', requestOptions)
 					.then(response => response.json())
-					.then(data => console.log("Usuario añadido"));
+					.then(data => console.log("User added:", data))
+					.catch(error => console.error("Error adding user:", error));
 			},
 
+			// Delete a user by index
 			deleteUser: (index) => {
-				const store = getStore(); 
-				let idToDelete = store.users[index].id;
-				console.log("Se borrara: " + idToDelete)
-				setStore({users : store.users.filter( (usuarios,indx)=>indx!=index) });
-					
-				fetch('https://solid-rotary-phone-rp7r7vgjg6vhp6-3001.app.github.dev/api/usuario/'+idToDelete, { method: 'DELETE' })
-					.then(response => console.log("Se borro " + idToDelete));
-					
+				const store = getStore();
+				const idToDelete = store.users[index].id;
+				console.log("Deleting user with id:", idToDelete);
+
+				// Update store before sending DELETE request
+				setStore({ users: store.users.filter((user, i) => i !== index) });
+
+				fetch(`https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/client/${idToDelete}`, { method: 'DELETE' })
+					.then(() => console.log(`User ${idToDelete} deleted`))
+					.catch(error => console.error("Error deleting user:", error));
 			},
 
-			modUser: (userModif,id) => {
-				
-				console.log("id a modiifcar : " + id)
+			// Update user by id
+			updateUser: (userModif, id) => {
 				const requestOptions = {
 					method: 'PUT',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify( 
-						userModif
-					   )
+					body: JSON.stringify(userModif)
 				};
-				fetch("https://solid-rotary-phone-rp7r7vgjg6vhp6-3001.app.github.dev/api/usuario/" + id, requestOptions)
+				fetch(`https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/client/${id}`, requestOptions)
 					.then(response => response.json())
-					.then(data => console.log("Usuario modificado"));
+					.then(data => console.log("User updated:", data))
+					.catch(error => console.error("Error updating user:", error));
 			},
 
 
