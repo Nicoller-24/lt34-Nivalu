@@ -8,7 +8,6 @@ export const Edit = () => {
     const [inputEmail, setInputEmail] = useState("");
     const [inputPhone, setInputPhone] = useState("");
     const [inputAddress, setInputAddress] = useState("");
-    const [inputUserName, setInputUserName] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
 
@@ -96,17 +95,6 @@ export const Edit = () => {
                         placeholder="Phone"
                         onChange={(e) => setInputPhone(e.target.value)}
                         value={inputPhone}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="username" className="form-label">User name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="username"
-                        placeholder="User name"
-                        onChange={(e) => setInputUserName(e.target.value)}
-                        value={inputUserName}
                     />
                 </div>
                 
