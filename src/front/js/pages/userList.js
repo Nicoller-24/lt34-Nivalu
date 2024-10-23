@@ -28,7 +28,7 @@ export const UserList = () => {
 						</div>
 
 						<div className="col p-auto">
-							<Link to={`/users/edit?index=${index}`}>
+							<Link to={`/updateInfo`}>
 								<button type="button" className="btn-primary mx-3">Modificar</button>
 							</Link>
 							<button type="button" className="btn btn-danger" onClick={()=>actions.deleteUser(index)}>Eliminar</button>

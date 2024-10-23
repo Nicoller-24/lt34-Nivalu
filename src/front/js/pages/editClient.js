@@ -124,9 +124,10 @@ export const EditClient = () => {
 						/>
 					</div>
 					
-					<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
-					<Link to="/users">
+					
+					<Link to="/userList">
 						<button type="button" className="btn btn-info">Volver</button>
+						<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
 					</Link>
 				</form>
 			</div>
