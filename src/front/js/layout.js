@@ -7,6 +7,9 @@ import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
+import { AddClients } from "./pages/addClients.js";
+import { UserList } from "./pages/userList.js";
+import { EditClient } from "./pages/editClient.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -15,6 +18,7 @@ import { Edit } from "./component/edit";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+
 
 //create your first component
 const Layout = () => {
@@ -31,7 +35,9 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<AddClients/>} path="/adduser"/>
+                        <Route element={<UserList/>} path="/userList"/>
+                        <Route element={<EditClient/>} path="/updateInfo"/>
                         <Route element={<Crudrestaurante />} path="/restaurants" />
                         <Route element={<Crearrestaurante />} path="/signup/restaurants" />
                         <Route element={<Single />} path="/single/:theid" />
