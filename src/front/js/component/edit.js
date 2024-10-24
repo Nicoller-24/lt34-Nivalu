@@ -13,7 +13,7 @@ export const Edit = () => {
     const params = useParams();
 
     function traer_admin() {
-        fetch(process.env.BACKEND_URL+ `api/restaurant/${params.id}`)
+        fetch(process.env.BACKEND_URL+ `api/admins/${params.id}`)
             .then((response) => response.json())
             .then((data) => {
                 setAdminData(data);
@@ -50,7 +50,7 @@ export const Edit = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="username" className="form-label">Username</label>
+                    <label htmlFor="user_name" className="form-label">Username</label>
                     <input
                         type="text"
                         className="form-control"
@@ -76,7 +76,6 @@ export const Edit = () => {
                 <Link to={"/admins"}>
                     <button
                         style={{"marginRight": "10px"}}
-                        onClick={() => actions.putAdmins(inputEmail, inputName, inputUserName, inputPassword, params.id)}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >

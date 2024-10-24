@@ -157,7 +157,7 @@ def update_admin(admin_id):
         admin.user_name = body["user_name"]
     if "email" in body:
         existing_admin = Admin1.query.filter_by(email=body["email"]).first()
-        if existing_admin and existing_admin["id"] != admin_id:
+        if existing_admin and existing_admin.id != admin_id:
             return jsonify({"error": "El email ya está en uso"}), 400
         else:
             admin.email = body["email"]
@@ -165,7 +165,7 @@ def update_admin(admin_id):
         admin.password = body["password"]
 
     db.session.commit()
-    return jsonify({"msg": "Usuario admin actualizado con éxito", "admins": Admin1.serialize()}), 200
+    return jsonify({"msg": "Usuario admin actualizado con éxito", "admin": admin.serialize()}), 200
 
 @api.route('/admins/<int:admin_id>', methods=['DELETE'])
 def delete_admin(admin_id):

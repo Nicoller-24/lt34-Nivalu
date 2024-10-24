@@ -80,12 +80,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}),
 					redirect: "follow"
 				})
-				.then((response) => response.text());
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(`Error: ${response.status}`);
+					}
+					return response.json(); // Ensure you parse the response
+				})
+				.then(data => {
+					console.log("Admin updated successfully:", data);
+					getActions().loadSomeData(); // Refresh the admin data after update
+				})
+				.catch((error) => console.error("Error updating admin:", error));
 			},
+
 			traer_admin: (id) => {
 				fetch(process.env.BACKEND_URL + "/api/admins/" + id)
 					.then((response) => response.json())
-					.then((data) => setStore({admins: data}))
+					.then((data) => setStore({admin: data}))
 			},
 
 			changeColor: (index, color) => {
