@@ -117,7 +117,7 @@ def delete_planeta(restaurant_id):
 
 @api.route('/admins', methods=['GET'])
 def get_admins():
-    all_admins = list(Admin1.query.all()) 
+    all_admins = Admin1.query.all()
     results = list(map(lambda admin1: admin1.serialize(), all_admins)) 
 
     return jsonify(results), 200
@@ -179,20 +179,11 @@ def update_admin(admin_id):
 
 @api.route('/admins/<int:admin_id>', methods=['DELETE'])
 def delete_admin(admin_id):
-    admin_to_delete = Admin1.query.filter_by(id=admin_id).all()
+    admin_to_delete = Admin1.query.get(admin_id)
 
-    def delete_admin(item):
-        return item.id == admin_id
-    
-    seleccion_de_admin = list(filter(delete_admin, admin_to_delete))
-
-    if len(seleccion_de_admin) > 0:
-        admin_to_delete = seleccion_de_admin[0]
+    if admin_to_delete:
         db.session.delete(admin_to_delete)
         db.session.commit()
-
-        response_body = {"msg": "Se eliminó correctamente"}
+        return jsonify({"msg": "Se eliminó correctamente"}), 200
     else:
-        response_body = {"msg": "No se encontró el usuario de admin"}
-
-    return jsonify(response_body), 200
+        return jsonify({"msg": "No se encontró el usuario de admin"}), 404
