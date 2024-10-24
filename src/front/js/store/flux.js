@@ -38,12 +38,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// Add a user
 			addUser: (newUserData) => {
+				console.log("adduser")
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(newUserData)
+					body: JSON.stringify({
+						...newUserData,
+						id: newUserData.identification_number
+					  })
 				};
-				fetch('https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/client', requestOptions)
+				fetch('https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/signup/client', requestOptions)
 					.then(response => response.json())
 					.then(data => console.log("User added:", data))
 					.catch(error => console.error("Error adding user:", error));

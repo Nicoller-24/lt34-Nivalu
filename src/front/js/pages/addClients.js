@@ -114,11 +114,13 @@ export const AddClients = () => {
                         />
                     </div>
 
+                    <button type="submit" className="btn btn-success">Agregar Usuario</button>
+
                 </form>
 
 				<div>
                     
-                    <button type="submit" className="btn btn-success">Agregar Usuario</button>
+                    
 					<Link to="/users">
                     <button type="button" className="btn btn-info">Volver</button>
                		</Link>

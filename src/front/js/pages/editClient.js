@@ -9,11 +9,11 @@ export const EditClient = () => {
 	const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const index = queryParams.get("index"); 
+	console.log(index);
 	
 
 	// Validar si store.users, debe estar en el store de flux y si el index existe
-	let id = store.users?.[index]?.id || null;
-
+	
     const [updateData, setUpdateData] = useState({
         name: '',
         last_name: '',
@@ -25,8 +25,9 @@ export const EditClient = () => {
 
     const handleSubmit = (i) => {
         i.preventDefault();
-		if (id) {
-            actions.updateUser(updateData, id); // Llamar a updateUser con los datos, debe estar en flux la accion
+		console.log()
+		if (index) {
+            actions.updateUser(updateData, index); // Llamar a updateUser con los datos, debe estar en flux la accion
         }
         setUpdateData({
             name: '',
@@ -125,10 +126,10 @@ export const EditClient = () => {
 					</div>
 					
 					
-					<Link to="/userList">
+					
 						<button type="button" className="btn btn-info">Volver</button>
 						<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
-					</Link>
+					
 				</form>
 			</div>
         </div>

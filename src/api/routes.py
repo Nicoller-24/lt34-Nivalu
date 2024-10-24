@@ -46,12 +46,14 @@ def signup_client():
     client = Client.query.filter_by(email=body["email"]).first()
     if client is None:
         client = Client(
+            id=body["id"],
             name=body["name"],
             last_name=body["last_name"],  
-            identification_number=body["id#"],
+            identification_number=body["identification_number"],
             email=body["email"],
             phone_number=body["phone_number"],
             password=body["password"],
+            
             is_active=True
         )
         db.session.add(client)
