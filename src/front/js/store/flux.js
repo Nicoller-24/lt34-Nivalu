@@ -14,7 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			admins: []
+			admins: [],
+			admin: {}
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -45,7 +46,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch((error) => console.error("Error al cargar los usuarios de admin:", error));
 			},
 			removeAdmin: (idToDelete) => {
-				fetch(process.env.BACKEND_URL + "api/admins/" + idToDelete, {
+				fetch(process.env.BACKEND_URL + "/api/admins/" + idToDelete, {
 					method: "DELETE",
 					redirect: "follow",
 				})
@@ -53,13 +54,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeData());
 			},
 			addNewAdmin:(email, name, user_name, password) => {
-				fetch(process.env.BACKEND_URL + 'api/signup/admins', {
+				fetch(process.env.BACKEND_URL + '/api/signup/admins', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
 						"email": email,
 						"name": name,
-						"username": user_name,
+						"user_name": user_name,
 						"password": password,
 					}),
 					redirect: "follow",
@@ -72,9 +73,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: 'PUT',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						email: email || adminsData?.email,
-						user_name: user_name || adminsData?.user_name,
-						name: name || adminsData?.name,
+						email: email || adminData?.email,
+						user_name: user_name || adminData?.user_name,
+						name: name || adminData?.name,
 						//password: password || adminsData?.password
 					}),
 					redirect: "follow"

@@ -9,9 +9,12 @@ import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
 import { Crudadmin } from "./component/crudadmin";
+import { Crearadmin } from "./component/crearadmin";
+import { Edit } from "./component/edit";
+import { Oneadmin } from "./component/oneadmin";
+
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
-import { Crearadmin } from "./component/crearadmin";
 
 //create your first component
 const Layout = () => {
@@ -31,6 +34,8 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Crudadmin />} path="/admins" />
                         <Route element={<Crearadmin />} path="/signup/admins" />
+                        <Route element={<Oneadmin />} path="/admins/:id" />
+                        <Route element={<Edit />} path="/edit/admins/:id" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
