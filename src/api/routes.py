@@ -57,7 +57,7 @@ def update_restaurant(restaurant_id):
         restaurant.phone_number = body["phone_number"]
     if "email" in body:
         existing_restaurant = Restaurant.query.filter_by(email=body["email"]).first()
-        if existing_restaurant and existing_restaurant["id"] != restaurant_id:
+        if existing_restaurant and existing_restaurant.id != restaurant_id:
             return jsonify({"error": "El email ya está en uso"}), 400
         else:
             restaurant.email = body["email"]
@@ -67,6 +67,7 @@ def update_restaurant(restaurant_id):
         restaurant.password = body["password"]
 
     db.session.commit()
+
     return jsonify({"msg": "Restaurante actualizado con éxito", "restaurant": restaurant.serialize()}), 200
 
 @api.route('/restaurant/<int:restaurant_id>', methods=['DELETE'])
