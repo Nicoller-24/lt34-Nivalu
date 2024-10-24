@@ -101,7 +101,7 @@ export const Edit = () => {
                 <Link to={"/restaurants"}>
                     <button
                         style={{"marginRight": "10px"}}
-                        onClick={() => actions.putRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword, params.id)}
+                        onClick={() => actions.putRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputPassword, params.id)}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >
