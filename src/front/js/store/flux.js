@@ -17,7 +17,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 		
 			users:[],
-			auth: false
+			auth: false,
+			restaurants: [
+
+			],
+			restaurante: {}
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -27,7 +31,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 			loadUsers: () => {
-				fetch('https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/clients')
+				fetch(process.env.BACKEND_URL + '/api/clients')
 					.then(response => response.json())
 					.then(data => {
 						console.log(data);
@@ -47,7 +51,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						id: newUserData.identification_number
 					  })
 				};
-				fetch('https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/signup/client', requestOptions)
+				fetch(process.env.BACKEND_URL + '/api/signup/client', requestOptions)
 					.then(response => response.json())
 					.then(data => console.log("User added:", data))
 					.catch(error => console.error("Error adding user:", error));
@@ -62,7 +66,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// Update store before sending DELETE request
 				setStore({ users: store.users.filter((user, i) => i !== index) });
 
-				fetch(`https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/client/${idToDelete}`, { method: 'DELETE' })
+				fetch(process.env.BACKEND_URL +`/api/client/${idToDelete}`, { method: 'DELETE' })
 					.then(() => console.log(`User ${idToDelete} deleted`))
 					.catch(error => console.error("Error deleting user:", error));
 			},
@@ -74,7 +78,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(userModif)
 				};
-				fetch(`https://literate-goggles-x5qrqj4gg6jhvg7w-3001.app.github.dev/api/client/${id}`, requestOptions)
+				fetch(process.env.BACKEND_URL + `/api/client/${id}`, requestOptions)
 					.then(response => response.json())
 					.then(data => console.log("User updated:", data))
 					.catch(error => console.error("Error updating user:", error));
@@ -92,6 +96,61 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}catch(error){
 					console.log("Error", error)
 				}
+			},
+			loadSomeData: () => {
+				console.log("Se cargó la página");
+				fetch(process.env.BACKEND_URL + "/api/restaurants")
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ restaurants: data })
+					})
+					.catch((error) => console.error("Error al cargar los restaurantes:", error));
+			},
+			removeRestaurant: (idToDelete) => {
+				fetch(process.env.BACKEND_URL + "/api/restaurant/" + idToDelete, {
+					method: "DELETE",
+					redirect: "follow",
+				})
+					.then((response) => response.text())
+					.then(() => getActions().loadSomeData());
+			},
+			addNewRestaurant:(email, guests_capacity, location, name, phone_number, password) => {
+				fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"email": email,
+						"guests_capacity": guests_capacity,
+						"location": location,
+						"name": name,
+						"phone_number": phone_number,
+						"password": password,
+					}),
+					redirect: "follow",
+				})
+					.then((response) => response.text())
+					.then(() => getActions().loadSomeData());
+			},
+			putRestaurant(email, guests_capacity, location, name, phone_number, password, id) {
+				fetch(process.env.BACKEND_URL + "/api/restaurant/" + id, {
+					method: 'PUT',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						email: email || restaurantData?.email,
+						guests_capacity: guests_capacity || restaurantData?.guests_capacity,
+						location: location || restaurantData?.location,
+						name: name || restaurantData?.name,
+						phone_number: phone_number || restaurantData?.phone_number,
+						//password: password || restaurantData?.password
+					}),
+					redirect: "follow"
+				})
+				.then((response) => response.text());
+			},
+			traer_restaurante: (id) => {
+				fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
+					.then((response) => response.json())
+					.then((data) => setStore({restaurante: data}))
 			},
 			changeColor: (index, color) => {
 				//get the store

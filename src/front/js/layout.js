@@ -11,6 +11,11 @@ import { AddClients } from "./pages/addClients.js";
 import { UserList } from "./pages/userList.js";
 import { EditClient } from "./pages/editClient.js";
 
+import { Crudrestaurante } from "./component/crudrestaurante";
+import { Singlerestaurant } from "./component/singlerestaurant";
+import { Crearrestaurante } from "./component/crearrestaurante";
+import { Edit } from "./component/edit";
+
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
@@ -29,14 +34,16 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
-                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<Home />} path="/" />
                         <Route element={<AddClients/>} path="/adduser"/>
                         <Route element={<UserList/>} path="/userList"/>
                         <Route element={<EditClient/>} path="/updateInfo"/>
-                        
-                        
-                        
-                        
+                        <Route element={<Crudrestaurante />} path="/restaurants" />
+                        <Route element={<Crearrestaurante />} path="/signup/restaurants" />
+                        <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<Singlerestaurant />} path="/restaurant/:id" />
+                        <Route element={<Edit />} path="/edit/restaurant/:id" />
+                        <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
                 </ScrollToTop>
