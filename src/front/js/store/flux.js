@@ -131,22 +131,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeData());
 			},
-			putRestaurant(email, guests_capacity, location, name, phone_number, password, id) {
-				fetch(process.env.BACKEND_URL + "/api/restaurant/" + id, {
-					method: 'PUT',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						email: email || restaurantData?.email,
-						guests_capacity: guests_capacity || restaurantData?.guests_capacity,
-						location: location || restaurantData?.location,
-						name: name || restaurantData?.name,
-						phone_number: phone_number || restaurantData?.phone_number,
-						//password: password || restaurantData?.password
-					}),
-					redirect: "follow"
-				})
-				.then((response) => response.text());
-			},
 			traer_restaurante: (id) => {
 				fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, Navigate } from "react-router-dom";
 
 export const Edit = () => {
     const [restaurantData, setRestaurantData] = useState(null);
@@ -8,14 +8,14 @@ export const Edit = () => {
     const [inputEmail, setInputEmail] = useState("");
     const [inputPhone, setInputPhone] = useState("");
     const [inputAddress, setInputAddress] = useState("");
-    const [inputPassword, setInputPassword] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
 
     const { store, actions } = useContext(Context);
     const params = useParams();
 
+
     function traer_restaurante() {
-        fetch(process.env.BACKEND_URL+ `api/restaurant/${params.id}`)
+        fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`)
             .then((response) => response.json())
             .then((data) => {
                 setRestaurantData(data);
@@ -23,16 +23,37 @@ export const Edit = () => {
                 setInputEmail(data.email || "");
                 setInputPhone(data.phone_number || "");
                 setInputAddress(data.location || "");
-                setInputUserName(data.user_name || "");
                 setInputGuestCapacity(data.guests_capacity || "");
-            });
+            })
+            .catch((error) => console.error("Error al cargar el restaurante:", error));
+    }
+
+    function putRestaurant(email, guests_capacity, location, name, phone_number) {
+        fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`, {
+            method: 'PUT',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: email || restaurantData?.email,
+                guests_capacity: guests_capacity || restaurantData?.guests_capacity,
+                location: location || restaurantData?.location,
+                name: name || restaurantData?.name,
+                phone_number: phone_number || restaurantData?.phone_number
+            }),
+        })
+        .then((response) => {
+            console.log(response.status);
+            actions.loadSomeData()
+            return response.text();
+        })
+        .then((result) => {
+            console.log("Resultado:", result);
+        })
+        .catch((error) => console.error("Error al guardar el restaurante:", error));
     }
 
     useEffect(() => {
         traer_restaurante();
     }, [params.id]);
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -97,19 +118,19 @@ export const Edit = () => {
                         value={inputPhone}
                     />
                 </div>
-                
-                <Link to={"/restaurants"}>
+                <Link to="/restaurants">
                     <button
-                        style={{"marginRight": "10px"}}
-                        onClick={() => actions.putRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputUserName, inputPassword, params.id)}
+                        onClick={() => {putRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone)}}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >
                         Save
                     </button>
                 </Link>
-                <Link to={"/restaurants"}>
-                    O deseas volver
+                <Link to="/restaurants">
+                    <button type="button" className="btn btn-secondary w-100">
+                        O deseas volver
+                    </button>
                 </Link>
             </form>
         </div>
