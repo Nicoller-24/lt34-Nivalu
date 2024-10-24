@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			admins: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -36,7 +37,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			loadSomeData: () => {
 				console.log("Se cargó la página");
-				fetch(process.env.BACKEND_URL + "api/admins")
+				fetch(process.env.BACKEND_URL + "/api/admins")
 					.then((response) => response.json())
 					.then((data) => {
 						setStore({ admins: data })
@@ -67,7 +68,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeData());
 			},
 			putAdmin(email, name, user_name, id) {
-				fetch(process.env.BACKEND_URL + "api/admins/" + id, {
+				fetch(process.env.BACKEND_URL + "/api/admins/" + id, {
 					method: 'PUT',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -81,7 +82,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then((response) => response.text());
 			},
 			traer_admin: (id) => {
-				fetch(process.env.BACKEND_URL + "api/admins/" + id)
+				fetch(process.env.BACKEND_URL + "/api/admins/" + id)
 					.then((response) => response.json())
 					.then((data) => setStore({admins: data}))
 			},
