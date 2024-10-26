@@ -68,3 +68,24 @@ class Restaurant(db.Model):
             # do not serialize the password, it's a security breach
         }
 
+class Admin1(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(80), unique=False, nullable=False)
+    email = db.Column(db.String(80), unique=False, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Admin1 {self.email}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_name": self.user_name,
+            "name": self.name,
+            "email": self.email,
+            "is_active": self.is_active
+            # do not serialize the password, it's a  security breach
+        }
+

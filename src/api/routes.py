@@ -2,10 +2,9 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 
-from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Client
 from flask import Flask, request, jsonify, Blueprint
-from api.models import db, Restaurant
+from api.models import db, Restaurant, Admin1
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -179,4 +178,68 @@ def login_restaurant():
     access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token)
 
+    return jsonify(response_body), 200
+
+@api.route('/admins', methods=['GET'])
+def get_admins():
+    all_admins = Admin1.query.all() 
+    results = list(map(lambda admin1: admin1.serialize(), all_admins)) 
+
+    return jsonify(results), 200
+
+@api.route('/admins/<int:admin_id>', methods=['GET'])
+def get_admin(admin_id):
+    admin = Admin1.query.filter_by(id=admin_id).first()
+    
+    if admin is None:
+        return jsonify({"error": "Usuario admin no encontrado"}), 404
+    
+    return jsonify(admin.serialize()), 200
+
+@api.route("/signup/admins", methods=["POST"])
+def signup_admin():
+    body = request.get_json()
+    admin = Admin1.query.filter_by(email=body["email"]).first()
+    if admin == None:
+        admin = Admin1(email=body["email"], name=body["name"], user_name=body["user_name"], password=body["password"], is_active=True)
+        db.session.add(admin)
+        db.session.commit()
+        response_body = {"msg": "Usuario admin creado"}
+        return jsonify(response_body), 200
+    else:
+        return jsonify({"msg": "El usuario admin ya existe"}), 401
+    
+@api.route('/admins/<int:admin_id>', methods=['PUT'])
+def update_admin(admin_id):
+    body = request.get_json()
+    admin = Admin1.query.filter_by(id=admin_id).first()
+    if admin is None:
+        return jsonify({"error": "Usuario admin no encontrado"}), 404
+
+    if "name" in body:
+        admin.name = body["name"]
+    if "user_name" in body:
+        admin.user_name = body["user_name"]
+    if "email" in body:
+        existing_admin = Admin1.query.filter_by(email=body["email"]).first()
+        if existing_admin and existing_admin.id != admin_id:
+            return jsonify({"error": "El email ya está en uso"}), 400
+        else:
+            admin.email = body["email"]
+    if "password" in body:
+        admin.password = body["password"]
+
+    db.session.commit()
+    return jsonify({"msg": "Usuario admin actualizado con éxito", "admin": admin.serialize()}), 200
+
+@api.route('/admins/<int:admin_id>', methods=['DELETE'])
+def delete_admin(admin_id):
+    admin_to_delete = Admin1.query.get(admin_id)
+
+    if admin_to_delete:
+        db.session.delete(admin_to_delete)
+        db.session.commit()
+        response_body = {"msg": "Se eliminó correctamente"}
+    else:
+        response_body = {"msg": "No se encontró el usuario de admin"}
     return jsonify(response_body), 200

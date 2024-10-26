@@ -23,6 +23,9 @@ export const Home = () => {
 				</a>
 			</p>
 
+			<Link to="/admins">
+				<button className="btn btn-primary">admins</button>
+			</Link>
 			<Link to="/restauranteselect">
 				<button className="btn btn-primary">restaurantes</button>
 			</Link>
