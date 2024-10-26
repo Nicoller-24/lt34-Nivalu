@@ -1,42 +1,67 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, Navigate } from "react-router-dom";
 
 export const Edit = () => {
-    const [adminData, setAdminData] = useState(null);
+    const [restaurantData, setRestaurantData] = useState(null);
     const [inputName, setInputName] = useState("");
     const [inputEmail, setInputEmail] = useState("");
-    const [inputPassword, setInputPassword] = useState("");
-    const [inputUserName, setInputUserName] = useState("");
+    const [inputPhone, setInputPhone] = useState("");
+    const [inputAddress, setInputAddress] = useState("");
+    const [inputGuestCapacity, setInputGuestCapacity] = useState("");
 
     const { store, actions } = useContext(Context);
     const params = useParams();
 
-    function traer_admin() {
-        fetch(process.env.BACKEND_URL+ `api/admins/${params.id}`)
+
+    function traer_restaurante() {
+        fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`)
             .then((response) => response.json())
             .then((data) => {
-                setAdminData(data);
+                setRestaurantData(data);
                 setInputName(data.name || "");
                 setInputEmail(data.email || "");
-                setInputUserName(data.user_name || "");
-            });
+                setInputPhone(data.phone_number || "");
+                setInputAddress(data.location || "");
+                setInputGuestCapacity(data.guests_capacity || "");
+            })
+            .catch((error) => console.error("Error al cargar el restaurante:", error));
+    }
+
+    function putRestaurant(email, guests_capacity, location, name, phone_number) {
+        fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`, {
+            method: 'PUT',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: email || restaurantData?.email,
+                guests_capacity: guests_capacity || restaurantData?.guests_capacity,
+                location: location || restaurantData?.location,
+                name: name || restaurantData?.name,
+                phone_number: phone_number || restaurantData?.phone_number
+            }),
+        })
+        .then((response) => {
+            console.log(response.status);
+            actions.loadSomeData()
+            return response.text();
+        })
+        .then((result) => {
+            console.log("Resultado:", result);
+        })
+        .catch((error) => console.error("Error al guardar el restaurante:", error));
     }
 
     useEffect(() => {
-        traer_admin();
+        traer_restaurante();
     }, [params.id]);
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        actions.putAdmin(inputEmail, inputName, inputUserName, params.id, inputPassword);
     };
 
     return (
         <div className="container" style={{ backgroundColor: "white", width: "70%", paddingBottom: "10%" }}>
-            <h1 style={{ marginLeft: "30%" }}>Edit Admin</h1>
+            <h1 style={{ marginLeft: "30%" }}>Edit Restaurant</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="Email" className="form-label">Email</label>
@@ -50,14 +75,25 @@ export const Edit = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="user_name" className="form-label">Username</label>
+                    <label htmlFor="guestscapacity" className="form-label">Guests capacity</label>
                     <input
                         type="text"
                         className="form-control"
                         id="guestscapacity"
-                        placeholder="Username"
-                        onChange={(e) => setInputUserName(e.target.value)}
-                        value={inputUserName}
+                        placeholder="Guests capacity"
+                        onChange={(e) => setInputGuestCapacity(e.target.value)}
+                        value={inputGuestCapacity}
+                    />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="Adress" className="form-label">Address</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="Adress"
+                        placeholder="Address"
+                        onChange={(e) => setInputAddress(e.target.value)}
+                        value={inputAddress}
                     />
                 </div>
                 <div className="mb-3">
@@ -71,19 +107,30 @@ export const Edit = () => {
                         value={inputName}
                     />
                 </div>
-
-                
-                <Link to={"/admins"}>
+                <div className="mb-3">
+                    <label htmlFor="Phone" className="form-label">Phone</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="Phone"
+                        placeholder="Phone"
+                        onChange={(e) => setInputPhone(e.target.value)}
+                        value={inputPhone}
+                    />
+                </div>
+                <Link to="/restaurants">
                     <button
-                        style={{"marginRight": "10px"}}
+                        onClick={() => {putRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone)}}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >
                         Save
                     </button>
                 </Link>
-                <Link to={"/admins"}>
-                    O deseas volver
+                <Link to="/restaurants">
+                    <button type="button" className="btn btn-secondary w-100">
+                        O deseas volver
+                    </button>
                 </Link>
             </form>
         </div>

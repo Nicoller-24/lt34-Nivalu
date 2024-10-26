@@ -36,6 +36,7 @@ const injectContext = PassedComponent => {
 			// state.actions.traer_admin();
 			
 			// <---- calling this function from the flux.js actions
+			state.actions.loadSomeData()// <---- calling this function from the flux.js actions
 		}, []);
 
 		// The initial value for the context is not null anymore, but the current state of this component,

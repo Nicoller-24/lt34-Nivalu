@@ -25,6 +25,12 @@ export const Home = () => {
 			<Link to="/admins">
 				<button className="btn btn-primary">admins</button>
 			</Link>
+			<Link to="/restaurants">
+				<button className="btn btn-primary">restaurantes</button>
+			</Link>
+			<Link to="/userList">
+				<button className="btn btn-primary">comensales</button>
+			</Link>
 		</div>
 	);
 };
