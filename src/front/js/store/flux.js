@@ -120,7 +120,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeData());
 			},
 
-			addNewRestaurant:(email, guests_capacity, location, name, phone_number, password) => {
+			addNewRestaurant:(email, guests_capacity, location, name, phone_number, password, image) => {
 				fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
@@ -131,6 +131,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"name": name,
 						"phone_number": phone_number,
 						"password": password,
+						"image_url": image
 					}),
 					redirect: "follow",
 				})
