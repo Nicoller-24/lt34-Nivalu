@@ -29,7 +29,7 @@ const injectContext = PassedComponent => {
 			 * store, instead use actions, like this:
 			 **/
 			state.actions.getMessage();
-			state.actions.loadSomeData();
+			state.actions.loadSomeDataAdmin();
 			// state.actions.removeAdmin();
 			// state.actions.addAdmin();
 			// state.actions.putAdmin();

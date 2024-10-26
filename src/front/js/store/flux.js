@@ -36,7 +36,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			loadSomeData: () => {
+			loadSomeDataAdmin: () => {
 				console.log("Se cargó la página");
 				fetch(process.env.BACKEND_URL + "/api/admins")
 					.then((response) => response.json())
@@ -51,7 +51,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					redirect: "follow",
 				})
 					.then((response) => response.text())
-					.then(() => getActions().loadSomeData());
+					.then(() => getActions().loadSomeDataAdmin());
 			},
 			addNewAdmin:(email, name, user_name, password) => {
 				fetch(process.env.BACKEND_URL + '/api/signup/admins', {
@@ -66,7 +66,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					redirect: "follow",
 				})
 					.then((response) => response.text())
-					.then(() => getActions().loadSomeData());
+					.then(() => getActions().loadSomeDataAdmin());
 			},
 			putAdmin(email, name, user_name, id) {
 				fetch(process.env.BACKEND_URL + "/api/admins/" + id, {
@@ -88,7 +88,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				})
 				.then(data => {
 					console.log("Admin updated successfully:", data);
-					getActions().loadSomeData(); // Refresh the admin data after update
+					getActions().loadSomeDataAdmin(); // Refresh the admin data after update
 				})
 				.catch((error) => console.error("Error updating admin:", error));
 			},
