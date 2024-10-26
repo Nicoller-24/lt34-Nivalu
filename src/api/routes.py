@@ -161,5 +161,22 @@ def delete_client_user(client_id):
     else:
         response_body = {"msg": "No se encontró usuario"}
         return jsonify(response_body), 404  
+    
+@api.route("/login/restaurant", methods=["POST"])
+def login_restaurant():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    restaurant= Restaurant.query.filter_by(email=email).first()
+    print(restaurant)
+
+    if restaurant == None:
+        return jsonify({"msg": "Could not find the email"}), 401
+
+    if email != restaurant.email or password != restaurant.password:
+        return jsonify({"msg": "Bad email or password"}), 401
+    
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token)
 
     return jsonify(response_body), 200

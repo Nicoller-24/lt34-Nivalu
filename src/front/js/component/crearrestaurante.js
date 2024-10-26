@@ -2,6 +2,8 @@ import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Crearrestaurante = () => {
     const [inputName, setInputname] = useState("");
@@ -10,11 +12,15 @@ export const Crearrestaurante = () => {
     const [inputAddress, setInputAddress] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
-
+    const navigate = useNavigate()
     const { store, actions } = useContext(Context);
 
     return (
-        <>
+        <>  
+
+        {store.restaurant_auth ? <Navigate to="/restaurants"/> :(
+
+
             <div className="container">
                 <h1 style={{ marginTop: "100px" }}>Crea un nuevo restaurante</h1>
 
@@ -80,7 +86,6 @@ export const Crearrestaurante = () => {
                             onChange={(e) => setInputPassword(e.target.value)}
                         />
                     </div>
-                    <Link to={"/restaurants"}>
                         <button type="button" className="btn btn-primary" style={{"marginRight": "10px"}} onClick={() => {actions.addNewRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputPassword); 
                             setInputGuestCapacity("");
                             setInputname(""); 
@@ -91,12 +96,12 @@ export const Crearrestaurante = () => {
                         }}>
                             Crear Restaurante
                         </button>
-                    </Link>
-                    <Link to={"/restaurants"}>
+                    <Link to={"/restauranteselect"}>
                         O deseas volver
                     </Link>
                 </form>
             </div>
+        )}
         </>
     );
 };
