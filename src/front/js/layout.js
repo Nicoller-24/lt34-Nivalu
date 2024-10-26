@@ -16,6 +16,11 @@ import { Singlerestaurant } from "./component/singlerestaurant";
 import { Crearrestaurante } from "./component/crearrestaurante";
 import { Edit } from "./component/edit";
 
+import { Crudadmin } from "./component/crudadmin";
+import { Crearadmin } from "./component/crearadmin";
+import { Editadmin } from "./component/editadmin";
+import { Oneadmin } from "./component/oneadmin";
+
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
@@ -34,7 +39,12 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
-                        <Route element={<Home />} path="/" />
+                    <Route element={<Home />} path="/" />
+                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<Crudadmin />} path="/admins" />
+                        <Route element={<Crearadmin />} path="/signup/admins" />
+                        <Route element={<Oneadmin />} path="/admins/:id" />
+                        <Route element={<Editadmin />} path="/editadmin/admins/:id" />
                         <Route element={<AddClients/>} path="/adduser"/>
                         <Route element={<UserList/>} path="/userList"/>
                         <Route element={<EditClient/>} path="/updateInfo"/>
