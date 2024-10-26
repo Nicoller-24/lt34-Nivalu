@@ -12,6 +12,7 @@ export const Crudrestaurante = () => {
     function salir () {
         actions.logoutrestaurant();
         navigate("/restauranteselect")
+        store.restaurant_auth = false
        
     }
 
