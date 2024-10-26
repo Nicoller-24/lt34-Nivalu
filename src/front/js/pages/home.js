@@ -22,10 +22,11 @@ export const Home = () => {
 					Read documentation
 				</a>
 			</p>
+
 			<Link to="/admins">
 				<button className="btn btn-primary">admins</button>
 			</Link>
-			<Link to="/restaurants">
+			<Link to="/restauranteselect">
 				<button className="btn btn-primary">restaurantes</button>
 			</Link>
 			<Link to="/userList">

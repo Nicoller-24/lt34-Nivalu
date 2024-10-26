@@ -2,12 +2,31 @@ import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Crudrestaurante = () => {
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate()
+
+    function salir () {
+        actions.logoutrestaurant();
+        navigate("/restauranteselect")
+        store.restaurant_auth = false
+       
+    }
+
+    useEffect(()=> console.log(store.restaurant_auth) ,[])
+
+
 
     return (
-        <>
+        <>  
+            {store.restaurant_auth ? (
+                 <button onClick={() => salir()} type="button" className="btn btn-primary" >
+                    volver
+                </button>
+             ) : null}
             <Link to={"/signup/restaurants"}>
                 <button type="button" className="btn btn-primary" >
                     crear nuevo restaurante
