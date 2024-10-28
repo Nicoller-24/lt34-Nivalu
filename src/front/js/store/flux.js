@@ -110,6 +110,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log(data)
 					});
 			},
+
+			logoutClient: () => {
+				localStorage.removeItem("token")
+				setStore( {auth : false});
+			},
 			
 
 
