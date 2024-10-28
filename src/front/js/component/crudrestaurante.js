@@ -2,14 +2,38 @@ import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Crudrestaurante = () => {
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate()
+
+    function salir () {
+        actions.logoutrestaurant();
+        navigate("/restauranteselect")
+        store.restaurant_auth = false
+       
+    }
+
+    useEffect(()=> {
+        console.log(store.restaurant_auth);
+        actions.loadSomeData()
+    } ,[])
+
+
 
     return (
-        <>
+        <>  
+
+            {store.restaurant_auth ? null : <Navigate to="/restauranteselect"/>}
+            {store.restaurant_auth ? (
+                 <button onClick={() => salir()} type="button" className="btn btn-primary" >
+                    volver
+                </button>
+             ) : null}
             <Link to={"/signup/restaurants"}>
-                <button type="button" className="btn btn-primary" >
+                <button  onClick={() => store.restaurant_auth = false} type="button" className="btn btn-primary" >
                     crear nuevo restaurante
                 </button>
             </Link>
@@ -20,7 +44,7 @@ export const Crudrestaurante = () => {
                         <li key={index} className="list-group-item d-flex justify-content-between">
                             <div className="d-flex">
                                 <img
-                                    src="https://plus.unsplash.com/premium_photo-1689565611422-b2156cc65e47?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                    src={item.image_url}
                                     style={{ width: "150px", height: "150px", borderRadius: "150px", objectFit: "cover" }}
                                 />
 

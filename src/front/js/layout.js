@@ -15,7 +15,9 @@ import { LoginClient} from "./pages/loginClient.js";
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
 import { Crearrestaurante } from "./component/crearrestaurante";
+import { Restaurantselect } from "./component/restaurantselect.js";
 import { Edit } from "./component/edit";
+import { Signuprestaurant } from "./component/signuprestaurant.js";
 
 import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
@@ -55,6 +57,9 @@ const Layout = () => {
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Singlerestaurant />} path="/restaurant/:id" />
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
+                        <Route element={<Restaurantselect/>} path="/restauranteselect"/>
+                        <Route element={<Signuprestaurant/>} path="/signuprestaurant"/>
+                        
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

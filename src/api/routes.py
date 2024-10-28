@@ -36,7 +36,7 @@ def signup():
     body = request.get_json()
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
     if restaurant == None:
-        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"], is_active=True)
+        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"],image_url=body["image_url"], is_active=True)
         db.session.add(restaurant)
         db.session.commit()
         response_body = {"msg": "Restaurante creado"}
@@ -69,6 +69,8 @@ def update_restaurant(restaurant_id):
         restaurant.guests_capacity = body["guests_capacity"]
     if "password" in body:
         restaurant.password = body["password"]
+    if "image_url" in body:
+        restaurant.image_url = body["image_url"]
 
     db.session.commit()
 
@@ -160,6 +162,23 @@ def delete_client_user(client_id):
     else:
         response_body = {"msg": "No se encontró usuario"}
         return jsonify(response_body), 404  
+    
+@api.route("/login/restaurant", methods=["POST"])
+def login_restaurant():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    restaurant= Restaurant.query.filter_by(email=email).first()
+    print(restaurant)
+
+    if restaurant == None:
+        return jsonify({"msg": "Could not find the email"}), 401
+
+    if email != restaurant.email or password != restaurant.password:
+        return jsonify({"msg": "Bad email or password"}), 401
+    
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token)
 
     return jsonify(response_body), 200
 

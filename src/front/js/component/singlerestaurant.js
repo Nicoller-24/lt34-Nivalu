@@ -20,7 +20,15 @@ export const Singlerestaurant = () => {
 		,[])
 
     return (<>
-       <h1>{store.restaurante.name}</h1>
+      <img
+        src={store.restaurante.image_url}
+        style={{ width: "400px", height: "400px", objectFit: "cover" }}
+      />
+      <h1>{store.restaurante.name}</h1>
+      <h3>{store.restaurante.location}</h3>
+      <h3>{store.restaurante.phone_number}</h3>
+
+
 	   	<Link to={"/restaurants"}>
 			O deseas volver
 		</Link>
