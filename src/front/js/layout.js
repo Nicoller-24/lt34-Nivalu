@@ -20,6 +20,8 @@ import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
 import { Editadmin } from "./component/editadmin";
 import { Oneadmin } from "./component/oneadmin";
+import { Adminlogin } from "./component/adminlogin";
+import { Adminhomepage } from "./component/adminhomepage"
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -45,6 +47,8 @@ const Layout = () => {
                         <Route element={<Crearadmin />} path="/signup/admins" />
                         <Route element={<Oneadmin />} path="/admins/:id" />
                         <Route element={<Editadmin />} path="/editadmin/admins/:id" />
+                        <Route element={<Adminlogin />} path="/adminlogin/" />
+                        <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<AddClients/>} path="/adduser"/>
                         <Route element={<UserList/>} path="/userList"/>
                         <Route element={<EditClient/>} path="/updateInfo"/>
@@ -53,6 +57,7 @@ const Layout = () => {
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Singlerestaurant />} path="/restaurant/:id" />
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
+
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

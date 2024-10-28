@@ -70,6 +70,7 @@ export const Crudadmin = () => {
                     );
                 })}
             </ul>
+            <Link to="/">Volver al inicio</Link>
         </>
     );
 };
