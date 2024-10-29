@@ -2,9 +2,8 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 
-from api.models import db, User, Client
 from flask import Flask, request, jsonify, Blueprint
-from api.models import db, Restaurant, Admin1
+from api.models import db, Restaurant, Admin1, Category, Client, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -34,9 +33,15 @@ def get_restaurant(restaurant_id):
 @api.route("/signup/restaurant", methods=["POST"])
 def signup():
     body = request.get_json()
+    category_id= body.get ("category_id")
+    
+    category = Category.query.filter_by(id=category_id).first()
+    if category is None:
+        return jsonify({"msg": "Category not found"}), 404
+    
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
     if restaurant == None:
-        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"],image_url=body["image_url"], is_active=True)
+        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"],image_url=body["image_url"], is_active=True, category_id=body["category_id"])
         db.session.add(restaurant)
         db.session.commit()
         response_body = {"msg": "Restaurante creado"}
@@ -280,3 +285,47 @@ def login_admin():
     access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token)
     return jsonify(response_body), 200
+
+@api.route('/category', methods=['GET'])
+def get_categories():
+    all_categories = Category.query.all() 
+    results = list(map(lambda Category: Category.serialize(), all_categories)) 
+
+    return jsonify(results), 200
+
+@api.route('/category/<int:category_id>', methods=['GET'])
+def get_category (category_id):
+    category = Category.query.filter_by(id=category_id).first()
+    
+    if category is None:
+        return jsonify({"error": "Categoria no encontrado"}), 404
+    
+    return jsonify(category.serialize()), 200
+
+@api.route('/category', methods=['POST'])
+@jwt_required()  # Make sure the admin is authenticated
+def create_category():
+    current_user = get_jwt_identity()  # Get the currently logged-in user
+    admin = Admin1.query.filter_by(email=current_user).first()
+
+    if admin is None:
+        return jsonify({"msg": "Only admins can create categories"}), 403
+
+    body = request.get_json()
+    name = body.get("name")
+
+    if not name:
+        return jsonify({"msg": "Category name is required"}), 400
+
+    category = Category.query.filter_by(name=name).first()
+    if category:
+        return jsonify({"msg": "Category already exists"}), 400
+
+    new_category = Category(
+        name=name,
+        created_by=admin.id
+    )
+    db.session.add(new_category)
+    db.session.commit()
+
+    return jsonify({"msg": "Category created successfully", "category": new_category.serialize()}), 201
