@@ -10,6 +10,7 @@ import injectContext from "./store/appContext";
 import { AddClients } from "./pages/addClients.js";
 import { UserList } from "./pages/userList.js";
 import { EditClient } from "./pages/editClient.js";
+import { ListOfRestaurants} from "./pages/listOfRestaurants.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -57,6 +58,7 @@ const Layout = () => {
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
                         <Route element={<Restaurantselect/>} path="/restauranteselect"/>
                         <Route element={<Signuprestaurant/>} path="/signuprestaurant"/>
+                        <Route element={<ListOfRestaurants/>} path="/listOfRestaurants"/>
                         
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
