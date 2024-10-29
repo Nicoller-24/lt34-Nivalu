@@ -87,6 +87,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch(error => console.error("Error updating user:", error));
 			},
 
+			loginClient: (email, password) => {
+					
+				const resquestOptions = {
+					method: 'POST',
+					headers: {'content-Type' : 'application/json'},
+					body: JSON.stringify({
+						"email": email,
+						"password" : password
+					})
+				};
+				fetch(`${process.env.BACKEND_URL}/api/loginClient`, resquestOptions)
+					.then(response => {
+						console.log (response.status)
+						if (response.status == 200){
+							setStore( {auth : true});
+						}
+						return response.json()
+					})
+					.then(data => {
+						localStorage.setItem("token",data.access_token)
+						console.log(data)
+					});
+			},
+
+			logoutClient: () => {
+				localStorage.removeItem("token")
+				setStore( {auth : false});
+			},
+			
+
 
 			getMessage: async () => {
 				try{

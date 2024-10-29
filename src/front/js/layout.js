@@ -10,6 +10,7 @@ import injectContext from "./store/appContext";
 import { AddClients } from "./pages/addClients.js";
 import { UserList } from "./pages/userList.js";
 import { EditClient } from "./pages/editClient.js";
+import { LoginClient} from "./pages/loginClient.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -48,6 +49,7 @@ const Layout = () => {
                         <Route element={<Oneadmin />} path="/admins/:id" />
                         <Route element={<Editadmin />} path="/editadmin/admins/:id" />
                         <Route element={<AddClients/>} path="/adduser"/>
+                        <Route element={<LoginClient/>} path="/loginClients"/>
                         <Route element={<UserList/>} path="/userList"/>
                         <Route element={<EditClient/>} path="/updateInfo"/>
                         <Route element={<Crudrestaurante />} path="/restaurants" />
