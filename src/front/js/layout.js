@@ -23,6 +23,8 @@ import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
 import { Editadmin } from "./component/editadmin";
 import { Oneadmin } from "./component/oneadmin";
+import { Adminlogin } from "./component/adminlogin";
+import { Adminhomepage } from "./component/adminhomepage"
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -48,6 +50,8 @@ const Layout = () => {
                         <Route element={<Crearadmin />} path="/signup/admins" />
                         <Route element={<Oneadmin />} path="/admins/:id" />
                         <Route element={<Editadmin />} path="/editadmin/admins/:id" />
+                        <Route element={<Adminlogin />} path="/adminlogin/" />
+                        <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<AddClients/>} path="/adduser"/>
                         <Route element={<LoginClient/>} path="/loginClients"/>
                         <Route element={<UserList/>} path="/userList"/>
