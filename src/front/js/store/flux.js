@@ -26,7 +26,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			restaurants: [
 
 			],
-			restaurante: {}
+			restaurante: {},
+			restaurant_auth : false,
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -122,7 +123,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeData());
 			},
 
-			addNewRestaurant:(email, guests_capacity, location, name, phone_number, password) => {
+			addNewRestaurant:(email, guests_capacity, location, name, phone_number, password, image) => {
 				fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
@@ -133,17 +134,51 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"name": name,
 						"phone_number": phone_number,
 						"password": password,
+						"image_url": image
 					}),
 					redirect: "follow",
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeData());
+				.then((response) => {
+					console.log(response.status)
+					if (response.status == 200) {
+						setStore({ restaurant_auth: true })
+					}
+					return response.json()
+				})
 			},
 
 			traer_restaurante: (id) => {
 				fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())
 					.then((data) => setStore({restaurante: data}))
+			},
+			loginrestaurant: (inputEmail, inputPassword) => {
+				fetch(process.env.BACKEND_URL + "/api/login/restaurant", {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"email": inputEmail,
+						"password": inputPassword
+					}),
+					redirect: "follow"
+				})
+					.then((response) => {
+						console.log(response.status)
+						if (response.status == 200) {
+							setStore({ restaurant_auth: true })
+						}
+						return response.json()
+					})
+					.then((data) => {
+						localStorage.setItem("token", data.access_token);
+						console.log(data.access_token)
+						console.log(data)
+					})
+			},
+			logoutrestaurant: () => {
+				console.log("logout")
+				localStorage.removeItem("token");
+				setStore({ auth: false })
 			},
 
 			adminlogin: (inputEmail, inputPassword) => {

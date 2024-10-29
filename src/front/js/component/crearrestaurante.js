@@ -2,6 +2,8 @@ import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Crearrestaurante = () => {
     const [inputName, setInputname] = useState("");
@@ -10,11 +12,46 @@ export const Crearrestaurante = () => {
     const [inputAddress, setInputAddress] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
-
+    const navigate = useNavigate()
     const { store, actions } = useContext(Context);
 
+    const preset_name = "nivalu";                         
+    const cloud_name = "duh7wjna3"                     
+
+    const [ image, setImage ] = useState('');      
+    const [ loading, setLoading ] = useState(false) 
+  
+
+    const uploadImage = async (e)=>{            
+        const files = e.target.files            
+        const data = new FormData()             
+        data.append('file', files[0])           
+        data.append('upload_preset',preset_name)  
+
+        setLoading(true)                        
+
+        try {
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
+                method: 'POST',
+                body: data
+            });
+
+            const file = await response.json();     
+            setImage(file.secure_url);              
+            setLoading(false);                      
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            setLoading(false);
+        }
+
+    }
+
     return (
-        <>
+        <>  
+
+        {store.restaurant_auth ? <Navigate to="/restaurants"/> :(
+
+
             <div className="container">
                 <h1 style={{ marginTop: "100px" }}>Crea un nuevo restaurante</h1>
 
@@ -80,23 +117,42 @@ export const Crearrestaurante = () => {
                             onChange={(e) => setInputPassword(e.target.value)}
                         />
                     </div>
-                    <Link to={"/restaurants"}>
-                        <button type="button" className="btn btn-primary" style={{"marginRight": "10px"}} onClick={() => {actions.addNewRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputPassword); 
+
+                    <div  className="form-group">
+                    <label htmlFor="file">Foto</label>
+                        <input type="file"
+                        className="form-control"
+                        name="file"
+                        id="file"
+                        placeholder='Upload an image'
+                        // accept='image/png, image/jpeg' 
+                        onChange={(e)=>uploadImage(e)}
+                        />
+
+                        {loading ? (
+                            <h3>Loading...</h3>
+                        ) : (
+                        <img src={image} alt="imagen subida"/>
+                        )}
+                    </div>
+
+                        <button type="button" className="btn btn-primary" style={{"marginRight": "10px"}} onClick={() => {actions.addNewRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputPassword, image); 
                             setInputGuestCapacity("");
                             setInputname(""); 
                             setInputPhone("");
                             setInputEmail("") ; 
                             setInputAddress("");
                             setInputPassword("");
+                            setImage("")
                         }}>
                             Crear Restaurante
                         </button>
-                    </Link>
-                    <Link to={"/restaurants"}>
+                    <Link to={"/restauranteselect"}>
                         O deseas volver
                     </Link>
                 </form>
             </div>
+        )}
         </>
     );
 };

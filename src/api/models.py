@@ -51,6 +51,7 @@ class Restaurant(db.Model):
     email = db.Column(db.String(80), unique=True, nullable=False)
     guests_capacity = db.Column(db.String(80), unique=False, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
+    image_url = db.Column(db.String(120), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
@@ -64,6 +65,7 @@ class Restaurant(db.Model):
             "phone_number": self.phone_number,
             "email": self.email,
             "guests_capacity": self.guests_capacity,
+            "image_url": self.image_url,
             "is_active": self.is_active
             # do not serialize the password, it's a security breach
         }
