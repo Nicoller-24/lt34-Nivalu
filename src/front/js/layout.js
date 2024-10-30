@@ -11,6 +11,7 @@ import { AddClients } from "./pages/addClients.js";
 import { UserList } from "./pages/userList.js";
 import { EditClient } from "./pages/editClient.js";
 import { ListOfRestaurants} from "./pages/listOfRestaurants.js";
+import { LoginClient} from "./pages/loginClient.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -23,6 +24,8 @@ import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
 import { Editadmin } from "./component/editadmin";
 import { Oneadmin } from "./component/oneadmin";
+import { Adminlogin } from "./component/adminlogin";
+import { Adminhomepage } from "./component/adminhomepage"
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -59,6 +62,9 @@ const Layout = () => {
                         <Route element={<Restaurantselect/>} path="/restauranteselect"/>
                         <Route element={<Signuprestaurant/>} path="/signuprestaurant"/>
                         <Route element={<ListOfRestaurants/>} path="/listOfRestaurants"/>
+                        <Route element={<Adminlogin />} path="/adminlogin/" />
+                        <Route element={<Adminhomepage />} path="/adminhomepage/" />
+                        <Route element={<LoginClient/>} path="/loginClients"/>
                         
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
