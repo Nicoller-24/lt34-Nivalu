@@ -34,7 +34,7 @@ export const ListOfRestaurants = () => {
 									<strong>Phone Number:</strong> {restaurant.phone_number}
 								</p>
                                 <Link to="/">
-				                    <button className="btn btn-primary">Book your table</button>
+				                    <button className="btn btn-primary">Book your table now</button>
 			                    </Link>
                                 
 							</div>
