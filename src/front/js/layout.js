@@ -11,6 +11,7 @@ import { AddClients } from "./pages/addClients.js";
 import { UserList } from "./pages/userList.js";
 import { EditClient } from "./pages/editClient.js";
 import { LoginClient} from "./pages/loginClient.js";
+import { AboutRestaurant } from "./pages/aboutRestaurant.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -63,6 +64,7 @@ const Layout = () => {
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
                         <Route element={<Restaurantselect/>} path="/restauranteselect"/>
                         <Route element={<Signuprestaurant/>} path="/signuprestaurant"/>
+                        <Route element={<AboutRestaurant/>} path="/aboutRestaurants"/>
                         
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
