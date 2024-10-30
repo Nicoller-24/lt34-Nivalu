@@ -182,6 +182,23 @@ def login_restaurant():
 
     return jsonify(response_body), 200
 
+
+@api.route("/loginClient", methods=["POST"])
+def login():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    user = Client.query.filter_by(email=email).first()
+
+    if user == None:
+        return jsonify({"msg": "Could not find you email"}), 401
+
+    if email != user.email or password != user.password:
+        return jsonify({"msg": "Bad email or password"}), 401
+
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token)
+
 @api.route('/admins', methods=['GET'])
 def get_admins():
     all_admins = Admin1.query.all() 
@@ -244,4 +261,22 @@ def delete_admin(admin_id):
         response_body = {"msg": "Se eliminó correctamente"}
     else:
         response_body = {"msg": "No se encontró el usuario de admin"}
+    return jsonify(response_body), 200
+
+@api.route("/login/admins", methods=["POST"])
+def login_admin():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    admin= Admin1.query.filter_by(email=email).first()
+    print(admin)
+
+    if admin == None:
+        return jsonify({"msg": "Could not find the email"}), 401
+
+    if email != admin.email or password != admin.password:
+        return jsonify({"msg": "Bad email or password"}), 401
+    
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token)
     return jsonify(response_body), 200

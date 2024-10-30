@@ -1,3 +1,5 @@
+import { Adminlogin } from "../component/adminlogin";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -16,6 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			admins: [],
 			admin: {},
+			admin_auth : false,
 
 		
 			users:[],
@@ -86,6 +89,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(data => console.log("User updated:", data))
 					.catch(error => console.error("Error updating user:", error));
 			},
+
+			loginClient: (email, password) => {
+					
+				const resquestOptions = {
+					method: 'POST',
+					headers: {'content-Type' : 'application/json'},
+					body: JSON.stringify({
+						"email": email,
+						"password" : password
+					})
+				};
+				fetch(`${process.env.BACKEND_URL}/api/loginClient`, resquestOptions)
+					.then(response => {
+						console.log (response.status)
+						if (response.status == 200){
+							setStore( {auth : true});
+						}
+						return response.json()
+					})
+					.then(data => {
+						localStorage.setItem("token",data.access_token)
+						console.log(data)
+					});
+			},
+
+			logoutClient: () => {
+				localStorage.removeItem("token")
+				setStore( {auth : false});
+			},
+			
 
 
 			getMessage: async () => {
@@ -177,6 +210,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 				localStorage.removeItem("token");
 				setStore({ auth: false })
 			},
+
+			adminlogin: (inputEmail, inputPassword) => {
+				fetch(process.env.BACKEND_URL + "/api/login/admins", {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"email": inputEmail,
+						"password": inputPassword
+					}),
+					redirect: "follow"
+				})
+					.then((response) => {
+						console.log(response.status)
+						if (response.status == 200) {
+							setStore({ admin_auth: true })
+						}
+						return response.json()
+					})
+					.then((data) => {
+						localStorage.setItem("token", data.access_token);
+						console.log(data.access_token)
+						console.log(data)
+					})
+			},
+
+			adminlogout: () => {
+				console.log("logout")
+				localStorage.removeItem("token");
+				setStore({ auth: false })
+			},
+
 
 			loadSomeDataAdmin: () => {
 				console.log("Se cargó la página");

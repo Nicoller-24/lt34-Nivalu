@@ -22,8 +22,7 @@ export const Home = () => {
 					Read documentation
 				</a>
 			</p>
-
-			<Link to="/admins">
+			<Link to="/adminhomepage">
 				<button className="btn btn-primary">admins</button>
 			</Link>
 			<Link to="/restauranteselect">
