@@ -286,7 +286,7 @@ def login_admin():
 def get_reservations():
 
     all_reservations = Reservations.query.all()
-    results = list(map(lambda review: review.serialize(), all_reservations))
+    results = list(map(lambda reservation: reservation.serialize(), all_reservations))
     
 
     return jsonify(results), 200
@@ -299,18 +299,18 @@ def add_reservation():
     if not body:
         return jsonify({"msg": "No se proporcionó información"}), 400
 
-    required_fields = ['client_id', 'time','date', 'number_of_people', 'restaurant_id' ]
+    required_fields = ['client_id', 'time','date', 'number_of_people', 'restaurant_id', ]
     missing_fields = [field for field in required_fields if field not in body]
     if missing_fields:
         return jsonify({"msg": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
 
     nueva_reservation = Reservations(
         client_id =body['client_id'],
-        name_restaurant=body['name_restaurant'],
+        restaurant_id=body['restaurant_id'],
         time=body['time'],
         date=body['date'],
         number_of_people=body['number_of_people'],
-        email_client=body['email_client']
+        
 
     )
 
@@ -322,7 +322,7 @@ def add_reservation():
 
     response_body = {
         "msg": "Reserva creada exitosamente",
-        "review": nueva_reservation.serialize() 
+        "reservation": nueva_reservation.serialize() 
     }
     
     return jsonify(response_body), 201
@@ -343,15 +343,15 @@ def delete_reservation(reservations_id):
 @api.route('/reservations/<int:reservations_id>', methods=['PUT'])
 def update_reservation(reservations_id):
     body = request.get_json()
-    review = Reservations.query.get(reservations_id)
+    reservation = Reservations.query.get(reservations_id)
     
-    if review is None:
+    if reservation is None:
         return jsonify({"error": "Reserva no encontrada"}), 404
 
     # Actualizar campos de la reserva
-    review.time = body.get('time', review.time)
-    review.date = body.get('date', review.date)
-    review.number_of_people = body.get('number_of_people', review.number_of_people)
+    reservation.time = body.get('time', reservation.time)
+    reservation.date = body.get('date', reservation.date)
+    reservation.number_of_people = body.get('number_of_people', reservation.number_of_people)
     
     try:
         db.session.commit()
@@ -360,7 +360,7 @@ def update_reservation(reservations_id):
 
     response_body = {
         "msg": "Reseña actualizada exitosamente",
-        "review": review.serialize()
+        "reservation": reservation.serialize()
     }
 
     return jsonify(response_body), 201
