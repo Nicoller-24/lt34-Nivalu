@@ -16,12 +16,20 @@ const AddressAutocomplete = ({ onAddressSelect }) => {
     const place = autocomplete.getPlace();
     if (place && place.formatted_address) {
       setAddress(place.formatted_address);
-      onAddressSelect(place.formatted_address);
+
+      // Obtiene latitud y longitud del lugar seleccionado
+      const location = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      };
+
+      // Envía la dirección y las coordenadas al componente padre
+      onAddressSelect(place.formatted_address, location);
     }
   };
 
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} libraries={libraries}>
+    <LoadScript googleMapsApiKey="AIzaSyB805JSDl4VlKuMftea-Yx1KSroMTJ0zl4" libraries={libraries}>
       <Autocomplete
         onLoad={onLoad}
         onPlaceChanged={onPlaceChanged}
@@ -31,7 +39,7 @@ const AddressAutocomplete = ({ onAddressSelect }) => {
           ref={inputRef}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          placeholder="Ingresa tú ciudad"
+          placeholder="Ingresa tu ciudad"
           style={{ width: '100%', padding: '8px' }}
         />
       </Autocomplete>

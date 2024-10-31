@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import AddressAutocomplete from "./addressautocomplete";
+import MapComponent from "./mapcomponet";
 
 export const Crudrestaurante = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-    const [selectedAddress, setSelectedAddress] = useState(''); // Estado para la dirección completa
-    const [firstPartAddress, setFirstPartAddress] = useState(''); // Estado para la primera parte de la dirección
+
 
     function salir() {
         actions.logoutrestaurant();
@@ -19,13 +19,6 @@ export const Crudrestaurante = () => {
         console.log(store.restaurant_auth);
         actions.loadSomeData();
     }, []);
-
-    // Maneja la selección de la dirección
-    const handleAddressSelect = (address) => {
-        setSelectedAddress(address);
-        const firstPart = address.split(',')[0]; // Dividir la dirección por comas y tomar la primera parte
-        setFirstPartAddress(firstPart); // Guardar la primera parte en el estado
-    };
 
     return (
         <>  
@@ -41,15 +34,6 @@ export const Crudrestaurante = () => {
                 </button>
             </Link>
 
-            {/* Componente AddressAutocomplete */}
-            <AddressAutocomplete onAddressSelect={handleAddressSelect} />
-
-            {/* Mostrar la primera parte de la dirección si está disponible */}
-            {firstPartAddress && (
-                <div>
-                    <p>Primera parte de la dirección: {firstPartAddress}</p>
-                </div>
-            )}
 
             <ul className="list-group">
                 {store.restaurants.map((item, index) => {
@@ -113,6 +97,7 @@ export const Crudrestaurante = () => {
                     );
                 })}
             </ul>
+               
         </>
     );
 };
