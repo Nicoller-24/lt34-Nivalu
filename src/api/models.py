@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -90,4 +91,34 @@ class Admin1(db.Model):
             "is_active": self.is_active
             # do not serialize the password, it's a  security breach
         }
+    
+
+class Reservations(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    occasion = db.Column(db.String(120), nullable=False)
+    time = db.Column(db.String(120), nullable=False)
+    date = db.Column(db.String(120), nullable=False)
+    number_of_people = db.Column(db.String(120), nullable=False)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)    
+    is_active = db.Column(db.Boolean(), nullable=False)
+
+    client = db.relationship('Client', backref=db.backref('reservations', lazy=True))
+    restaurant = db.relationship('Restaurant', backref=db.backref('reservations', lazy=True))
+
+    def __repr__(self):
+        return f'<Reservations {self.time}, {self.date}>'
+    def serialize(self):
+        return {
+            "client_id": self.client_id,
+            "email_client": self.client.email if self.client else None,
+            "name_restaurant": self.restaurant.name if self.restaurant else None,
+            "number_of_people": self.number_of_people,
+            "time": self.time,
+            "date":self.date
+        }
+
+
+
+
 

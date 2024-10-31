@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 
-from api.models import db, User, Client
+from api.models import db, User, Client, Reservations
 from flask import Flask, request, jsonify, Blueprint
 from api.models import db, Restaurant, Admin1
 from api.utils import generate_sitemap, APIException
@@ -280,3 +280,87 @@ def login_admin():
     access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token)
     return jsonify(response_body), 200
+
+
+@api.route('/reservations', methods=['GET'])
+def get_reservations():
+
+    all_reservations = Reservations.query.all()
+    results = list(map(lambda review: review.serialize(), all_reservations))
+    
+
+    return jsonify(results), 200
+
+
+@api.route('/reservations', methods=['POST'])
+def add_reservation():
+    body = request.get_json()  
+
+    if not body:
+        return jsonify({"msg": "No se proporcionó información"}), 400
+
+    required_fields = ['client_id', 'time','date', 'number_of_people', 'restaurant_id' ]
+    missing_fields = [field for field in required_fields if field not in body]
+    if missing_fields:
+        return jsonify({"msg": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
+
+    nueva_reservation = Reservations(
+        client_id =body['client_id'],
+        name_restaurant=body['name_restaurant'],
+        time=body['time'],
+        date=body['date'],
+        number_of_people=body['number_of_people'],
+        email_client=body['email_client']
+
+    )
+
+    try:
+        db.session.add(nueva_reservation)
+        db.session.commit() 
+    except Exception as e:
+        return jsonify({"msg": "Error al crear la reserva"}), 500
+
+    response_body = {
+        "msg": "Reserva creada exitosamente",
+        "review": nueva_reservation.serialize() 
+    }
+    
+    return jsonify(response_body), 201
+
+@api.route('/reservations/<int:reservations_id>', methods=['DELETE'])
+def delete_reservation(reservations_id):
+    reservation_to_delete = Reservations.query.filter_by(id=reservations_id).first()
+    
+    if reservation_to_delete is None:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+    
+    db.session.delete(reservation_to_delete)
+    db.session.commit()
+    
+    return jsonify({"msg": "Reserva eliminada exitosamente"}), 200
+
+
+@api.route('/reservations/<int:reservations_id>', methods=['PUT'])
+def update_reservation(reservations_id):
+    body = request.get_json()
+    review = Reservations.query.get(reservations_id)
+    
+    if review is None:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+
+    # Actualizar campos de la reserva
+    review.time = body.get('time', review.time)
+    review.date = body.get('date', review.date)
+    review.number_of_people = body.get('number_of_people', review.number_of_people)
+    
+    try:
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"msg": "Error al actualizar la reserva"}), 500
+
+    response_body = {
+        "msg": "Reseña actualizada exitosamente",
+        "review": review.serialize()
+    }
+
+    return jsonify(response_body), 201
