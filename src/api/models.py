@@ -2,6 +2,57 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+class Admin1(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(80), unique=False, nullable=False)
+    email = db.Column(db.String(80), unique=False, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Admin1 {self.email}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_name": self.user_name,
+            "name": self.name,
+            "email": self.email,
+            "is_active": self.is_active,
+            # do not serialize the password, it's a  security breach
+        }
+
+class Category(db.Model):
+    __tablename__ = 'restaurant_category'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False, unique=True)
+    
+    def __repr__(self):
+        return f'<Category {self.name}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
+    
+class Ocasiones1 (db.Model):
+    __tablename__ = 'ocasiones'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False, unique=True)
+    
+    def __repr__(self):
+        return f'<Ocasiones1 {self.name}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -66,28 +117,6 @@ class Restaurant(db.Model):
             "email": self.email,
             "guests_capacity": self.guests_capacity,
             "image_url": self.image_url,
-            "is_active": self.is_active
+            "is_active": self.is_active,
             # do not serialize the password, it's a security breach
-        }
-
-class Admin1(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(120), unique=True, nullable=False)
-    name = db.Column(db.String(80), unique=False, nullable=False)
-    email = db.Column(db.String(80), unique=False, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-
-    def __repr__(self):
-        return f'<Admin1 {self.email}>'
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user_name": self.user_name,
-            "name": self.name,
-            "email": self.email,
-            "is_active": self.is_active
-            # do not serialize the password, it's a  security breach
-        }
-
+                }
