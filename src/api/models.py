@@ -9,7 +9,6 @@ class Admin1(db.Model):
     email = db.Column(db.String(80), unique=False, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    categories = db.relationship('Category', backref='admin', lazy=True)
 
     def __repr__(self):
         return f'<Admin1 {self.email}>'
@@ -29,7 +28,6 @@ class Category(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False, unique=True)
-    created_by = db.Column(db.Integer, db.ForeignKey('admin1.id'), nullable=False)
     
     def __repr__(self):
         return f'<Category {self.name}>'
@@ -38,7 +36,21 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "created_by": self.created_by
+        }
+    
+class Ocasiones1 (db.Model):
+    __tablename__ = 'ocasiones'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False, unique=True)
+    
+    def __repr__(self):
+        return f'<Ocasiones1 {self.name}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
         }
 
 class User(db.Model):
@@ -92,7 +104,6 @@ class Restaurant(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     image_url = db.Column(db.String(120), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    category_id = db.Column(db.Integer, db.ForeignKey('restaurant_category.id'), nullable=False)
 
     def __repr__(self):
         return f'<Restaurant {self.email}>'
@@ -107,6 +118,5 @@ class Restaurant(db.Model):
             "guests_capacity": self.guests_capacity,
             "image_url": self.image_url,
             "is_active": self.is_active,
-            "category_id": self.category_id,
             # do not serialize the password, it's a security breach
                 }

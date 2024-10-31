@@ -26,6 +26,13 @@ import { Oneadmin } from "./component/oneadmin";
 import { Adminlogin } from "./component/adminlogin";
 import { Adminhomepage } from "./component/adminhomepage"
 
+import { Crearcategoria } from "./component/crearcategoria"
+import { Crudcategoria } from "./component/crudcategoria"
+
+import { Crearocasion } from "./component/crearocasion"
+import { Crudocasion } from "./component/crudocasion"
+
+
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
@@ -63,7 +70,10 @@ const Layout = () => {
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
                         <Route element={<Restaurantselect/>} path="/restauranteselect"/>
                         <Route element={<Signuprestaurant/>} path="/signuprestaurant"/>
-                        
+                        <Route element={<Crearcategoria/>} path="/create/categories"/>
+                        <Route element={<Crudcategoria/>} path="/categories"/>
+                        <Route element={<Crearocasion/>} path="/create/ocasiones"/>
+                        <Route element={<Crudocasion/>} path="/ocasiones"/>
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
