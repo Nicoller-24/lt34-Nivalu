@@ -29,7 +29,7 @@ const AddressAutocomplete = ({ onAddressSelect }) => {
   };
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyB805JSDl4VlKuMftea-Yx1KSroMTJ0zl4" libraries={libraries}>
+    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}libraries={libraries}>
       <Autocomplete
         onLoad={onLoad}
         onPlaceChanged={onPlaceChanged}
