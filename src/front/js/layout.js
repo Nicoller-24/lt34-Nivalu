@@ -10,6 +10,7 @@ import injectContext from "./store/appContext";
 import { AddClients } from "./pages/addClients.js";
 import { UserList } from "./pages/userList.js";
 import { EditClient } from "./pages/editClient.js";
+import { ListOfRestaurants} from "./pages/listOfRestaurants.js";
 import { LoginClient} from "./pages/loginClient.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
@@ -57,10 +58,7 @@ const Layout = () => {
                         <Route element={<Crearadmin />} path="/signup/admins" />
                         <Route element={<Oneadmin />} path="/admins/:id" />
                         <Route element={<Editadmin />} path="/editadmin/admins/:id" />
-                        <Route element={<Adminlogin />} path="/adminlogin/" />
-                        <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<AddClients/>} path="/adduser"/>
-                        <Route element={<LoginClient/>} path="/loginClients"/>
                         <Route element={<UserList/>} path="/userList"/>
                         <Route element={<EditClient/>} path="/updateInfo"/>
                         <Route element={<Crudrestaurante />} path="/restaurants" />
@@ -74,6 +72,11 @@ const Layout = () => {
                         <Route element={<Crudcategoria/>} path="/categories"/>
                         <Route element={<Crearocasion/>} path="/create/ocasiones"/>
                         <Route element={<Crudocasion/>} path="/ocasiones"/>
+                        <Route element={<ListOfRestaurants/>} path="/listOfRestaurants"/>
+                        <Route element={<Adminlogin />} path="/adminlogin/" />
+                        <Route element={<Adminhomepage />} path="/adminhomepage/" />
+                        <Route element={<LoginClient/>} path="/loginClients"/>
+                        
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
