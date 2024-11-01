@@ -3,7 +3,7 @@ import { LoadScript, Autocomplete } from '@react-google-maps/api';
 
 const libraries = ['places'];
 
-const AddressAutocomplete = ({ onAddressSelect }) => {
+const AddressAutocomplete = ({ onAddressSelect, initialAddress }) => {
   const [address, setAddress] = useState('');
   const [autocomplete, setAutocomplete] = useState(null);
   const inputRef = useRef(null);
@@ -28,8 +28,13 @@ const AddressAutocomplete = ({ onAddressSelect }) => {
     }
   };
 
+  // useEffect para establecer la dirección inicial cuando cambie
+  useEffect(() => {
+    setAddress(initialAddress);
+  }, [initialAddress]);
+
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}libraries={libraries}>
+    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} libraries={libraries}>
       <Autocomplete
         onLoad={onLoad}
         onPlaceChanged={onPlaceChanged}

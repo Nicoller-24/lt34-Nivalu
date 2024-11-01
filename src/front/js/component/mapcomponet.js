@@ -40,7 +40,7 @@ const MapComponent = ({ initialPosition, onLocationSelect }) => {
     <GoogleMap
       mapContainerStyle={containerStyle}
       center={markerPosition || initialPosition}
-      zoom={6}
+      zoom={17}
       onLoad={onLoad}
       onUnmount={onUnmount}
       onClick={handleMapClick} 
