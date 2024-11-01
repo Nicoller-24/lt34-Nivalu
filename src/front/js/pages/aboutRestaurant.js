@@ -6,6 +6,25 @@ export const AboutRestaurant = () => {
     const { store, actions } = useContext(Context);
     const { uid } = useParams();
     const [unitrestaurant, setUnitRestaurant] = useState(null);
+    const [reservationInfo, setReservationInfo] = useState({
+        number_of_people: '',
+        date: '',
+        time: '',
+        ocassion: ''
+    });
+
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        actions.addReservation(reservationInfo);
+        setReservationInfo({
+            number_of_people: '',
+            date: '',
+            time: '',
+            ocassion: ''
+        });
+    };
+
 
     useEffect(() => {
         const foundRestaurant = store.restaurants.find(restaurant => restaurant.uid === uid);
@@ -52,13 +71,87 @@ export const AboutRestaurant = () => {
 
                 <div className="col-4">
 
+                    <div className="p-3 m-auto w-75">
+                        <div>
+                            <h1 className="mx-auto">Book your table</h1>
+
+                        </div>
+
+                        <div>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group p-1">
+                                    <label htmlFor="Numero de personas">Number of guest</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="How many people will come?"
+                                        value={reservationInfo.number_of_people}
+                                        onChange={(e) => setReservationInfo({ ...reservationInfo, number_of_people: e.target.value })}
+                                        required
+                                        className="form-control"
+                                    />
+                                </div>
+
+                                <div className="form-group p-1">
+                                    <label htmlFor="Time">Time</label>
+                                    <input
+                                        type="text"
+                                        name="last_name"
+                                        placeholder="What time are you coming?"
+                                        value={reservationInfo.time}
+                                        onChange={(e) => setReservationInfo({ ...reservationInfo, time: e.target.value })}
+                                        required
+                                        className="form-control"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="Date">Date</label>
+                                    <input
+                                        type="text"
+                                        name="date"
+                                        placeholder="Date of your reservation"
+                                        value={reservationInfo.date}
+                                        onChange={(e) => setReservationInfo({ ...reservationInfo, date: e.target.value })}
+                                        required
+                                        className="form-control"
+                                    />
+                                </div>
+
+                                <div className="form-group p-1">
+                                    <label htmlFor="ocassion">Ocassion</label>
+                                    <input
+                                        type="text"
+                                        name="Ocasion"
+                                        placeholder="Are you coming for an special ocassion?"
+                                        value={reservationInfo.ocassion}
+                                        onChange={(e) => setReservationInfo({ ...reservationInfo, ocassion: e.target.value })}
+                                        required
+                                        className="form-control"
+                                    />
+                                </div>
+
+                                <button type="submit" className="btn btn-success">Add reservation</button>
+
+                            </form>
 
 
 
+
+
+
+
+
+                        </div>
+
+
+                    </div>
                 </div>
 
 
             </div>
         </div>
+
+
     );
 };

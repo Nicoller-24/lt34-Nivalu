@@ -28,6 +28,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			restaurante: {},
 			restaurant_auth : false,
+
+			reservations: [],
+			reservations: {},
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -319,7 +322,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
+
+			addReservation: (newReservationData) => {
+				console.log("addReservation")
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						...newReservationData,
+						id: newReservationData.client_id
+					  })
+				};
+				fetch(process.env.BACKEND_URL + '/api/reservations', requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Reservation added:", data))
+					.catch(error => console.error("Error adding reservation:", error));
+			},
 		}
+
+		
 	};
 
 };
