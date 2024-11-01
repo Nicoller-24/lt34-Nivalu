@@ -34,6 +34,12 @@ export const Home = () => {
 			<Link to="/mapa">
 				<button className="btn btn-primary">mapa</button>
 			</Link>
+			<Link to="/categories">
+				<button className="btn btn-primary">categories</button>
+			</Link>
+			<Link to="/ocasiones">
+				<button className="btn btn-primary">ocasiones</button>
+			</Link>
 		</div>
 	);
 };

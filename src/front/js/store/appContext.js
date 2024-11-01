@@ -38,6 +38,8 @@ const injectContext = PassedComponent => {
 			// <---- calling this function from the flux.js actions
 			state.actions.loadSomeData()// <---- calling this function from the flux.js actions
 			state.actions.loginClient()
+			state.actions.loadSomeDataCategory()
+			state.actions.loadSomeDataOcasion()
 		}, []);
 			
 
