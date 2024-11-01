@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
+
 export const AboutRestaurant = () => {
     const { store, actions } = useContext(Context);
     const { uid } = useParams();
@@ -10,18 +11,32 @@ export const AboutRestaurant = () => {
         number_of_people: '',
         date: '',
         time: '',
-        ocassion: ''
+        occasion: ''
     });
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        actions.addReservation(reservationInfo);
+         // Agregar client_id y restaurant_id a reservationInfo
+    const reservationData = {
+        ...reservationInfo,
+        client_id: store.client_id, // Usar el ID almacenado
+        restaurant_id: unitrestaurant.id// Suponiendo que uid es el ID del restaurante
+    };
+
+    console.log(reservationData); // Agrega esta línea para verificar la información
+
+
+
+
+        actions.addReservation(reservationData);
         setReservationInfo({
             number_of_people: '',
             date: '',
             time: '',
-            ocassion: ''
+            occasion: '',
+            client_id:'',
+            restaurant_id:''
         });
     };
 
@@ -119,17 +134,18 @@ export const AboutRestaurant = () => {
                                 </div>
 
                                 <div className="form-group p-1">
-                                    <label htmlFor="ocassion">Ocassion</label>
+                                    <label htmlFor="occasion">Occasion</label>
                                     <input
                                         type="text"
-                                        name="Ocasion"
-                                        placeholder="Are you coming for an special ocassion?"
-                                        value={reservationInfo.ocassion}
-                                        onChange={(e) => setReservationInfo({ ...reservationInfo, ocassion: e.target.value })}
+                                        name="Occasion"
+                                        placeholder="Are you coming for an special occasion?"
+                                        value={reservationInfo.occasion}
+                                        onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
                                         required
                                         className="form-control"
                                     />
                                 </div>
+
 
                                 <button type="submit" className="btn btn-success">Add reservation</button>
 

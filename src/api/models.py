@@ -99,8 +99,8 @@ class Reservations(db.Model):
     time = db.Column(db.String(120), nullable=False)
     date = db.Column(db.String(120), nullable=False)
     number_of_people = db.Column(db.String(120), nullable=False)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)    
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=True)    
     is_active = db.Column(db.Boolean(), nullable=True)
 
     client = db.relationship('Client', backref=db.backref('reservations', lazy=True))
@@ -116,7 +116,8 @@ class Reservations(db.Model):
             "restaurant_id": self.restaurant_id,
             "number_of_people": self.number_of_people,
             "time": self.time,
-            "date":self.date
+            "date":self.date,
+            "occasion":self.occasion,
 
             
         }

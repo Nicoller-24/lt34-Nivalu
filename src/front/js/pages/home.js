@@ -31,6 +31,9 @@ export const Home = () => {
 			<Link to="/userList">
 				<button className="btn btn-primary">comensales</button>
 			</Link>
+			<Link to="/aboutRestaurants">
+				<button className="btn btn-primary">Hacer Reserva</button>
+			</Link>
 		</div>
 	);
 };

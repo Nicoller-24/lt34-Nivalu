@@ -299,26 +299,25 @@ def add_reservation():
     if not body:
         return jsonify({"msg": "No se proporcionó información"}), 400
 
-    required_fields = ['client_id', 'time','date', 'number_of_people', 'restaurant_id', ]
+    required_fields = [ 'time','date', 'number_of_people', 'occasion', 'client_id', 'restaurant_id' ]
     missing_fields = [field for field in required_fields if field not in body]
     if missing_fields:
         return jsonify({"msg": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
 
     nueva_reservation = Reservations(
-        client_id =body['client_id'],
-        restaurant_id=body['restaurant_id'],
+        occasion =body['occasion'],
         time=body['time'],
         date=body['date'],
         number_of_people=body['number_of_people'],
-        
-
-    )
+        client_id=body['client_id'],  # Agregar client_id
+        restaurant_id=body['restaurant_id']  # Agregar restaurant_id
+  )
 
     try:
         db.session.add(nueva_reservation)
         db.session.commit() 
     except Exception as e:
-        return jsonify({"msg": "Error al crear la reserva"}), 500
+        return jsonify({"msg": "Error al crear la reserva", "error": str(e)}), 500
 
     response_body = {
         "msg": "Reserva creada exitosamente",

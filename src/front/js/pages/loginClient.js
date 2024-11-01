@@ -1,22 +1,32 @@
 import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 export const LoginClient = () => {
 
     const[email, setEmail] = useState ('')
     const[password, setPassword] = useState ('')
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate();
 
 
 
     function sendData(e){
         e.preventDefault() 
 
-        actions.loginClient(email, password)
+        actions.loginClient(email, password).then(success => {
+            if (success) {
+                navigate("/");
+            } else {
+                alert("Inicio de sesión fallido");
+            }
+        });
         
     }
     return(
+        
         <div>
             <form className="w-50 mx-auto" onSubmit={sendData}>
             <div className="mb-3">

@@ -103,17 +103,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"password" : password
 					})
 				};
-				fetch(`${process.env.BACKEND_URL}/api/loginClient`, resquestOptions)
+				return fetch(`${process.env.BACKEND_URL}/api/loginClient`, resquestOptions)
 					.then(response => {
 						console.log (response.status)
 						if (response.status == 200){
 							setStore( {auth : true});
+							return response.json();
+						} else {
+						throw new Error("Login fallido");
 						}
-						return response.json()
+					
+					
 					})
 					.then(data => {
-						localStorage.setItem("token",data.access_token)
+						localStorage.setItem("token",data.access_token);
+						// Almacena client_id y restaurant_id en el store
+						setStore({ auth: true, client_id: data.client_id, restaurant_id: data.restaurant_id });
+
 						console.log(data)
+						return true; 
+					})
+
+					.catch(error => {
+						console.error("Error en login:", error);
+						return false;  // Fallo
 					});
 			},
 
@@ -324,13 +337,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			addReservation: (newReservationData) => {
+				const store = getStore();
 				console.log("addReservation")
+
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						...newReservationData,
-						id: newReservationData.client_id
+						client_id: store.client_id, // Usar el ID almacenado
+           				 restaurant_id: store.restaurant_id // Usar el ID almacenado
+						
 					  })
 				};
 				fetch(process.env.BACKEND_URL + '/api/reservations', requestOptions)
