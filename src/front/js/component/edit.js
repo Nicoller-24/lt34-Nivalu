@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { useParams, Link, useNavigate, Navigate } from "react-router-dom";
+import { Mapautocompletate } from "./mapautocompletate";
+import AddressAutocomplete from "./addressautocomplete";
+import MapComponent from "./mapcomponet";
 
 export const Edit = () => {
     const [restaurantData, setRestaurantData] = useState(null);
@@ -9,6 +12,9 @@ export const Edit = () => {
     const [inputPhone, setInputPhone] = useState("");
     const [inputAddress, setInputAddress] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
+    const [selectedAddress, setSelectedAddress] = useState(''); 
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    
 
     const { store, actions } = useContext(Context);
     const params = useParams();
@@ -22,7 +28,7 @@ export const Edit = () => {
                 setInputName(data.name || "");
                 setInputEmail(data.email || "");
                 setInputPhone(data.phone_number || "");
-                setInputAddress(data.location || "");
+                setSelectedAddress(data.location || "");
                 setInputGuestCapacity(data.guests_capacity || "");
             })
             .catch((error) => console.error("Error al cargar el restaurante:", error));
@@ -59,6 +65,14 @@ export const Edit = () => {
         e.preventDefault();
     };
 
+    const handleAddressSelect = (address, location) => {
+        setSelectedAddress(address);
+        setSelectedLocation(location);
+        console.log("Dirección seleccionada:", address);
+        console.log("Coordenadas seleccionadas:", location);
+    };
+
+
     return (
         <div className="container" style={{ backgroundColor: "white", width: "70%", paddingBottom: "10%" }}>
             <h1 style={{ marginLeft: "30%" }}>Edit Restaurant</h1>
@@ -87,14 +101,20 @@ export const Edit = () => {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="Adress" className="form-label">Address</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="Adress"
-                        placeholder="Address"
-                        onChange={(e) => setInputAddress(e.target.value)}
-                        value={inputAddress}
+                    <AddressAutocomplete
+                    onAddressSelect={handleAddressSelect}
+                    initialAddress={selectedAddress} // Nueva prop para la dirección inicial
                     />
+
+                    {selectedLocation && (
+                        <MapComponent initialPosition={selectedLocation} />
+                    )}
+                    {selectedLocation && (
+                        <div>
+                            <p>Latitud: {selectedLocation.lat}</p>
+                            <p>Longitud: {selectedLocation.lng}</p>
+                        </div>
+                    )}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="name" className="form-label">Name</label>
@@ -120,7 +140,7 @@ export const Edit = () => {
                 </div>
                 <Link to="/restaurants">
                     <button
-                        onClick={() => {putRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone)}}
+                        onClick={() => {putRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone)}}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >

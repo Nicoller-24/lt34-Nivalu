@@ -19,6 +19,7 @@ import { Crearrestaurante } from "./component/crearrestaurante";
 import { Restaurantselect } from "./component/restaurantselect.js";
 import { Edit } from "./component/edit";
 import { Signuprestaurant } from "./component/signuprestaurant.js";
+import { Mapautocompletate } from "./component/mapautocompletate.js";
 
 import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
@@ -68,6 +69,8 @@ const Layout = () => {
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
                         <Route element={<Restaurantselect/>} path="/restauranteselect"/>
                         <Route element={<Signuprestaurant/>} path="/signuprestaurant"/>
+                        <Route element={<Mapautocompletate/>} path="/mapa"/>
+
                         <Route element={<Crearcategoria/>} path="/create/categories"/>
                         <Route element={<Crudcategoria/>} path="/categories"/>
                         <Route element={<Crearocasion/>} path="/create/ocasiones"/>

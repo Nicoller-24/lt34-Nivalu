@@ -1,42 +1,39 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
-import { Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import AddressAutocomplete from "./addressautocomplete";
+import MapComponent from "./mapcomponet";
 
 export const Crudrestaurante = () => {
     const { store, actions } = useContext(Context);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    function salir () {
+
+    function salir() {
         actions.logoutrestaurant();
-        navigate("/restauranteselect")
-        store.restaurant_auth = false
-       
+        navigate("/restauranteselect");
+        store.restaurant_auth = false;
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         console.log(store.restaurant_auth);
-        actions.loadSomeData()
-    } ,[])
-
-
+        actions.loadSomeData();
+    }, []);
 
     return (
         <>  
-
-            {store.restaurant_auth ? null : <Navigate to="/restauranteselect"/>}
+            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
             {store.restaurant_auth ? (
-                 <button onClick={() => salir()} type="button" className="btn btn-primary" >
+                <button onClick={() => salir()} type="button" className="btn btn-primary">
                     volver
                 </button>
-             ) : null}
+            ) : null}
             <Link to={"/signup/restaurants"}>
-                <button  onClick={() => store.restaurant_auth = false} type="button" className="btn btn-primary" >
+                <button onClick={() => store.restaurant_auth = false} type="button" className="btn btn-primary">
                     crear nuevo restaurante
                 </button>
             </Link>
+
 
             <ul className="list-group">
                 {store.restaurants.map((item, index) => {
@@ -78,15 +75,15 @@ export const Crudrestaurante = () => {
                                 <Link to={"/restaurant/" + item.id}>
                                     <button style={{ backgroundColor: "white", border: "0px" }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16" style={{ marginRight: "25px" }}>
-                                            <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5"/>
-                                            <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0z"/>
+                                            <path fillRule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5"/>
+                                            <path fillRule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0z"/>
                                         </svg>
                                     </button>
                                 </Link>
                                 <Link to={"/edit/restaurant/" + item.id}>
                                     <button style={{ backgroundColor: "white", border: "0px" }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" className="bi bi-pencil-fill" viewBox="0 0 16 16" style={{ marginRight: "25px" }}>
-                                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" className="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                            <path d="M15.968.27a.5.5 0 0 0-.656-.048l-.083.073L12 3.585l-1.414-1.414L9.586.646a.5.5 0 0 0-.707 0l-2 2a.5.5 0 0 0 0 .707L8.586 4 4 8.586V12h3.414L15.968 2.502a.5.5 0 0 0 .048-.707l-2-2zM8.982 7.001 10.586 5.414 11.414 6.243 9.829 7.829 8.982 7.001zM7.5 14H6v-1.5h1.5A.5.5 0 0 1 8 13v1a.5.5 0 0 1-.5.5zM11.293 9.293l1.414 1.414L10 15h-.5a.5.5 0 0 1-.5-.5V14h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
                                         </svg>
                                     </button>
                                 </Link>
@@ -100,6 +97,7 @@ export const Crudrestaurante = () => {
                     );
                 })}
             </ul>
+               
         </>
     );
 };

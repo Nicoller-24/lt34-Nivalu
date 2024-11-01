@@ -4,6 +4,9 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { Mapautocompletate } from "./mapautocompletate";
+import AddressAutocomplete from "./addressautocomplete";
+import MapComponent from "./mapcomponet";
 
 export const Crearrestaurante = () => {
     const [inputName, setInputname] = useState("");
@@ -14,7 +17,9 @@ export const Crearrestaurante = () => {
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
     const navigate = useNavigate()
     const { store, actions } = useContext(Context);
-
+    const [selectedAddress, setSelectedAddress] = useState(''); 
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    
     const preset_name = "nivalu";                         
     const cloud_name = "duh7wjna3"                     
 
@@ -45,6 +50,14 @@ export const Crearrestaurante = () => {
         }
 
     }
+
+
+    const handleAddressSelect = (address, location) => {
+        setSelectedAddress(address);
+        setSelectedLocation(location); // Guarda la ubicación
+        console.log("Dirección seleccionada:", address);
+        console.log("Coordenadas seleccionadas:", location);
+    };
 
     return (
         <>  
@@ -87,14 +100,17 @@ export const Crearrestaurante = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="address">Dirección</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="address"
-                            value={inputAddress}
-                            onChange={(e) => setInputAddress(e.target.value)}
-                        />
+                            <label htmlFor="address">Dirección</label>
+                            <AddressAutocomplete onAddressSelect={handleAddressSelect} />
+                            {selectedLocation && (
+                                <MapComponent initialPosition={selectedLocation} />
+                            )}
+                            {selectedLocation && (
+                                <div>
+                                    <p>Latitud: {selectedLocation.lat}</p>
+                                    <p>Longitud: {selectedLocation.lng}</p>
+                                </div>
+                            )}
                     </div>
                     <div className="form-group">
                         <label htmlFor="guests_capacity">Capacidad de invitados</label>
@@ -136,12 +152,11 @@ export const Crearrestaurante = () => {
                         )}
                     </div>
 
-                        <button type="button" className="btn btn-primary" style={{"marginRight": "10px"}} onClick={() => {actions.addNewRestaurant(inputEmail, inputGuestCapacity, inputAddress, inputName, inputPhone, inputPassword, image); 
+                        <button type="button" className="btn btn-primary" style={{"marginRight": "10px"}} onClick={() => {actions.addNewRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone, inputPassword, image); 
                             setInputGuestCapacity("");
                             setInputname(""); 
                             setInputPhone("");
                             setInputEmail("") ; 
-                            setInputAddress("");
                             setInputPassword("");
                             setImage("")
                         }}>
