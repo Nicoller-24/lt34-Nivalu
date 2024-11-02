@@ -2,8 +2,9 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 
+from api.models import db, User, Client, Reservations
 from flask import Flask, request, jsonify, Blueprint
-from api.models import Ocasiones1, db, Restaurant, Admin1, Category, Client, User
+from api.models import db, Restaurant, Admin1
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -202,7 +203,7 @@ def login():
         return jsonify({"msg": "Bad email or password"}), 401
 
     access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
+    return jsonify(access_token=access_token, user_id= user.id)
 
 @api.route('/admins', methods=['GET'])
 def get_admins():
@@ -286,86 +287,85 @@ def login_admin():
     return jsonify(access_token=access_token)
     return jsonify(response_body), 200
 
-@api.route('/categories', methods=['GET'])
-def get_categories():
-    all_categories = Category.query.all() 
-    results = list(map(lambda Category: Category.serialize(), all_categories)) 
+
+@api.route('/reservations', methods=['GET'])
+def get_reservations():
+
+    all_reservations = Reservations.query.all()
+    results = list(map(lambda reservation: reservation.serialize(), all_reservations))
+    
 
     return jsonify(results), 200
 
-@api.route('/categories/<int:category_id>', methods=['GET'])
-def get_category(category_id):
-    category = Category.query.filter_by(id=category_id).first()
-    
-    if category is None:
-        return jsonify({"error": "Categoria no encontrada"}), 404
-    
-    return jsonify(category.serialize()), 200
 
-@api.route("/create/categories", methods=["POST"])
-def create_category():
+@api.route('/reservations', methods=['POST'])
+def add_reservation():
+    body = request.get_json()  
+
+    if not body:
+        return jsonify({"msg": "No se proporcionó información"}), 400
+
+    required_fields = [ 'time','date', 'number_of_people', 'occasion', 'client_id', 'restaurant_id' ]
+    missing_fields = [field for field in required_fields if field not in body]
+    if missing_fields:
+        return jsonify({"msg": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
+
+    nueva_reservation = Reservations(
+        occasion =body['occasion'],
+        time=body['time'],
+        date=body['date'],
+        number_of_people=body['number_of_people'],
+        client_id=body['client_id'],  # Agregar client_id
+        restaurant_id=body['restaurant_id']  # Agregar restaurant_id
+  )
+
+    try:
+        db.session.add(nueva_reservation)
+        db.session.commit() 
+    except Exception as e:
+        return jsonify({"msg": "Error al crear la reserva", "error": str(e)}), 500
+
+    response_body = {
+        "msg": "Reserva creada exitosamente",
+        "reservation": nueva_reservation.serialize() 
+    }
+    
+    return jsonify(response_body), 201
+
+@api.route('/reservations/<int:reservations_id>', methods=['DELETE'])
+def delete_reservation(reservations_id):
+    reservation_to_delete = Reservations.query.filter_by(id=reservations_id).first()
+    
+    if reservation_to_delete is None:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+    
+    db.session.delete(reservation_to_delete)
+    db.session.commit()
+    
+    return jsonify({"msg": "Reserva eliminada exitosamente"}), 200
+
+
+@api.route('/reservations/<int:reservations_id>', methods=['PUT'])
+def update_reservation(reservations_id):
     body = request.get_json()
-    category = Category.query.filter_by(name=body["name"]).first()
-    if category == None:
-        category = Category( name=body["name"])
-        db.session.add(category)
+    reservation = Reservations.query.get(reservations_id)
+    
+    if reservation is None:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+
+    # Actualizar campos de la reserva
+    reservation.time = body.get('time', reservation.time)
+    reservation.date = body.get('date', reservation.date)
+    reservation.number_of_people = body.get('number_of_people', reservation.number_of_people)
+    
+    try:
         db.session.commit()
-        response_body = {"msg": "Categoria creado"}
-        return jsonify(response_body), 200
-    else:
-        return jsonify({"msg": "La categoria ya existe"}), 401
-    
-@api.route('/categories/<int:category_id>', methods=['DELETE'])
-def delete_category(category_id):
-    category_to_delete = Category.query.get(category_id)
+    except Exception as e:
+        return jsonify({"msg": "Error al actualizar la reserva"}), 500
 
-    if category_to_delete:
-        db.session.delete(category_to_delete)
-        db.session.commit()
-        response_body = {"msg": "Se eliminó correctamente"}
-    else:
-        response_body = {"msg": "No se encontró la categoria"}
-    return jsonify(response_body), 200
+    response_body = {
+        "msg": "Reseña actualizada exitosamente",
+        "reservation": reservation.serialize()
+    }
 
-@api.route('/ocasiones', methods=['GET'])
-def get_ocasiones():
-    all_ocasiones = Ocasiones1.query.all() 
-    results = list(map(lambda Ocasiones1: Ocasiones1.serialize(), all_ocasiones)) 
-
-    return jsonify(results), 200
-
-@api.route('/ocasiones/<int:ocasion_id>', methods=['GET'])
-def get_ocasion(ocasion_id):
-    ocasion = Ocasiones1.query.filter_by(id=ocasion_id).first()
-    
-    if ocasion is None:
-        return jsonify({"error": "ocasion no encontrada"}), 404
-    
-    return jsonify(ocasion.serialize()), 200
-
-@api.route("/create/ocasiones", methods=["POST"])
-def create_ocasion():
-    body = request.get_json()
-    ocasion = Ocasiones1.query.filter_by(name=body["name"]).first()
-    if ocasion == None:
-        ocasion = Ocasiones1( name=body["name"])
-        db.session.add(ocasion)
-        db.session.commit()
-        response_body = {"msg": "Ocasion creada"}
-        return jsonify(response_body), 200
-    else:
-        return jsonify({"msg": "La ocasion ya existe"}), 401
-    
-@api.route('/ocasiones/<int:ocasion_id>', methods=['DELETE'])
-def delete_ocasion(ocasion_id):
-    ocasion_to_delete = Ocasiones1.query.get(ocasion_id)
-
-    if ocasion_to_delete:
-        db.session.delete(ocasion_to_delete)
-        db.session.commit()
-        response_body = {"msg": "Se eliminó correctamente"}
-    else:
-        response_body = {"msg": "No se encontró la ocasion"}
-    return jsonify(response_body), 200
-
-    
+    return jsonify(response_body), 201
