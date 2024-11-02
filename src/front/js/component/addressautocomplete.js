@@ -44,7 +44,7 @@ const AddressAutocomplete = ({ onAddressSelect, initialAddress }) => {
           ref={inputRef}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          placeholder="Ingresa tu ciudad"
+          placeholder="Ingresa tu ubicación"
           style={{ width: '100%', padding: '8px' }}
         />
       </Autocomplete>

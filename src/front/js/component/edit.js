@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useParams, Link, useNavigate, Navigate } from "react-router-dom";
-import { Mapautocompletate } from "./mapautocompletate";
+import { useParams, Link } from "react-router-dom";
 import AddressAutocomplete from "./addressautocomplete";
 import MapComponent from "./mapcomponet";
 
@@ -10,15 +9,41 @@ export const Edit = () => {
     const [inputName, setInputName] = useState("");
     const [inputEmail, setInputEmail] = useState("");
     const [inputPhone, setInputPhone] = useState("");
-    const [inputAddress, setInputAddress] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
     const [selectedAddress, setSelectedAddress] = useState(''); 
     const [selectedLocation, setSelectedLocation] = useState(null);
-    
 
     const { store, actions } = useContext(Context);
     const params = useParams();
 
+    const preset_name = "nivalu";                         
+    const cloud_name = "duh7wjna3";                     
+
+    const [image, setImage] = useState('');      
+    const [loading, setLoading] = useState(false); 
+
+    const uploadImage = async (e) => {            
+        const files = e.target.files;            
+        const data = new FormData();             
+        data.append('file', files[0]);           
+        data.append('upload_preset', preset_name);  
+
+        setLoading(true);
+
+        try {
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
+                method: 'POST',
+                body: data
+            });
+
+            const file = await response.json();     
+            setImage(file.secure_url);              
+            setLoading(false);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            setLoading(false);
+        }
+    };
 
     function traer_restaurante() {
         fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`)
@@ -29,12 +54,19 @@ export const Edit = () => {
                 setInputEmail(data.email || "");
                 setInputPhone(data.phone_number || "");
                 setSelectedAddress(data.location || "");
+                setImage(data.image_url || ""); 
+                if (data.latitude && data.longitude) {
+                    setSelectedLocation({
+                        lat: parseFloat(data.latitude),
+                        lng: parseFloat(data.longitude),
+                    });
+                }
                 setInputGuestCapacity(data.guests_capacity || "");
             })
             .catch((error) => console.error("Error al cargar el restaurante:", error));
     }
 
-    function putRestaurant(email, guests_capacity, location, name, phone_number) {
+    function putRestaurant(email, guests_capacity, location, name, phone_number, image, lat, lng) {
         fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
@@ -43,12 +75,14 @@ export const Edit = () => {
                 guests_capacity: guests_capacity || restaurantData?.guests_capacity,
                 location: location || restaurantData?.location,
                 name: name || restaurantData?.name,
-                phone_number: phone_number || restaurantData?.phone_number
+                phone_number: phone_number || restaurantData?.phone_number,
+                image_url: image || restaurantData?.image_url, 
+                latitude: parseFloat(lat), 
+                longitude: parseFloat(lng)  
             }),
         })
         .then((response) => {
-            console.log(response.status);
-            actions.loadSomeData()
+            actions.loadSomeData();
             return response.text();
         })
         .then((result) => {
@@ -68,10 +102,7 @@ export const Edit = () => {
     const handleAddressSelect = (address, location) => {
         setSelectedAddress(address);
         setSelectedLocation(location);
-        console.log("Dirección seleccionada:", address);
-        console.log("Coordenadas seleccionadas:", location);
     };
-
 
     return (
         <div className="container" style={{ backgroundColor: "white", width: "70%", paddingBottom: "10%" }}>
@@ -102,18 +133,14 @@ export const Edit = () => {
                 <div className="mb-3">
                     <label htmlFor="Adress" className="form-label">Address</label>
                     <AddressAutocomplete
-                    onAddressSelect={handleAddressSelect}
-                    initialAddress={selectedAddress} // Nueva prop para la dirección inicial
+                        onAddressSelect={handleAddressSelect}
+                        initialAddress={selectedAddress}
                     />
-
                     {selectedLocation && (
-                        <MapComponent initialPosition={selectedLocation} />
-                    )}
-                    {selectedLocation && (
-                        <div>
-                            <p>Latitud: {selectedLocation.lat}</p>
-                            <p>Longitud: {selectedLocation.lng}</p>
-                        </div>
+                        <MapComponent
+                            initialPosition={selectedLocation}
+                            onLocationSelect={(location) => setSelectedLocation(location)}
+                        />
                     )}
                 </div>
                 <div className="mb-3">
@@ -138,9 +165,25 @@ export const Edit = () => {
                         value={inputPhone}
                     />
                 </div>
+                <div className="form-group">
+                    <label htmlFor="file">Foto</label>
+                    <input
+                        type="file"
+                        className="form-control"
+                        name="file"
+                        id="file"
+                        placeholder="Upload an image"
+                        onChange={uploadImage}
+                    />
+                    {loading ? (
+                        <h3>Loading...</h3>
+                    ) : (
+                        <img src={image} alt="imagen actual o subida" style={{ width: "100%", marginTop: "10px" }} />
+                    )}
+                </div>
                 <Link to="/restaurants">
                     <button
-                        onClick={() => {putRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone)}}
+                        onClick={() => putRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone, image, selectedLocation.lat, selectedLocation.lng)}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >

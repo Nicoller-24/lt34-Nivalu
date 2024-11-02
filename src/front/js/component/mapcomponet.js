@@ -7,6 +7,7 @@ const containerStyle = {
 };
 
 const MapComponent = ({ initialPosition, onLocationSelect }) => {
+
   const [markerPosition, setMarkerPosition] = useState(initialPosition);
   const mapRef = useRef(null);
 
@@ -14,7 +15,7 @@ const MapComponent = ({ initialPosition, onLocationSelect }) => {
     if (initialPosition) {
       setMarkerPosition(initialPosition);
       if (mapRef.current) {
-        mapRef.current.panTo(initialPosition);
+        mapRef.current.panTo(initialPosition); // Pan to the new position
       }
     }
   }, [initialPosition]);
@@ -33,17 +34,17 @@ const MapComponent = ({ initialPosition, onLocationSelect }) => {
       lng: e.latLng.lng()
     };
     setMarkerPosition(newPosition);
-    if (onLocationSelect) onLocationSelect(newPosition); 
+    if (onLocationSelect) onLocationSelect(newPosition); // Update position in parent component
   };
 
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
-      center={markerPosition || initialPosition}
+      center={markerPosition || initialPosition} // Center the map on the marker position
       zoom={17}
       onLoad={onLoad}
       onUnmount={onUnmount}
-      onClick={handleMapClick} 
+      onClick={handleMapClick}
     >
       {markerPosition && <Marker position={markerPosition} />}
     </GoogleMap>

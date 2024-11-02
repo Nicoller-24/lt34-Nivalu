@@ -34,9 +34,11 @@ def get_restaurant(restaurant_id):
 @api.route("/signup/restaurant", methods=["POST"])
 def signup():
     body = request.get_json()
+   
+    
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
     if restaurant == None:
-        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"],image_url=body["image_url"], is_active=True)
+        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"],image_url=body["image_url"],latitude=body["latitude"],longitude=body["longitude"], is_active=True)
         db.session.add(restaurant)
         db.session.commit()
         response_body = {"msg": "Restaurante creado"}
@@ -71,6 +73,10 @@ def update_restaurant(restaurant_id):
         restaurant.password = body["password"]
     if "image_url" in body:
         restaurant.image_url = body["image_url"]
+    if "latitude" in body:
+        restaurant.latitude = body["latitude"]
+    if "longitude" in body:
+        restaurant.longitude = body["longitude"]
 
     db.session.commit()
 
