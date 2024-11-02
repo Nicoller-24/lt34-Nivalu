@@ -36,6 +36,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			ocasiones: [],
 			ocasiones_auth :false,
 
+			reservations: {},
+			sessionUserId: null,
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -123,7 +125,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(data => {
 						localStorage.setItem("token",data.access_token);
 						// Almacena client_id y restaurant_id en el store
-						setStore({ auth: true, client_id: data.client_id, restaurant_id: data.restaurant_id });
+						setStore({ auth: true, sessionUserId: data.user_id});
 
 						console.log(data)
 						return true; 
@@ -343,15 +345,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			addReservation: (newReservationData) => {
 				const store = getStore();
-				console.log("addReservation")
+				console.log(newReservationData)
 
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						...newReservationData,
-						client_id: store.client_id, // Usar el ID almacenado
-           				 restaurant_id: store.restaurant_id // Usar el ID almacenado
+						
 						
 					  })
 				};
@@ -361,7 +362,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch(error => console.error("Error adding reservation:", error));
 
 			},
-			
+
 			loadSomeDataCategory: () => {
 				console.log("Se cargó la página");
 				fetch(process.env.BACKEND_URL + "/api/categories")

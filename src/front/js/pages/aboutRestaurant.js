@@ -14,17 +14,24 @@ export const AboutRestaurant = () => {
         occasion: ''
     });
 
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+      
+   
 
     const handleSubmit = (e) => {
         e.preventDefault();
          // Agregar client_id y restaurant_id a reservationInfo
     const reservationData = {
         ...reservationInfo,
-        client_id: store.client_id, // Usar el ID almacenado
-        restaurant_id: unitrestaurant.id// Suponiendo que uid es el ID del restaurante
+        client_id: store.sessionUserId, // Usar el ID almacenado
+        restaurant_id: getQueryParam('id_restaurant')// Suponiendo que uid es el ID del restaurante
     };
 
     console.log(reservationData); // Agrega esta línea para verificar la información
+    console.log(store);
 
 
 

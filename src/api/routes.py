@@ -197,7 +197,7 @@ def login():
         return jsonify({"msg": "Bad email or password"}), 401
 
     access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
+    return jsonify(access_token=access_token, user_id= user.id)
 
 @api.route('/admins', methods=['GET'])
 def get_admins():
