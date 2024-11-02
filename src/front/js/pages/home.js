@@ -31,6 +31,9 @@ export const Home = () => {
 			<Link to="/userList">
 				<button className="btn btn-primary">comensales</button>
 			</Link>
+			<Link to="/aboutRestaurants">
+				<button className="btn btn-primary">Hacer Reserva</button>
+			</Link>
 			<Link to="/mapa">
 				<button className="btn btn-primary">mapa</button>
 			</Link>
@@ -39,6 +42,9 @@ export const Home = () => {
 			</Link>
 			<Link to="/ocasiones">
 				<button className="btn btn-primary">ocasiones</button>
+			</Link>
+			<Link to="/listOfRestaurants">
+				<button className="btn btn-primary">Lista de Restaurantes</button>
 			</Link>
 		</div>
 	);

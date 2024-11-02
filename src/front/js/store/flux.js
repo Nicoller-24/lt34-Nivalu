@@ -29,12 +29,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			restaurante: {},
 			restaurant_auth : false,
 
+			reservations: [],
 			categories: [],
 			categories_auth :false,
 
 			ocasiones: [],
 			ocasiones_auth :false,
 
+			reservations: {},
+			sessionUserId: null,
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -107,17 +110,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"password" : password
 					})
 				};
-				fetch(`${process.env.BACKEND_URL}/api/loginClient`, resquestOptions)
+				return fetch(`${process.env.BACKEND_URL}/api/loginClient`, resquestOptions)
 					.then(response => {
 						console.log (response.status)
 						if (response.status == 200){
 							setStore( {auth : true});
+							return response.json();
+						} else {
+						throw new Error("Login fallido");
 						}
-						return response.json()
+					
+					
 					})
 					.then(data => {
-						localStorage.setItem("token",data.access_token)
+						localStorage.setItem("token",data.access_token);
+						// Almacena client_id y restaurant_id en el store
+						setStore({ auth: true, sessionUserId: data.user_id});
+
 						console.log(data)
+						return true; 
+					})
+
+					.catch(error => {
+						console.error("Error en login:", error);
+						return false;  // Fallo
 					});
 			},
 
@@ -327,6 +343,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ demo: demo });
 			},
 
+			addReservation: (newReservationData) => {
+				const store = getStore();
+				console.log(newReservationData)
+
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						...newReservationData,
+						
+						
+					  })
+				};
+				fetch(process.env.BACKEND_URL + '/api/reservations', requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Reservation added:", data))
+					.catch(error => console.error("Error adding reservation:", error));
+
+			},
+
 			loadSomeDataCategory: () => {
 				console.log("Se cargó la página");
 				fetch(process.env.BACKEND_URL + "/api/categories")
@@ -393,6 +429,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeDataOcasion());
 			},
 		}
+
+		
 	};
 
 };

@@ -33,7 +33,7 @@ export const ListOfRestaurants = () => {
 									<strong>Location:</strong> {restaurant.location} <br />
 									<strong>Phone Number:</strong> {restaurant.phone_number}
 								</p>
-                                <Link to="/">
+								<Link to={`/aboutRestaurants/?id_restaurant=${restaurant.id}`}>
 				                    <button className="btn btn-primary">Book your table now</button>
 			                    </Link>
                                 

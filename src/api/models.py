@@ -1,27 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
 
-class Admin1(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(120), unique=True, nullable=False)
-    name = db.Column(db.String(80), unique=False, nullable=False)
-    email = db.Column(db.String(80), unique=False, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    def __repr__(self):
-        return f'<Admin1 {self.email}>'
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user_name": self.user_name,
-            "name": self.name,
-            "email": self.email,
-            "is_active": self.is_active,
-            # do not serialize the password, it's a  security breach
-        }
 
 class Category(db.Model):
     __tablename__ = 'restaurant_category'
@@ -119,4 +101,60 @@ class Restaurant(db.Model):
             "image_url": self.image_url,
             "is_active": self.is_active,
             # do not serialize the password, it's a security breach
-                }
+        }
+
+class Admin1(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(80), unique=False, nullable=False)
+    email = db.Column(db.String(80), unique=False, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Admin1 {self.email}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_name": self.user_name,
+            "name": self.name,
+            "email": self.email,
+            "is_active": self.is_active
+            # do not serialize the password, it's a  security breach
+        }
+
+        
+    
+
+class Reservations(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    occasion = db.Column(db.String(120), nullable=True)
+    time = db.Column(db.String(120), nullable=False)
+    date = db.Column(db.String(120), nullable=False)
+    number_of_people = db.Column(db.String(120), nullable=False)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=True)    
+    is_active = db.Column(db.Boolean(), nullable=True)
+
+    client = db.relationship('Client', backref=db.backref('reservations', lazy=True))
+    restaurant = db.relationship('Restaurant', backref=db.backref('reservations', lazy=True))
+
+    def __repr__(self):
+        return f'<Reservations {self.time}, {self.date}>'
+    def serialize(self):
+        return {
+            "id":self.id,
+            "client_id": self.client_id,
+            "email_client": self.client.email if self.client else None,
+            "restaurant_id": self.restaurant_id,
+            "number_of_people": self.number_of_people,
+            "time": self.time,
+            "date":self.date,
+            "occasion":self.occasion,
+
+            
+        }
+
+
+
