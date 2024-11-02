@@ -30,7 +30,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			restaurant_auth : false,
 
 			reservations: [],
-			reservations: {},
+			categories: [],
+			categories_auth :false,
+
+			ocasiones: [],
+			ocasiones_auth :false,
+
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -354,6 +359,73 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(response => response.json())
 					.then(data => console.log("Reservation added:", data))
 					.catch(error => console.error("Error adding reservation:", error));
+
+			},
+			
+			loadSomeDataCategory: () => {
+				console.log("Se cargó la página");
+				fetch(process.env.BACKEND_URL + "/api/categories")
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ categories: data })
+					})
+					.catch((error) => console.error("Error al cargar categorias:", error));
+			},
+
+			addNewCategory:(name,) => {
+				fetch(process.env.BACKEND_URL + '/api/create/categories', {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"name": name,
+
+					}),
+					redirect: "follow",
+				})
+					.then((response) => response.text())
+					.then(() => getActions().loadSomeDataAdmin());
+			},
+
+			removeCategory: (idToDelete) => {
+				fetch(process.env.BACKEND_URL + "/api/categories/" + idToDelete, {
+					method: "DELETE",
+					redirect: "follow",
+				})
+					.then((response) => response.text())
+					.then(() => getActions().loadSomeDataCategory());
+			},
+
+			loadSomeDataOcasion: () => {
+				console.log("Se cargó la página");
+				fetch(process.env.BACKEND_URL + "/api/ocasiones")
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ ocasiones: data })
+					})
+					.catch((error) => console.error("Error al cargar ocasiones:", error));
+			},
+
+			addNewOcasion:(name,) => {
+				fetch(process.env.BACKEND_URL + '/api/create/ocasiones', {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"name": name,
+
+					}),
+					redirect: "follow",
+				})
+					.then((response) => response.text())
+					.then(() => getActions().loadSomeDataOcasion());
+			},
+
+			removeOcasion: (idToDelete) => {
+				fetch(process.env.BACKEND_URL + "/api/ocasiones/" + idToDelete, {
+					method: "DELETE",
+					redirect: "follow",
+				})
+					.then((response) => response.text())
+					.then(() => getActions().loadSomeDataOcasion());
 			},
 		}
 
