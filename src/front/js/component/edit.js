@@ -24,17 +24,25 @@ export const Edit = () => {
         fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`)
             .then((response) => response.json())
             .then((data) => {
+                console.log("Datos del restaurante:", data); // Verifica que los datos sean correctos
                 setRestaurantData(data);
                 setInputName(data.name || "");
                 setInputEmail(data.email || "");
                 setInputPhone(data.phone_number || "");
                 setSelectedAddress(data.location || "");
+                if (data.latitude && data.longitude) {
+                    setSelectedLocation({
+                        lat: parseFloat(data.latitude),
+                        lng: parseFloat(data.longitude),
+                    });
+                }
                 setInputGuestCapacity(data.guests_capacity || "");
             })
             .catch((error) => console.error("Error al cargar el restaurante:", error));
     }
+    
 
-    function putRestaurant(email, guests_capacity, location, name, phone_number) {
+    function putRestaurant(email, guests_capacity, location, name, phone_number, lat, lng) {
         fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
@@ -43,12 +51,14 @@ export const Edit = () => {
                 guests_capacity: guests_capacity || restaurantData?.guests_capacity,
                 location: location || restaurantData?.location,
                 name: name || restaurantData?.name,
-                phone_number: phone_number || restaurantData?.phone_number
+                phone_number: phone_number || restaurantData?.phone_number,
+                latitude: parseFloat(lat), 
+                longitude: parseFloat(lng)  
             }),
         })
         .then((response) => {
             console.log(response.status);
-            actions.loadSomeData()
+            actions.loadSomeData();
             return response.text();
         })
         .then((result) => {
@@ -56,6 +66,8 @@ export const Edit = () => {
         })
         .catch((error) => console.error("Error al guardar el restaurante:", error));
     }
+    
+    
 
     useEffect(() => {
         traer_restaurante();
@@ -103,18 +115,15 @@ export const Edit = () => {
                     <label htmlFor="Adress" className="form-label">Address</label>
                     <AddressAutocomplete
                     onAddressSelect={handleAddressSelect}
-                    initialAddress={selectedAddress} // Nueva prop para la dirección inicial
-                    />
+                    initialAddress={selectedAddress}
+                     />
+                    {selectedLocation && (
+                        <MapComponent
+                            initialPosition={selectedLocation}
+                            onLocationSelect={(location) => setSelectedLocation(location)}
+                        />
+                    )}
 
-                    {selectedLocation && (
-                        <MapComponent initialPosition={selectedLocation} />
-                    )}
-                    {selectedLocation && (
-                        <div>
-                            <p>Latitud: {selectedLocation.lat}</p>
-                            <p>Longitud: {selectedLocation.lng}</p>
-                        </div>
-                    )}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="name" className="form-label">Name</label>
@@ -140,7 +149,7 @@ export const Edit = () => {
                 </div>
                 <Link to="/restaurants">
                     <button
-                        onClick={() => {putRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone)}}
+                        onClick={() => {putRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone, selectedLocation.lat, selectedLocation.lng )}}
                         type="submit"
                         className="btn btn-primary w-100 mb-4"
                     >

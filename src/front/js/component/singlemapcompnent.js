@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
 const containerStyle = {
-  width: '100%',
-  height: '400px'
+  width: '400px',  // Cambiado a 300px de ancho
+  height: '300px'  // Cambiado a 200px de alto
 };
 
-const MapComponent = ({ initialPosition, onLocationSelect }) => {
-
+const SingleMapComponent = ({ initialPosition, onLocationSelect }) => {
   const [markerPosition, setMarkerPosition] = useState(initialPosition);
   const mapRef = useRef(null);
 
@@ -34,21 +33,23 @@ const MapComponent = ({ initialPosition, onLocationSelect }) => {
       lng: e.latLng.lng()
     };
     setMarkerPosition(newPosition);
-    if (onLocationSelect) onLocationSelect(newPosition); // Update position in parent component
+    if (onLocationSelect) onLocationSelect(newPosition); 
   };
 
   return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={markerPosition || initialPosition} // Center the map on the marker position
-      zoom={17}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
-      onClick={handleMapClick}
-    >
-      {markerPosition && <Marker position={markerPosition} />}
-    </GoogleMap>
+    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}> 
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={markerPosition || initialPosition} 
+        zoom={17}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+        onClick={handleMapClick}
+      >
+        {markerPosition && <Marker position={markerPosition} />}
+      </GoogleMap>
+    </LoadScript>
   );
 };
 
-export default MapComponent;
+export default SingleMapComponent;
