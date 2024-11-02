@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
 const containerStyle = {
-  width: '400px',  // Cambiado a 300px de ancho
-  height: '300px'  // Cambiado a 200px de alto
+  width: '400px',  
+  height: '300px'  
 };
 
 const SingleMapComponent = ({ initialPosition, onLocationSelect }) => {
@@ -14,7 +14,7 @@ const SingleMapComponent = ({ initialPosition, onLocationSelect }) => {
     if (initialPosition) {
       setMarkerPosition(initialPosition);
       if (mapRef.current) {
-        mapRef.current.panTo(initialPosition); // Pan to the new position
+        mapRef.current.panTo(initialPosition); 
       }
     }
   }, [initialPosition]);

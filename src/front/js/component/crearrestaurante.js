@@ -4,7 +4,6 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Mapautocompletate } from "./mapautocompletate";
 import AddressAutocomplete from "./addressautocomplete";
 import MapComponent from "./mapcomponet";
 
@@ -12,7 +11,6 @@ export const Crearrestaurante = () => {
     const [inputName, setInputname] = useState("");
     const [inputEmail, setInputEmail] = useState("");
     const [inputPhone, setInputPhone] = useState("");
-    const [inputAddress, setInputAddress] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
     const navigate = useNavigate()
@@ -54,7 +52,7 @@ export const Crearrestaurante = () => {
 
     const handleAddressSelect = (address, location) => {
         setSelectedAddress(address);
-        setSelectedLocation(location); // Guarda la ubicación
+        setSelectedLocation(location); 
         console.log("Dirección seleccionada:", address);
         console.log("Coordenadas seleccionadas:", location);
     };
