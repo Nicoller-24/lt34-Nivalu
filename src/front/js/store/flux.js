@@ -1,5 +1,3 @@
-import { Adminlogin } from "../component/adminlogin";
-
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -303,29 +301,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataAdmin());
 			},
-			putAdmin(email, name, user_name, id) {
-				fetch(process.env.BACKEND_URL + "/api/admins/" + id, {
+			
+			editAdmin: (adminModif, id) => {
+				const requestOptions = {
 					method: 'PUT',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						email: email || adminData?.email,
-						user_name: user_name || adminData?.user_name,
-						name: name || adminData?.name,
-						//password: password || adminsData?.password
-					}),
-					redirect: "follow"
-				})
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error(`Error: ${response.status}`);
-					}
-					return response.json(); // Ensure you parse the response
-				})
-				.then(data => {
-					console.log("Admin updated successfully:", data);
-					getActions().loadSomeDataAdmin(); // Refresh the admin data after update
-				})
-				.catch((error) => console.error("Error updating admin:", error));
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(adminModif)
+				};
+				fetch(process.env.BACKEND_URL + `/api/edit/admins/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Admin updated:", data))
+					.catch(error => console.error("Error updating admin:", error));
 			},
 
 			traer_admin: (id) => {
@@ -390,7 +376,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 					redirect: "follow",
 				})
 					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataAdmin());
+					.then(() => getActions().loadSomeDataCategory());
+			},
+
+			editCategory: (categoryModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(categoryModif)
+				};
+				fetch(process.env.BACKEND_URL + `/api/edit/categories/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Category updated:", data))
+					.catch(error => console.error("Error updating category:", error));
 			},
 
 			removeCategory: (idToDelete) => {
