@@ -292,7 +292,7 @@ def login_admin():
 def get_reservations():
 
     all_reservations = Reservations.query.all()
-    results = list(map(lambda reservation: reservation.serialize(), all_reservations))
+    results = list(map(lambda reservation: reservation.serialize(), all_reservations)) 
     
 
     return jsonify(results), 200
