@@ -457,6 +457,24 @@ def create_ocasion():
         return jsonify(response_body), 200
     else:
         return jsonify({"msg": "La ocasion ya existe"}), 401
+
+@api.route('edit/ocasiones/<int:ocasion_id>', methods=['PUT'])
+def update_ocasiones(ocasion_id):  
+    body = request.get_json()
+    ocasion = Ocasiones1.query.filter_by(id=ocasion_id).first()
+
+    if ocasion is None:
+        return jsonify({"error": "Ocasion no encontrada"}), 404
+
+    if "name" in body:
+        existing_ocasion = Ocasiones1.query.filter_by(name=body["name"]).first()  
+        if existing_ocasion and existing_ocasion.id != ocasion_id:
+            return jsonify({"error": "La ocasion ya está en uso"}), 400
+        
+        ocasion.name = body["name"] 
+
+    db.session.commit()
+    return jsonify({"msg": "Ocasion actualizada!", "ocasion": ocasion.serialize()}), 200 
     
 @api.route('/ocasiones/<int:ocasion_id>', methods=['DELETE'])
 def delete_ocasion(ocasion_id):

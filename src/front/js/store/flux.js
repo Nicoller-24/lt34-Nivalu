@@ -424,6 +424,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeDataOcasion());
 			},
 
+			editOcasion: (ocasionModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(ocasionModif)
+				};
+				fetch(process.env.BACKEND_URL + `/api/edit/ocasiones/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Ocasion updated:", data))
+					.catch(error => console.error("Error updating ocasion:", error));
+			},
+
 			removeOcasion: (idToDelete) => {
 				fetch(process.env.BACKEND_URL + "/api/ocasiones/" + idToDelete, {
 					method: "DELETE",
