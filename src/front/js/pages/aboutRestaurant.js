@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
+import SingleMapComponent from "../component/singlemapcompnent";
 
 
 export const AboutRestaurant = () => {
@@ -13,6 +14,8 @@ export const AboutRestaurant = () => {
         time: '',
         occasion: ''
     });
+    const [initialPosition, setInitialPosition] = useState(null);
+
 
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -51,9 +54,20 @@ export const AboutRestaurant = () => {
     useEffect(() => {
         const foundRestaurant = store.restaurants.find(restaurant => restaurant.uid === uid);
         setUnitRestaurant(foundRestaurant);
+        console.log("found",foundRestaurant)
+        console.log(unitrestaurant)
+       setInitialPosition({
+            lat: parseFloat(foundRestaurant.latitude),
+            lng: parseFloat(foundRestaurant.longitude),
+        })
     }, [uid, store.restaurants]);
 
     if (!unitrestaurant) return <div>Loading...</div>;
+
+    const handleAddressSelect = (location) => {
+        setSelectedLocation(location);
+        console.log("Coordenadas seleccionadas:", location);
+    };
 
     return (
         <div className="container text-align">
@@ -78,6 +92,12 @@ export const AboutRestaurant = () => {
                         <p className="lead">
                             Location: {unitrestaurant.location || "Unknown"}
                         </p>
+                        {initialPosition && (
+                            <SingleMapComponent
+                                initialPosition={initialPosition}
+                                onLocationSelect={handleAddressSelect}
+                            />
+                        )}
                         <p className="lead">
                             Phone Number: {unitrestaurant.phone_number || "Unknown"}
                         </p>
@@ -87,6 +107,8 @@ export const AboutRestaurant = () => {
                         <p className="lead">
                             Guest Capacity: {unitrestaurant.guests_capacity || "Unknown"}
                         </p>
+
+
                         <h2>Details of the restaurant? Menu? </h2>
                     </div>
                 </div>
