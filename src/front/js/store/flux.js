@@ -34,7 +34,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			ocasiones: [],
 			ocasiones_auth :false,
 
-			reservations: {},
 			sessionUserId: null,
 		},
 		actions: {
@@ -353,6 +352,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(data => console.log("Reservation added:", data))
 					.catch(error => console.error("Error adding reservation:", error));
 
+			},
+
+			deleteReservation: (reservationId) => {
+				const store = getStore();
+				const updatedReservations = store.reservations.filter(reservation => reservation.id !== reservationId);
+				console.log("Deleting reservation with id:", reservationId);
+
+				// Update store before sending DELETE request
+				setStore({ reservations: updatedReservations });
+
+				fetch(process.env.BACKEND_URL +`/api/reservations/${reservationId}`, { method: 'DELETE' })
+					.then(() => console.log(`Reservation ${reservationId} deleted`))
+					.catch(error => console.error("Error deleting reservation:", error));
 			},
 
 			loadSomeDataCategory: () => {

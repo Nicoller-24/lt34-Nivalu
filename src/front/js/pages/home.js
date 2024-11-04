@@ -34,8 +34,8 @@ export const Home = () => {
 			<Link to="/aboutRestaurants">
 				<button className="btn btn-primary">Hacer Reserva</button>
 			</Link>
-			<Link to="/mapa">
-				<button className="btn btn-primary">mapa</button>
+			<Link to="/openai">
+				<button className="btn btn-primary">Open AI</button>
 			</Link>
 			<Link to="/categories">
 				<button className="btn btn-primary">categories</button>
@@ -45,6 +45,8 @@ export const Home = () => {
 			</Link>
 			<Link to="/listOfRestaurants">
 				<button className="btn btn-primary">Lista de Restaurantes</button>
+			</Link>
+			<Link to="/listReservationsUser"><button className="btn btn-primary">Acive reservations</button>
 			</Link>
 		</div>
 	);
