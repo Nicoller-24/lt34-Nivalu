@@ -13,6 +13,7 @@ import { EditClient } from "./pages/editClient.js";
 import { ListOfRestaurants } from "./pages/listOfRestaurants.js";
 import { LoginClient } from "./pages/loginClient.js";
 import { AboutRestaurant } from "./pages/aboutRestaurant.js";
+import { ListReservationsUser } from "./pages/listReservationsUser.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -73,6 +74,7 @@ const Layout = () => {
                         <Route element={<Signuprestaurant />} path="/signuprestaurant" />
                         <Route element={<AboutRestaurant />} path="/aboutRestaurants" />
                         <Route element={<Mapautocompletate />} path="/mapa" />
+                        <Route element={<ListReservationsUser />} path="/listReservationsUser" />
                         <Route element={<App/>} path="/openai" />
 
 

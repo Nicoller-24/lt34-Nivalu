@@ -292,10 +292,20 @@ def login_admin():
 def get_reservations():
 
     all_reservations = Reservations.query.all()
-    results = list(map(lambda reservation: reservation.serialize(), all_reservations))
+    results = list(map(lambda reservation: reservation.serialize(), all_reservations)) 
     
 
     return jsonify(results), 200
+
+@api.route('/reservations/<client_id>', methods=['GET'])
+def get_reservationsUser(client_id):
+    reservationsUser = Reservations.query.filter_by(client_id=client_id).all()  # Obtener todas las reservas del usuario
+    if not reservationsUser:
+        return jsonify({"message": "Reservations not found"}), 404
+    
+    # Serializar cada reserva en una lista de JSON
+    return jsonify([reservation.serialize() for reservation in reservationsUser]), 200
+
 
 
 @api.route('/reservations', methods=['POST'])
