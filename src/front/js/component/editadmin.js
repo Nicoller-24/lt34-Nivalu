@@ -1,91 +1,95 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
-import { useParams, Link } from "react-router-dom";
 
-export const Editadmin = () => {
-    const [adminData, setAdminData] = useState(null);
-    const [inputName, setInputName] = useState("");
-    const [inputEmail, setInputEmail] = useState("");
-    const [inputPassword, setInputPassword] = useState("");
-    const [inputUserName, setInputUserName] = useState("");
+export const EditAdmin = () => { 
+	const { store, actions } = useContext(Context);
+	const { id } = useParams(); // Retrieve `id` from URL parameter
 
-    const { store, actions } = useContext(Context);
-    const params = useParams();
+	const [updateData, setUpdateData] = useState({
+		name: '',
+		user_name: '',
+		email: '',
+		password: '',
+	});
 
-    function traer_admin() {
-        fetch(process.env.BACKEND_URL+ `api/admins/${params.id}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setAdminData(data);
-                setInputName(data.name || "");
-                setInputEmail(data.email || "");
-                setInputUserName(data.user_name || "");
-            });
-    }
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		if (id) {
+			actions.editAdmin(updateData, id); // Call the correctly named action
+		}
+		setUpdateData({
+			name: '',
+			user_name: '',
+			email: '',
+			password: '',
+		});
+	};
 
-    useEffect(() => {
-        traer_admin();
-    }, [params.id]);
+	return (
+		<div className="p-3 m-auto w-75">
+			<h1 className="mx-auto">Actualización de datos </h1>
+			<form onSubmit={handleSubmit}>
+				<div className="form-group p-1">
+					<label htmlFor="name">Nombre</label>
+					<input
+						type="text"
+						name="name"
+						placeholder="Nombre"
+						value={updateData.name}
+						onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
+						required
+						className="form-control"
+					/>
+				</div>
 
+					<div className="form-group">
+						<label htmlFor="email">Correo Electrónico</label>
+						<input
+							type="email"
+							name="email"
+							placeholder="Email"
+							value={updateData.email}
+							onChange={(e) => setUpdateData({ ...updateData, email: e.target.value })}
+							required
+							className="form-control"
+						/>
+					</div>
 
+					<div className="form-group">
+						<label htmlFor="user_name">Username</label>
+						<input
+							type="text"
+							name="user_name"
+							placeholder="Username"
+							value={updateData.user_name}
+							onChange={(e) => setUpdateData({ ...updateData, user_name: e.target.value })}
+							required
+							className="form-control"
+						/>
+					</div>
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        actions.putAdmin(inputEmail, inputName, inputUserName, params.id, inputPassword);
-    };
-
-    return (
-        <div className="container" style={{ backgroundColor: "white", width: "70%", paddingBottom: "10%" }}>
-            <h1 style={{ marginLeft: "30%" }}>Edit Admin</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="Email" className="form-label">Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="Email"
-                        placeholder="Email"
-                        onChange={(e) => setInputEmail(e.target.value)}
-                        value={inputEmail}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="user_name" className="form-label">Username</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="guestscapacity"
-                        placeholder="Username"
-                        onChange={(e) => setInputUserName(e.target.value)}
-                        value={inputUserName}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        placeholder="Name"
-                        onChange={(e) => setInputName(e.target.value)}
-                        value={inputName}
-                    />
-                </div>
-
-                
-                <Link to={"/admins"}>
-                    <button
-                        style={{"marginRight": "10px"}}
-                        type="submit"
-                        className="btn btn-primary w-100 mb-4"
-                    >
-                        Save
-                    </button>
-                </Link>
-                <Link to={"/admins"}>
-                    O deseas volver
-                </Link>
-            </form>
-        </div>
+					<div className="form-group">
+						<label htmlFor="password">Contraseña</label>
+						<input
+							type="password"
+							name="password"
+							placeholder="Contraseña"
+							value={updateData.password}
+							onChange={(e) => setUpdateData({ ...updateData, password: e.target.value })}
+							required
+							className="form-control"
+						/>
+					</div>
+					
+					
+					
+                    <Link to={"/admins"}>
+                        O deseas volver
+                    </Link>
+						<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
+					
+				</form>
+			</div>
     );
 };
