@@ -22,6 +22,7 @@ import { Restaurantselect } from "./component/restaurantselect.js";
 import { Edit } from "./component/edit";
 import { Signuprestaurant } from "./component/signuprestaurant.js";
 import { Mapautocompletate } from "./component/mapautocompletate.js";
+import App from "./component/App.js";
 
 import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
@@ -74,6 +75,9 @@ const Layout = () => {
                         <Route element={<AboutRestaurant />} path="/aboutRestaurants" />
                         <Route element={<Mapautocompletate />} path="/mapa" />
                         <Route element={<ListReservationsUser />} path="/listReservationsUser" />
+                        <Route element={<App/>} path="/openai" />
+
+
 
                         <Route element={<Crearcategoria />} path="/create/categories" />
                         <Route element={<Crudcategoria />} path="/categories" />
