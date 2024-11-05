@@ -128,12 +128,9 @@ class Admin1(db.Model):
             # do not serialize the password, it's a  security breach
         }
 
-        
-    
-
 class Reservations(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    occasion = db.Column(db.String(120), nullable=True)
+    # occasion = db.Column(db.String(120), nullable=True)
     time = db.Column(db.String(120), nullable=False)
     date = db.Column(db.String(120), nullable=False)
     number_of_people = db.Column(db.String(120), nullable=False)
@@ -155,7 +152,7 @@ class Reservations(db.Model):
             "number_of_people": self.number_of_people,
             "time": self.time,
             "date":self.date,
-            "occasion":self.occasion,
+            # "occasion":self.occasion,
 
             
         }

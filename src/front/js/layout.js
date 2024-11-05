@@ -13,6 +13,7 @@ import { EditClient } from "./pages/editClient.js";
 import { ListOfRestaurants } from "./pages/listOfRestaurants.js";
 import { LoginClient } from "./pages/loginClient.js";
 import { AboutRestaurant } from "./pages/aboutRestaurant.js";
+import { ListReservationsUser } from "./pages/listReservationsUser.js";
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -25,16 +26,18 @@ import App from "./component/App.js";
 
 import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
-import { Editadmin } from "./component/editadmin";
+import { EditAdmin } from "./component/editadmin";
 import { Oneadmin } from "./component/oneadmin";
 import { Adminlogin } from "./component/adminlogin";
-import { Adminhomepage } from "./component/adminhomepage"
+import { Adminhomepage } from "./component/adminhomepage";
 
-import { Crearcategoria } from "./component/crearcategoria"
-import { Crudcategoria } from "./component/crudcategoria"
+import { Crearcategoria } from "./component/crearcategoria";
+import { Crudcategoria } from "./component/crudcategoria";
+import { EditCategory } from "./component/editcategory";
 
-import { Crearocasion } from "./component/crearocasion"
-import { Crudocasion } from "./component/crudocasion"
+import { Crearocasion } from "./component/crearocasion";
+import { Crudocasion } from "./component/crudocasion";
+import { EditOcasion } from "./component/editocasion";
 
 
 import { Navbar } from "./component/navbar";
@@ -60,7 +63,8 @@ const Layout = () => {
                         <Route element={<Crudadmin />} path="/admins" />
                         <Route element={<Crearadmin />} path="/signup/admins" />
                         <Route element={<Oneadmin />} path="/admins/:id" />
-                        <Route element={<Editadmin />} path="/editadmin/admins/:id" />
+                        <Route element={<EditAdmin />} path="/edit/admins/:id" />
+                        
                         <Route element={<AddClients />} path="/adduser" />
                         <Route element={<UserList />} path="/userList" />
                         <Route element={<EditClient />} path="/updateInfo" />
@@ -73,14 +77,14 @@ const Layout = () => {
                         <Route element={<Signuprestaurant />} path="/signuprestaurant" />
                         <Route element={<AboutRestaurant />} path="/aboutRestaurants" />
                         <Route element={<Mapautocompletate />} path="/mapa" />
+                        <Route element={<ListReservationsUser />} path="/listReservationsUser" />
                         <Route element={<App/>} path="/openai" />
-
-
-
                         <Route element={<Crearcategoria />} path="/create/categories" />
                         <Route element={<Crudcategoria />} path="/categories" />
+                        <Route element={<EditCategory />} path="/edit/categories/:id" />
                         <Route element={<Crearocasion />} path="/create/ocasiones" />
                         <Route element={<Crudocasion />} path="/ocasiones" />
+                        <Route element={<EditOcasion />} path="/edit/ocasiones/:id" />
                         <Route element={<ListOfRestaurants />} path="/listOfRestaurants" />
                         <Route element={<Adminlogin />} path="/adminlogin/" />
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />

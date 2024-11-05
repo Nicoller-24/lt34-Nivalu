@@ -24,9 +24,15 @@ export const Navbar = () => {
                     {store.auth ? (
                         <button onClick={handleLogoutClient} className="btn btn-primary">Logout</button>
                     ) : (
+
+                        <>
                         <Link to="/loginClients">
                             <button className="btn btn-outline-primary mr-3">Login</button>
                         </Link>
+                       
+                        </>
+                      
+
                     )}
 					
                 </div>
