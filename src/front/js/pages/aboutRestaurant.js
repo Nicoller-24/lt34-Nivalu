@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import SingleMapComponent from "../component/singlemapcompnent";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 export const AboutRestaurant = () => {
@@ -10,11 +12,22 @@ export const AboutRestaurant = () => {
     const [unitrestaurant, setUnitRestaurant] = useState(null);
     const [reservationInfo, setReservationInfo] = useState({
         number_of_people: '',
-        date: '',
+        date: null,
         time: '',
         occasion: ''
     });
     const [initialPosition, setInitialPosition] = useState(null);
+    const [ocasiones, setOcasiones] = useState([]);
+
+    useEffect(() => {
+        const fetchOcasiones = async () => {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/ocasiones`);
+            const data = await response.json();
+            setOcasiones(data); // Asegúrate de que la respuesta sea un array
+        };
+        fetchOcasiones();
+    }, []);
+
 
 
     function getQueryParam(param) {
@@ -30,7 +43,10 @@ export const AboutRestaurant = () => {
     const reservationData = {
         ...reservationInfo,
         client_id: store.sessionUserId, // Usar el ID almacenado
+        ocasiones_id: reservationInfo.occasion, // Asegúrate de que sea el correcto
         restaurant_id: getQueryParam('id_restaurant')// Suponiendo que uid es el ID del restaurante
+        
+
     };
 
     console.log(reservationData); // Agrega esta línea para verificar la información
@@ -44,7 +60,7 @@ export const AboutRestaurant = () => {
             number_of_people: '',
             date: '',
             time: '',
-            occasion: '',
+            ocasion: '',
             client_id:'',
             restaurant_id:''
         });
@@ -151,28 +167,30 @@ export const AboutRestaurant = () => {
 
                                 <div className="form-group">
                                     <label htmlFor="Date">Date</label>
-                                    <input
-                                        type="text"
-                                        name="date"
-                                        placeholder="Date of your reservation"
-                                        value={reservationInfo.date}
-                                        onChange={(e) => setReservationInfo({ ...reservationInfo, date: e.target.value })}
-                                        required
-                                        className="form-control"
+                                    <DatePicker
+                                       
+                                       selected={reservationInfo.date}
+                                       onChange={(date) => setReservationInfo({ ...reservationInfo, date })}
+                                       dateFormat="yyyy-MM-dd"
+                                       placeholderText="Select a reservation date"
+                                       className="form-control"
                                     />
                                 </div>
 
                                 <div className="form-group p-1">
                                     <label htmlFor="occasion">Occasion</label>
-                                    <input
-                                        type="text"
-                                        name="Occasion"
-                                        placeholder="Are you coming for an special occasion?"
+                                    <select
+                                        name="occasion"
                                         value={reservationInfo.occasion}
                                         onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
                                         required
                                         className="form-control"
-                                    />
+                                    >
+                                        <option value="">Select an occasion</option>
+                                        {ocasiones.map(ocas => (
+                                            <option key={ocas.id} value={ocas.id}>{ocas.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
 
 
