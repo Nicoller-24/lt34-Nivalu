@@ -180,5 +180,37 @@ class ClientOcasiones(db.Model):
     client = db.relationship('Client', backref=db.backref('ocasiones', lazy='dynamic'))
     ocasion = db.relationship('Ocasiones1', backref=db.backref('clients', lazy='dynamic'))
 
-
+def save_restaurant(body):
+    restaurant = Restaurant.query.filter_by(email=body["email"]).first()
+    
+    if restaurant is None:
+        # Create new restaurant
+        restaurant = Restaurant(
+            email=body["email"],
+            guests_capacity=body["guests_capacity"],
+            location=body["location"],
+            name=body["name"],
+            phone_number=body["phone_number"],
+            password=body["password"],
+            image_url=body["image_url"],
+            latitude=body["latitude"],
+            longitude=body["longitude"],
+            is_active=True
+        )
+        db.session.add(restaurant)
+        db.session.commit()
+        return restaurant, "Restaurante creado"
+    
+    # If restaurant exists, update it
+    restaurant.guests_capacity = body.get("guests_capacity", restaurant.guests_capacity)
+    restaurant.location = body.get("location", restaurant.location)
+    restaurant.name = body.get("name", restaurant.name)
+    restaurant.phone_number = body.get("phone_number", restaurant.phone_number)
+    restaurant.password = body.get("password", restaurant.password)
+    restaurant.image_url = body.get("image_url", restaurant.image_url)
+    restaurant.latitude = body.get("latitude", restaurant.latitude)
+    restaurant.longitude = body.get("longitude", restaurant.longitude)
+    
+    db.session.commit()
+    return restaurant, "Restaurante actualizado con éxito"
 

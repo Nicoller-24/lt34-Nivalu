@@ -528,6 +528,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataOcasion());
 			},
+
+			setRestaurantCategory: (restaurantId, categoryId) => {
+				const token = localStorage.getItem("token");
+				fetch(process.env.BACKEND_URL + `/api/restaurant/${restaurantId}/category`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`
+					},
+					body: JSON.stringify({ category_id: categoryId })
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error("Failed to set restaurant category");
+					}
+					return response.json();
+				})
+				.then(data => {
+					console.log("Category set successfully:", data);
+				})
+				.catch(error => {
+					console.error("Error setting category:", error);
+				});
+			},
+
+			saveRestaurant: async (restaurantData) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants`, {
+						method: 'PUT', // Use 'PUT' for updating existing restaurants
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(restaurantData),
+					});
+	
+					if (!response.ok) {
+						throw new Error('Failed to save restaurant');
+					}
+	
+					const newRestaurant = await response.json();
+	
+					// Update the restaurants list in the store
+					setStore(prevState => ({
+						...prevState,
+						restaurants: [...prevState.restaurants, newRestaurant],
+					}));
+				} catch (error) {
+					console.error("Error saving restaurant:", error);
+				}
+			},
 		}
 
 		

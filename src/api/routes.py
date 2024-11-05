@@ -10,6 +10,11 @@ from flask_jwt_extended import jwt_required, create_access_token
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 from flask import jsonify, request
 from werkzeug.security import check_password_hash
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)  # This will allow all origins
 
 api = Blueprint('api', __name__)
 CORS(api)
@@ -384,6 +389,21 @@ def get_categories():
     results = list(map(lambda Category: Category.serialize(), all_categories)) 
 
     return jsonify(results), 200
+
+@api.route("/restaurant/<int:restaurant_id>/category", methods=["POST"])
+def set_restaurant_category(restaurant_id):
+    category_id = request.json.get("category_id")
+    restaurant = Restaurant.query.get(restaurant_id)
+    if not restaurant:
+        return jsonify({"msg": "Restaurant not found"}), 404
+    
+    category = Category.query.get(category_id)
+    if not category:
+        return jsonify({"msg": "Category not found"}), 404
+    
+    restaurant.category_id = category.id  # Assuming a category_id field in the Restaurant model
+    db.session.commit()
+    return jsonify({"msg": "Category updated successfully"}), 200
 
 @api.route('/categories/<int:category_id>', methods=['GET'])
 def get_category(category_id):
