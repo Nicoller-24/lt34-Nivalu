@@ -2,7 +2,6 @@
 import axios from 'axios';
 
 const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;  
-console.log('OpenAI API Key:', openaiApiKey);
 
 export const getChatCompletion = async (messages) => {
   try {
