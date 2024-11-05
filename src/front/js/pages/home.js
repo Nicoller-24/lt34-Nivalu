@@ -37,12 +37,12 @@ export const Home = () => {
 			<Link to="/openai">
 				<button className="btn btn-primary">Open AI</button>
 			</Link>
-			<Link to="/categories">
+			{/* <Link to="/categories">
 				<button className="btn btn-primary">categories</button>
-			</Link>
-			<Link to="/ocasiones">
+			</Link> */}
+			{/* <Link to="/ocasiones">
 				<button className="btn btn-primary">ocasiones</button>
-			</Link>
+			</Link> */}
 			<Link to="/listOfRestaurants">
 				<button className="btn btn-primary">Lista de Restaurantes</button>
 			</Link>

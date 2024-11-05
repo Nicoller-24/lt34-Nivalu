@@ -6,7 +6,10 @@ from api.models import db, User, Client, Reservations, Restaurant, Admin1, Ocasi
 from flask import Flask, request, jsonify, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+from flask_jwt_extended import jwt_required, create_access_token
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+from flask import jsonify, request
+from werkzeug.security import check_password_hash
 
 api = Blueprint('api', __name__)
 CORS(api)
@@ -274,18 +277,13 @@ def login_admin():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
-    admin= Admin1.query.filter_by(email=email).first()
-    print(admin)
+    admin = Admin1.query.filter_by(email=email).first()
 
-    if admin == None:
-        return jsonify({"msg": "Could not find the email"}), 401
+    if admin is None:
+        return jsonify({"msg": "Could not find an admin with that email."}), 401
 
-    if email != admin.email or password != admin.password:
-        return jsonify({"msg": "Bad email or password"}), 401
-    
     access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
-    return jsonify(response_body), 200
+    return jsonify(access_token=access_token), 200  # Return 200 status for successful login
 
 
 @api.route('/reservations', methods=['GET'])
@@ -397,17 +395,25 @@ def get_category(category_id):
     return jsonify(category.serialize()), 200
 
 @api.route("/create/categories", methods=["POST"])
+@jwt_required()
 def create_category():
     body = request.get_json()
+    print("Received body:", body)  # Log the received data
+
+    if "name" not in body:
+        return jsonify({"msg": "Falta el nombre de la categoría"}), 400
+
     category = Category.query.filter_by(name=body["name"]).first()
-    if category == None:
-        category = Category( name=body["name"])
+    
+    if category is None:
+        category = Category(name=body["name"])
         db.session.add(category)
         db.session.commit()
         response_body = {"msg": "Categoria creado"}
         return jsonify(response_body), 200
     else:
-        return jsonify({"msg": "La categoria ya existe"}), 401
+        print("Category already exists:", body["name"])  # Log existing category case
+        return jsonify({"msg": "La categoria ya existe"}), 400
 
 @api.route('edit/categories/<int:category_id>', methods=['PUT'])
 def update_categories(category_id):  
@@ -456,8 +462,13 @@ def get_ocasion(ocasion_id):
     return jsonify(ocasion.serialize()), 200
 
 @api.route("/create/ocasiones", methods=["POST"])
+@jwt_required ()
 def create_ocasion():
     body = request.get_json()
+
+    if "name" not in body:
+        return jsonify({"msg": "Falta el nombre de la ocasión"}), 400
+
     ocasion = Ocasiones1.query.filter_by(name=body["name"]).first()
     if ocasion == None:
         ocasion = Ocasiones1( name=body["name"])

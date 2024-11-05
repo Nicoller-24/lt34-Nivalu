@@ -93,6 +93,7 @@ class Restaurant(db.Model):
         return f'<Restaurant {self.email}>'
 
     def serialize(self):
+        categories_list = [category.category.serialize() for category in self.categories]
         return {
             "id": self.id,
             "name": self.name,
@@ -104,6 +105,7 @@ class Restaurant(db.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
             "is_active": self.is_active,
+            "categories": categories_list
             # do not serialize the password, it's a security breach
         }
 
@@ -114,6 +116,9 @@ class Admin1(db.Model):
     email = db.Column(db.String(80), unique=False, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+
+    # categories = db.relationship('Category', backref='admin', lazy=True)
+    # ocasiones = db.relationship('Ocasiones1', backref='admin', lazy=True)
 
     def __repr__(self):
         return f'<Admin1 {self.email}>'
@@ -153,9 +158,27 @@ class Reservations(db.Model):
             "time": self.time,
             "date":self.date,
             # "occasion":self.occasion,
-
-            
         }
+
+# Association Table for Restaurant and Category
+class RestaurantCategory(db.Model):
+    __tablename__ = 'restaurant_category_association'
+    
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('restaurant_category.id'), primary_key=True)
+
+    restaurant = db.relationship('Restaurant', backref=db.backref('categories', lazy='dynamic'))
+    category = db.relationship('Category', backref=db.backref('restaurants', lazy='dynamic'))
+
+# Association Table for Client and Ocasiones
+class ClientOcasiones(db.Model):
+    __tablename__ = 'client_ocasiones_association'
+    
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), primary_key=True)
+    ocasion_id = db.Column(db.Integer, db.ForeignKey('ocasiones.id'), primary_key=True)
+
+    client = db.relationship('Client', backref=db.backref('ocasiones', lazy='dynamic'))
+    ocasion = db.relationship('Ocasiones1', backref=db.backref('clients', lazy='dynamic'))
 
 
 
