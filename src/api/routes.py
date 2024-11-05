@@ -2,11 +2,13 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 
-from api.models import db, User, Client, Reservations, Restaurant, Admin1, Ocasiones1, Category
+from api.models import db, User, Client, Reservations, Restaurant, Admin1, Ocasiones1, Category, Chat, Message
 from flask import Flask, request, jsonify, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+from datetime import datetime, timedelta, timezone
+
 
 api = Blueprint('api', __name__)
 CORS(api)
@@ -497,3 +499,83 @@ def delete_ocasion(ocasion_id):
     else:
         response_body = {"msg": "No se encontró la ocasion"}
     return jsonify(response_body), 200
+
+
+@api.route("/chat/post/", methods=["POST"])
+def create_chat():
+    body = request.get_json()
+   
+    chat = Chat.query.filter_by().first()
+    if chat == None:
+        chat = Chat(id_restaurant=body["id_restaurant"], id_comensal=body["id_comensal"])
+        db.session.add(chat)
+        db.session.commit()
+        response_body = {"msg": "Chat creado"}
+        return jsonify(response_body), 200
+    else:
+        return jsonify({"msg": "El chat ya existe"}), 401
+    
+@api.route('/chat/get', methods=['GET'])
+def get_chat():
+    all_chats = list(Chat.query.all())
+    results = list(map(lambda restaurant: restaurant.serialize(), all_chats))
+    return jsonify(results), 200
+
+@api.route('/chat/restaurant/<int:id_restaurant>', methods=['GET'])
+def get_chats_restaurant(id_restaurant):
+    
+    chat = Chat.query.filter_by(id_restaurant=id_restaurant)
+    chats = list(map(lambda item: item.serialize(), chat)) 
+
+    return jsonify(chats), 200
+
+@api.route('/chat/client/<int:id_comensal>', methods=['GET'])
+def get_chats_client(id_comensal):
+    
+    chat = Chat.query.filter_by(id_comensal=id_comensal)
+    chats = list(map(lambda item: item.serialize(), chat)) 
+
+    return jsonify(chats), 200
+
+@api.route('/messages/<int:restaurant_id>/<int:client_id>/<int:chat_id>', methods=['GET'])
+def get_messages(restaurant_id, client_id, chat_id):
+    messages = Message.query.filter_by(id_restaurant=restaurant_id, id_comensal=client_id, id_chat=chat_id).all()
+    
+    if not messages:
+        return jsonify({"error": "No se encontraron mensajes para los criterios dados"}), 404
+
+    print("Messages found:", messages)  # Depuración para ver los resultados
+
+    serialized_messages = [message.serialize() for message in messages]
+    
+    return jsonify(serialized_messages), 200
+
+
+@api.route("/message/post", methods=["POST"])
+def create_message():
+    body = request.get_json()
+
+    required_fields = ["id_restaurant", "id_comensal", "id_chat", "message", "origin"]
+    if not all(field in body for field in required_fields):
+        return jsonify({"msg": "Faltan datos requeridos"}), 400
+
+    if not isinstance(body["id_restaurant"], int) or not isinstance(body["id_comensal"], int) or not isinstance(body["id_chat"], int):
+        return jsonify({"msg": "Los valores de id_restaurant, id_comensal y id_chat deben ser enteros"}), 400
+
+    message = Message(
+        id_restaurant=body["id_restaurant"],
+        id_comensal=body["id_comensal"],
+        id_chat=body["id_chat"],
+        message=body["message"],
+        origin=body["origin"],
+        message_date=datetime.now(timezone.utc).date(),
+        message_time=datetime.now(timezone.utc).time()
+    )
+
+    db.session.add(message)
+    db.session.commit()
+
+    response_body = {"msg": "Mensaje creado"}
+    return jsonify(response_body), 201
+
+
