@@ -4,11 +4,15 @@ import SingleMapComponent from "../component/singlemapcompnent";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { setHours, setMinutes } from 'date-fns';
+import { useNavigate } from "react-router-dom";
+
+
 
 // Inside your component
 export const AboutRestaurant = () => {
     const { store, actions } = useContext(Context);
     const [unitrestaurant, setUnitRestaurant] = useState(null);
+    const navigate = useNavigate();
     const [reservationInfo, setReservationInfo] = useState({
         number_of_people: '',
         date: null,
@@ -56,6 +60,8 @@ export const AboutRestaurant = () => {
         };
 
         actions.addReservation(reservationData);
+        navigate("/reservaExitosa");
+
         setReservationInfo({
             number_of_people: '',
             date: '',
@@ -72,7 +78,7 @@ export const AboutRestaurant = () => {
                 <div className="col-8">
                     <img
                         src={unitrestaurant.image_url || "fallback_image_url"}
-                        className="card-img-top"
+                        className="card-img-top img-fluid rounded shadow-lg"
                         alt={unitrestaurant.name}
                         style={{ width: '400px', height: '400px' }}
                         onError={(e) => {
@@ -99,57 +105,59 @@ export const AboutRestaurant = () => {
                     <div className="p-3 m-auto w-75">
                         <div><h1 className="mx-auto">Book your table</h1></div>
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group p-1">
-                                <label>Number of guests</label>
-                                <input
-                                    type="text"
-                                    placeholder="How many people?"
-                                    value={reservationInfo.number_of_people}
-                                    onChange={(e) => setReservationInfo({ ...reservationInfo, number_of_people: e.target.value })}
-                                    required
-                                    className="form-control"
-                                />
-                            </div>
-                            <div className="form-group p-1">
-                                <label>Time</label>
-                                <DatePicker
-                                    selected={reservationInfo.time}
-                                    onChange={(time) => setReservationInfo({ ...reservationInfo, time })}
-                                    showTimeSelect
-                                    showTimeSelectOnly
-                                    timeIntervals={15}
-                                    timeCaption="Time"
-                                    dateFormat="h:mm aa"
-                                    placeholderText="Select a time"
-                                    className="form-control"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Date</label>
-                                <DatePicker
-                                    selected={reservationInfo.date}
-                                    onChange={(date) => setReservationInfo({ ...reservationInfo, date })}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="Select a date"
-                                    className="form-control"
-                                />
-                            </div>
-                            <div className="form-group p-1">
-                                <label>Occasion</label>
-                                <select
-                                    value={reservationInfo.occasion}
-                                    onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
-                                    required
-                                    className="form-control"
-                                >
-                                    <option value="">Select an occasion</option>
-                                    {ocasiones.map(ocas => (
-                                        <option key={ocas.id} value={ocas.id}>{ocas.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <button type="submit" className="btn btn-success">Add reservation</button>
-                        </form>
+                <div className="mb-3">
+                    <label className="form-label">Number of guests: </label>
+                    <input
+                        type="number"
+                        value={reservationInfo.number_of_people}
+                        onChange={(e) => setReservationInfo({ ...reservationInfo, number_of_people: e.target.value })}
+                        className="form-control"
+                        required
+                    />
+                </div>
+
+                <div className="mb-3">
+                    <label className="form-label">Time: </label>
+                    <DatePicker
+                        selected={reservationInfo.time}
+                        onChange={(time) => setReservationInfo({ ...reservationInfo, time })}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={60}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                        className="form-control"
+                    />
+                </div>
+
+                <div className="mb-3">
+                    <label className="form-label">Date: </label>
+                    <DatePicker
+                        selected={reservationInfo.date}
+                        onChange={(date) => setReservationInfo({ ...reservationInfo, date })}
+                        dateFormat="yyyy-MM-dd"
+                        className="form-control"
+                    />
+                </div>
+
+                <div className="mb-3">
+                    <label className="form-label">Occasion: </label>
+                    <select
+                        value={reservationInfo.occasion}
+                        onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
+                        className="form-control"
+                    >
+                        <option value="">Select an occasion</option>
+                        {ocasiones.map((ocas) => (
+                            <option key={ocas.id} value={ocas.id}>
+                                {ocas.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <button type="submit" className="btn btn-success w-100">Add reservation</button>   
+                         </form>
                     </div>
                 </div>
             </div>
