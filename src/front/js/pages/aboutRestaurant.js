@@ -3,14 +3,16 @@ import { Context } from "../store/appContext";
 import SingleMapComponent from "../component/singlemapcompnent";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { setHours, setMinutes } from 'date-fns';
 
+// Inside your component
 export const AboutRestaurant = () => {
     const { store, actions } = useContext(Context);
     const [unitrestaurant, setUnitRestaurant] = useState(null);
     const [reservationInfo, setReservationInfo] = useState({
         number_of_people: '',
         date: null,
-        time: '',
+        time: null, // change to date object for time picker compatibility
         occasion: ''
     });
     const [initialPosition, setInitialPosition] = useState(null);
@@ -110,12 +112,15 @@ export const AboutRestaurant = () => {
                             </div>
                             <div className="form-group p-1">
                                 <label>Time</label>
-                                <input
-                                    type="text"
-                                    placeholder="What time?"
-                                    value={reservationInfo.time}
-                                    onChange={(e) => setReservationInfo({ ...reservationInfo, time: e.target.value })}
-                                    required
+                                <DatePicker
+                                    selected={reservationInfo.time}
+                                    onChange={(time) => setReservationInfo({ ...reservationInfo, time })}
+                                    showTimeSelect
+                                    showTimeSelectOnly
+                                    timeIntervals={15}
+                                    timeCaption="Time"
+                                    dateFormat="h:mm aa"
+                                    placeholderText="Select a time"
                                     className="form-control"
                                 />
                             </div>
