@@ -41,6 +41,7 @@ export const Singlerestaurant = () => {
 
     return (
         <>
+        {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
             {restaurant.image_url && (
                 <img
                     src={restaurant.image_url}
