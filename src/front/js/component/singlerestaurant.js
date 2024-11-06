@@ -56,6 +56,9 @@ export const Singlerestaurant = () => {
                     onLocationSelect={handleAddressSelect}
                 />
             )}
+            <Link to={"/restaurant/chat/" + params.id}>
+                <button type="button" class="btn btn-primary">ver chats</button>
+            </Link>
 
             <Link to="/restaurants">
                 O deseas volver

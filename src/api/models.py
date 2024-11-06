@@ -176,8 +176,11 @@ class Message(db.Model):
     id_chat = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
     message = db.Column(db.String(120), nullable=False)
     origin = db.Column(db.String(120), nullable=False)
-    message_date = db.Column(db.Date, nullable=False, default=datetime.now(timezone.utc).date)
-    message_time = db.Column(db.Time, nullable=False, default=datetime.now(timezone.utc).time)
+    message_date = db.Column(db.Date, nullable=False)
+    message_time = db.Column(db.Time, nullable=False)
+
+    id_chat = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
+
 
     def __repr__(self):
         return f'<Message {self.id}>'
@@ -187,6 +190,7 @@ class Message(db.Model):
             "id": self.id,
             "id_comensal": self.id_comensal,
             "id_restaurant": self.id_restaurant,
+            "id_chat": self.id_chat,
             "message": self.message,
             "origin": self.origin,
             "message_date": self.message_date.isoformat(),

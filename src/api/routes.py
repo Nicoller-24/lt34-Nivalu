@@ -35,17 +35,34 @@ def get_restaurant(restaurant_id):
 @api.route("/signup/restaurant", methods=["POST"])
 def signup():
     body = request.get_json()
-   
-    
+
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
-    if restaurant == None:
-        restaurant = Restaurant(email=body["email"], guests_capacity=body["guests_capacity"], location=body["location"], name=body["name"], phone_number=body["phone_number"], password=body["password"],image_url=body["image_url"],latitude=body["latitude"],longitude=body["longitude"], is_active=True)
+    if restaurant is None:
+        restaurant = Restaurant(
+            email=body["email"],
+            guests_capacity=body["guests_capacity"],
+            location=body["location"],
+            name=body["name"],
+            phone_number=body["phone_number"],
+            password=body["password"],  
+            image_url=body["image_url"],
+            latitude=body["latitude"],
+            longitude=body["longitude"],
+            is_active=True
+        )
         db.session.add(restaurant)
         db.session.commit()
-        response_body = {"msg": "Restaurante creado"}
-        return jsonify(response_body), 200
+
+        access_token = create_access_token(identity=restaurant.id)
+
+        response_body = {
+            "msg": "Restaurante creado",
+            "access_token": access_token
+        }
+        return jsonify(response_body), 201  
     else:
-        return jsonify({"msg": "El restaurante ya existe"}), 401
+        return jsonify({"msg": "El restaurante ya existe"}), 409  
+
     
     
 
@@ -175,19 +192,18 @@ def login_restaurant():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
-    restaurant= Restaurant.query.filter_by(email=email).first()
-    print(restaurant)
+    restaurant = Restaurant.query.filter_by(email=email).first()
 
-    if restaurant == None:
+    if restaurant is None:
         return jsonify({"msg": "Could not find the email"}), 401
 
     if email != restaurant.email or password != restaurant.password:
         return jsonify({"msg": "Bad email or password"}), 401
     
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
+    access_token = create_access_token(identity=restaurant.id)
 
-    return jsonify(response_body), 200
+    return jsonify(access_token=access_token), 200
+
 
 
 @api.route("/loginClient", methods=["POST"])
@@ -504,16 +520,21 @@ def delete_ocasion(ocasion_id):
 @api.route("/chat/post/", methods=["POST"])
 def create_chat():
     body = request.get_json()
-   
-    chat = Chat.query.filter_by().first()
-    if chat == None:
+
+    if not body or "id_restaurant" not in body or "id_comensal" not in body:
+        return jsonify({"msg": "Faltan datos requeridos"}), 400
+
+    chat = Chat.query.filter_by(id_restaurant=body["id_restaurant"], id_comensal=body["id_comensal"]).first()
+    
+    if chat is None:
         chat = Chat(id_restaurant=body["id_restaurant"], id_comensal=body["id_comensal"])
         db.session.add(chat)
         db.session.commit()
         response_body = {"msg": "Chat creado"}
-        return jsonify(response_body), 200
+        return jsonify(response_body), 201  
     else:
-        return jsonify({"msg": "El chat ya existe"}), 401
+        return jsonify({"msg": "El chat ya existe"}), 409  
+
     
 @api.route('/chat/get', methods=['GET'])
 def get_chat():
@@ -523,11 +544,28 @@ def get_chat():
 
 @api.route('/chat/restaurant/<int:id_restaurant>', methods=['GET'])
 def get_chats_restaurant(id_restaurant):
-    
-    chat = Chat.query.filter_by(id_restaurant=id_restaurant)
-    chats = list(map(lambda item: item.serialize(), chat)) 
+    chats = Chat.query.filter_by(id_restaurant=id_restaurant).all()
 
-    return jsonify(chats), 200
+    response_data = []
+    for chat in chats:
+        chat_data = chat.serialize()
+        
+        comensal = Client.query.get(chat.id_comensal)
+ 
+        if comensal:
+            chat_data["comensal_details"] = {
+                "name": comensal.name,
+                "last_name": comensal.last_name,
+                "email": comensal.email,
+                "phone_number": comensal.phone_number
+            }
+        else:
+            chat_data["comensal_details"] = None 
+
+        response_data.append(chat_data)
+
+    return jsonify(response_data), 200
+
 
 @api.route('/chat/client/<int:id_comensal>', methods=['GET'])
 def get_chats_client(id_comensal):
@@ -539,16 +577,28 @@ def get_chats_client(id_comensal):
 
 @api.route('/messages/<int:restaurant_id>/<int:client_id>/<int:chat_id>', methods=['GET'])
 def get_messages(restaurant_id, client_id, chat_id):
+
     messages = Message.query.filter_by(id_restaurant=restaurant_id, id_comensal=client_id, id_chat=chat_id).all()
     
     if not messages:
         return jsonify({"error": "No se encontraron mensajes para los criterios dados"}), 404
 
-    print("Messages found:", messages)  # Depuración para ver los resultados
 
-    serialized_messages = [message.serialize() for message in messages]
-    
+    comensal = Client.query.get(client_id)
+    comensal_details = {
+        "name": comensal.name,
+        "last_name": comensal.last_name,
+        "email": comensal.email,
+        "phone_number": comensal.phone_number
+    } if comensal else None 
+
+    serialized_messages = [
+        {**message.serialize(), "comensal_details": comensal_details}
+        for message in messages
+    ]
+
     return jsonify(serialized_messages), 200
+
 
 
 @api.route("/message/post", methods=["POST"])
@@ -568,8 +618,8 @@ def create_message():
         id_chat=body["id_chat"],
         message=body["message"],
         origin=body["origin"],
-        message_date=datetime.now(timezone.utc).date(),
-        message_time=datetime.now(timezone.utc).time()
+        message_date=body["message_date"],
+        message_time=body["message_time"]
     )
 
     db.session.add(message)
@@ -577,5 +627,25 @@ def create_message():
 
     response_body = {"msg": "Mensaje creado"}
     return jsonify(response_body), 201
+
+@api.route('/chat/messages/delete/<int:id>', methods=['DELETE'])
+def delete_chat_and_messages(id):
+
+    chat_to_delete = Chat.query.get(id)
+    
+    if chat_to_delete:
+        messages_to_delete = Message.query.filter_by(id_chat=id).all()
+        
+        for message in messages_to_delete:
+            db.session.delete(message)
+
+        db.session.delete(chat_to_delete)
+        db.session.commit()
+        
+        response_body = {"msg": "Se eliminaron correctamente el chat y sus mensajes"}
+    else:
+        response_body = {"msg": "No se encontró el chat"}
+    
+    return jsonify(response_body), 200
 
 

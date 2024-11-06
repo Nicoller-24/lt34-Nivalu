@@ -15,6 +15,8 @@ export const AboutRestaurant = () => {
         occasion: ''
     });
     const [initialPosition, setInitialPosition] = useState(null);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    
 
 
     function getQueryParam(param) {
@@ -56,10 +58,10 @@ export const AboutRestaurant = () => {
         setUnitRestaurant(foundRestaurant);
         console.log("found",foundRestaurant)
         console.log(unitrestaurant)
-       setInitialPosition({
+        setInitialPosition({
             lat: parseFloat(foundRestaurant.latitude),
             lng: parseFloat(foundRestaurant.longitude),
-        })
+        });
     }, [uid, store.restaurants]);
 
     if (!unitrestaurant) return <div>Loading...</div>;
@@ -96,7 +98,7 @@ export const AboutRestaurant = () => {
                             <SingleMapComponent
                                 initialPosition={initialPosition}
                                 onLocationSelect={handleAddressSelect}
-                            />
+                             />
                         )}
                         <p className="lead">
                             Phone Number: {unitrestaurant.phone_number || "Unknown"}
