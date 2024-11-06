@@ -17,7 +17,7 @@ class Category(db.Model):
             "id": self.id,
             "name": self.name,
         }
-
+    
 class Ocasiones1(db.Model):
     __tablename__ = 'ocasiones'
     
@@ -134,10 +134,15 @@ class Reservations(db.Model):
     date = db.Column(db.String(120), nullable=False)
     number_of_people = db.Column(db.String(120), nullable=False)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=True)    
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=True)  
+    ocasiones_id= db.Column(db.Integer, db.ForeignKey('ocasiones.id'), nullable=True)   
+    is_active = db.Column(db.Boolean(), nullable=True)
+
     client = db.relationship('Client', backref=db.backref('reservations', lazy=True))
     restaurant = db.relationship('Restaurant', backref=db.backref('reservations', lazy=True))
-    is_active = db.Column(db.Boolean(), nullable=True)
+    Ocasiones = db.relationship('Ocasiones1', backref=db.backref('reservations', lazy=True))
+    
+
 
     def __repr__(self):
         return f'<Reservations {self.time}, {self.date}>'
@@ -150,7 +155,10 @@ class Reservations(db.Model):
             "restaurant_id": self.restaurant_id,
             "number_of_people": self.number_of_people,
             "time": self.time,
-            "date": self.date,
+            "date":self.date,
+            "ocasiones_id": self.ocasiones_id,
+
+            
         }
 
 class Chat(db.Model):
