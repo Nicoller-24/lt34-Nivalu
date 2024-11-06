@@ -76,6 +76,7 @@ export const AboutRestaurant = () => {
         <div className="container text-align">
             <div className="row">
                 <div className="col-8">
+                <h1 className="display-4">{unitrestaurant.name}</h1>
                     <img
                         src={unitrestaurant.image_url || "fallback_image_url"}
                         className="card-img-top img-fluid rounded shadow-lg"
@@ -86,9 +87,8 @@ export const AboutRestaurant = () => {
                             e.target.src = 'https://phohoangminh.com/img/placeholders/burger_placeholder.png?v=1';
                         }}
                     />
-                    <h1> Information about us! </h1>
+                   
                     <div className="content-wrapper">
-                        <h2 className="display-4">{unitrestaurant.name}</h2>
                         <p className="lead">Location: {unitrestaurant.location || "Unknown"}</p>
                         {initialPosition && (
                             <SingleMapComponent
