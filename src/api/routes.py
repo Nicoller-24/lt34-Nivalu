@@ -315,13 +315,13 @@ def add_reservation():
     if not body:
         return jsonify({"msg": "No se proporcionó información"}), 400
 
-    required_fields = [ 'time','date', 'number_of_people', 'occasion', 'client_id', 'restaurant_id' ]
+    required_fields = [ 'time','date', 'number_of_people', 'ocasiones_id', 'client_id', 'restaurant_id' ]
     missing_fields = [field for field in required_fields if field not in body]
     if missing_fields:
         return jsonify({"msg": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
 
     nueva_reservation = Reservations(
-        occasion =body['occasion'],
+        ocasiones_id =body['ocasiones_id'],
         time=body['time'],
         date=body['date'],
         number_of_people=body['number_of_people'],

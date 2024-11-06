@@ -343,6 +343,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						...newReservationData,
+					date: newReservationData.date ? newReservationData.date.toISOString().split('T')[0] : null
+					
 						
 						
 					  })

@@ -22,10 +22,10 @@ export const ListOfRestaurants = () => {
 					<div key={index} className="col-md-4">
 						<div className="card" style={{ width: '18rem' }}>
 							<img
-								src={restaurant.image_url || "fallback_image_url"}
+								src={restaurant.image_url || "https://phohoangminh.com/img/placeholders/burger_placeholder.png?v=1"}
 								alt={restaurant.name}
 								className="card-img-top"
-								style={{ width: '300px', height: '300px' }}
+								style={{ width: '300px', height: '300px', objectFit: 'cover' }}
 							/>
 							<div className="card-body">
 								<h5 className="card-title">{restaurant.name}</h5>

@@ -8,8 +8,9 @@ export const ListReservationsUser = () => {
 
     const getReservationsPerUser = () => {
         const token = actions.loginClient(); 
+        const clientId = store.sessionUserId;
 
-        fetch(process.env.BACKEND_URL + "/api/reservations", {
+        fetch(`${process.env.BACKEND_URL}/api/reservations/${clientId}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
