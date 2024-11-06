@@ -173,7 +173,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeData());
 			},
 
-			addNewRestaurant:(email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
+			addNewRestaurant: (email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
 				fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
@@ -192,13 +192,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 				})
 				.then((response) => {
 					console.log(response.status)
-					if (response.status == 200) {
-						setStore({ restaurant_auth: true })
+					if (response.status === 201) { 
+						setStore({ restaurant_auth: true });
 					}
-					return response.json()
+					return response.json();
 				})
-			},
+				.then((data) => {
+					if (data.access_token) {
+						localStorage.setItem("token", data.access_token);
+						console.log("Token de acceso:", data.access_token);
+						getActions().loadSomeData()
 
+					}
+				})
+				.catch((error) => console.error("Error al crear el restaurante:", error));
+			},
 			traer_restaurante: (id) => {
 				return fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())
@@ -234,6 +242,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logoutrestaurant: () => {
 				console.log("logout")
 				localStorage.removeItem("token");
+				console.log(localStorage)
 				setStore({ auth: false })
 			},
 
