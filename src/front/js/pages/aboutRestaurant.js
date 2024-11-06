@@ -83,7 +83,7 @@ export const AboutRestaurant = () => {
                         style={{ width: '400px', height: '400px' }}
                         onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = 'https://previews.123rf.com/images/dmitrymoi/dmitrymoi1702/dmitrymoi170200016/71707598-restaurante-o-cafeter%C3%ADa-edificio-exterior-vector-ilustraci%C3%B3n-de-dibujos-animados.jpg';
+                            e.target.src = 'https://phohoangminh.com/img/placeholders/burger_placeholder.png?v=1';
                         }}
                     />
                     <h1> Information about us! </h1>
