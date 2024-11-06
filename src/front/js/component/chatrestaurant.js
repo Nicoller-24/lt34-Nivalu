@@ -4,63 +4,79 @@ import { useParams } from "react-router-dom";
 import "../../styles/chat.css";
 
 const Chatrestaurant = () => {
+  const { store, actions } = useContext(Context);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessages] = useState("");
   const [chats, setChats] = useState([]);
-  const [selectedComensal, setSelectedComensal] = useState(""); // Estado para almacenar el nombre del comensal
+  const [selectedComensal, setSelectedComensal] = useState(""); 
   const params = useParams();
+  const [chatId, setChatId] = useState(null);
+  const [comensalId, setComensalId] = useState(null);
+
+  function removeChat (idToDelete) {
+    fetch(process.env.BACKEND_URL + "/api/restaurant/" + idToDelete, {
+      method: "DELETE",
+      redirect: "follow",
+    })
+      .then((response) => response.text())
+      .then(() => getActions().loadSomeData());
+  }
   
-  function get_mesages(id_restaurant, id_client, id_chat, comensal_name) {
+  
+  function getMessages(id_restaurant, id_client, id_chat, comensal_name) {
     fetch(`${process.env.BACKEND_URL}/api/messages/${id_restaurant}/${id_client}/${id_chat}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        if (Array.isArray(data)) {
-          setMessages(data);
-        } else {
-          console.error("La respuesta no es un array:", data);
-          setMessages([]); 
-        }
-        setSelectedComensal(comensal_name); 
+        setMessages(Array.isArray(data) ? data : []);
+        setSelectedComensal(comensal_name);
+        console.log("estado autenticado", store.restaurant_auth)
       })
       .catch((error) => console.error("Error al cargar los mensajes:", error));
   }
-  function get_chats() {
+
+  
+  function getChats() {
     fetch(`${process.env.BACKEND_URL}/api/chat/restaurant/${params.id}`)
       .then((response) => response.json())
-      .then((data) => {
-        setChats(data);
-      })
+      .then((data) => setChats(data))
       .catch((error) => console.error("Error al cargar los chats:", error));
   }
 
+
   function sendMessage(id_restaurant, id_comensal, id_chat, message) {
     const currentDate = new Date();
-    const message_date = currentDate.toISOString().split('T')[0]; 
-    const message_time = currentDate.toTimeString().split(' ')[0]; 
-  
+    const message_date = currentDate.toISOString().split("T")[0];
+    const message_time = currentDate.toTimeString().split(" ")[0];
+    
+    const payload = {
+      id_restaurant: parseInt(id_restaurant, 10),
+      id_comensal: parseInt(id_comensal, 10),
+      id_chat: parseInt(id_chat, 10),
+      message,
+      origin: "Restaurant",
+      message_date,
+      message_time,
+    };
+
+    console.log("Payload:", payload);
+
     fetch(`${process.env.BACKEND_URL}/api/message/post`, {
-      method: 'POST',
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_restaurant,
-        id_comensal,
-        id_chat,
-        message,
-        origin: "Restaurant",
-        message_date,
-        message_time
-      }),
+      body: JSON.stringify(payload),
     })
+    .then((response) => response.json())
     .then(() => {
-      get_mesages(id_restaurant, id_comensal, id_chat, selectedComensal); 
+      getMessages(id_restaurant, id_comensal, id_chat, selectedComensal);
+      setInputMessages("");
     })
     .catch(error => console.error("Error al enviar el mensaje:", error));
   }
   
   useEffect(() => {
-    get_chats();
+    getChats();
   }, []);
+
   
   return (
     <div className="container">
@@ -80,8 +96,10 @@ const Chatrestaurant = () => {
                 {chats.map((item, index) => (
                   <li 
                     onClick={() => {
-                      console.log(item.id_restaurant, item.id_comensal, item.id, `${item.comensal_details.name} ${item.comensal_details.last_name}`);
-                      get_mesages(item.id_restaurant, item.id_comensal, item.id, `${item.comensal_details.name} ${item.comensal_details.last_name}`)}}
+                      getMessages(item.id_restaurant, item.id_comensal, item.id, `${item.comensal_details.name} ${item.comensal_details.last_name}`);
+                      setComensalId(item.id_comensal);
+                      setChatId(item.id);
+                    }}
                     key={index} 
                     className="clearfix"
                   >
@@ -116,10 +134,8 @@ const Chatrestaurant = () => {
               </div>
               <div className="chat-history">
                 <ul className="m-b-0">
-                  {messages.map((item, index) => {
-                    if (item.origin === "Restaurant") {
-                      return(
-
+                  {messages.map((item, index) => (
+                    item.origin === "Restaurant" ? (
                       <li key={index} className="clearfix">
                         <div className="message-data text-right">
                           <span className="message-data-time">{item.message_time}</span>
@@ -128,19 +144,15 @@ const Chatrestaurant = () => {
                           {item.message}
                         </div>
                       </li>
-                      )
-                    } else {
-                        return(
-                          <li key={index} className="clearfix">
-                          <div className="message-data">
-                            <span className="message-data-time">{item.message_time}</span>
-                          </div>
-                          <div className="message my-message">{item.message}</div>
-                        </li>
-                        )
-                    }
-
-                  })}
+                    ) : (
+                      <li key={index} className="clearfix">
+                        <div className="message-data">
+                          <span className="message-data-time">{item.message_time}</span>
+                        </div>
+                        <div className="message my-message">{item.message}</div>
+                      </li>
+                    )
+                  ))}
                 </ul>
               </div>
               <div className="chat-message clearfix">
@@ -148,8 +160,7 @@ const Chatrestaurant = () => {
                   <div className="input-group-prepend">
                     <span 
                       onClick={() => {
-                        sendMessage(1, 2, 5, inputMessage);
-                        setInputMessages("");
+                        sendMessage(params.id, comensalId, chatId, inputMessage);
                       }} 
                       className="input-group-text"
                     >
@@ -166,7 +177,7 @@ const Chatrestaurant = () => {
                     onChange={(e) => setInputMessages(e.target.value)}
                   />
                 </div>
-                <button>Obtener nuevos mensajes</button>
+                <button onClick={() => getMessages(params.id, comensalId, chatId, selectedComensal)}>Obtener nuevos mensajes</button>
               </div>
             </div>
           </div>

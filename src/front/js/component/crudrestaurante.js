@@ -14,7 +14,7 @@ export const Crudrestaurante = () => {
         const token = localStorage.getItem("token");
         if (token) {
             const decoded = jwtDecode(token);
-            setAuthRestaurantId(decoded.sub); // `sub` o `identity` según la configuración del backend
+            setAuthRestaurantId(decoded.sub); 
         }
         actions.loadSomeData();
     }, []);

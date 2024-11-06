@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, useParams } from "react-router-dom";
 import SingleMapComponent from "./singlemapcompnent";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Singlerestaurant = () => {
     const { store, actions } = useContext(Context);
@@ -56,6 +58,7 @@ export const Singlerestaurant = () => {
                     onLocationSelect={handleAddressSelect}
                 />
             )}
+            
             <Link to={"/restaurant/chat/" + params.id}>
                 <button type="button" class="btn btn-primary">ver chats</button>
             </Link>
