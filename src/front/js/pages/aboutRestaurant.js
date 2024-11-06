@@ -1,14 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import SingleMapComponent from "../component/singlemapcompnent";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-
 export const AboutRestaurant = () => {
     const { store, actions } = useContext(Context);
-    const { uid } = useParams();
     const [unitrestaurant, setUnitRestaurant] = useState(null);
     const [reservationInfo, setReservationInfo] = useState({
         number_of_people: '',
@@ -20,70 +17,52 @@ export const AboutRestaurant = () => {
     const [ocasiones, setOcasiones] = useState([]);
 
     useEffect(() => {
+        const restaurantId = getQueryParam('id_restaurant');
+        if (restaurantId) {
+            const foundRestaurant = store.restaurants.find(restaurant => restaurant.id === parseInt(restaurantId));
+            if (foundRestaurant) {
+                setUnitRestaurant(foundRestaurant);
+                setInitialPosition({
+                    lat: parseFloat(foundRestaurant.latitude),
+                    lng: parseFloat(foundRestaurant.longitude),
+                });
+            }
+        }
+    }, [store.restaurants]);
+
+    useEffect(() => {
         const fetchOcasiones = async () => {
             const response = await fetch(`${process.env.BACKEND_URL}/api/ocasiones`);
             const data = await response.json();
-            setOcasiones(data); // Asegúrate de que la respuesta sea un array
+            setOcasiones(data);
         };
         fetchOcasiones();
     }, []);
 
-
-
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
-      }
-      
-   
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-         // Agregar client_id y restaurant_id a reservationInfo
-    const reservationData = {
-        ...reservationInfo,
-        client_id: store.sessionUserId, // Usar el ID almacenado
-        ocasiones_id: reservationInfo.occasion, // Asegúrate de que sea el correcto
-        restaurant_id: getQueryParam('id_restaurant')// Suponiendo que uid es el ID del restaurante
-        
-
-    };
-
-    console.log(reservationData); // Agrega esta línea para verificar la información
-    console.log(store);
-
-
-
+        const reservationData = {
+            ...reservationInfo,
+            client_id: store.sessionUserId,
+            ocasiones_id: reservationInfo.occasion,
+            restaurant_id: parseInt(getQueryParam('id_restaurant')),
+        };
 
         actions.addReservation(reservationData);
         setReservationInfo({
             number_of_people: '',
             date: '',
             time: '',
-            ocasion: '',
-            client_id:'',
-            restaurant_id:''
+            occasion: '',
         });
     };
 
-
-    useEffect(() => {
-        const foundRestaurant = store.restaurants.find(restaurant => restaurant.uid === uid);
-        setUnitRestaurant(foundRestaurant);
-        console.log("found",foundRestaurant)
-        console.log(unitrestaurant)
-       setInitialPosition({
-            lat: parseFloat(foundRestaurant.latitude),
-            lng: parseFloat(foundRestaurant.longitude),
-        })
-    }, [uid, store.restaurants]);
-
     if (!unitrestaurant) return <div>Loading...</div>;
-
-    const handleAddressSelect = (location) => {
-        setSelectedLocation(location);
-        console.log("Coordenadas seleccionadas:", location);
-    };
 
     return (
         <div className="container text-align">
@@ -92,7 +71,6 @@ export const AboutRestaurant = () => {
                     <img
                         src={unitrestaurant.image_url || "fallback_image_url"}
                         className="card-img-top"
-                        id="restaurant"
                         alt={unitrestaurant.name}
                         style={{ width: '400px', height: '400px' }}
                         onError={(e) => {
@@ -100,121 +78,76 @@ export const AboutRestaurant = () => {
                             e.target.src = 'https://previews.123rf.com/images/dmitrymoi/dmitrymoi1702/dmitrymoi170200016/71707598-restaurante-o-cafeter%C3%ADa-edificio-exterior-vector-ilustraci%C3%B3n-de-dibujos-animados.jpg';
                         }}
                     />
-
                     <h1> Information about us! </h1>
-
                     <div className="content-wrapper">
                         <h2 className="display-4">{unitrestaurant.name}</h2>
-                        <p className="lead">
-                            Location: {unitrestaurant.location || "Unknown"}
-                        </p>
+                        <p className="lead">Location: {unitrestaurant.location || "Unknown"}</p>
                         {initialPosition && (
                             <SingleMapComponent
                                 initialPosition={initialPosition}
-                                onLocationSelect={handleAddressSelect}
                             />
                         )}
-                        <p className="lead">
-                            Phone Number: {unitrestaurant.phone_number || "Unknown"}
-                        </p>
-                        <p className="lead">
-                            Email: {unitrestaurant.email || "Unknown"}
-                        </p>
-                        <p className="lead">
-                            Guest Capacity: {unitrestaurant.guests_capacity || "Unknown"}
-                        </p>
-
-
-                        <h2>Details of the restaurant? Menu? </h2>
+                        <p className="lead">Phone Number: {unitrestaurant.phone_number || "Unknown"}</p>
+                        <p className="lead">Email: {unitrestaurant.email || "Unknown"}</p>
+                        <p className="lead">Guest Capacity: {unitrestaurant.guests_capacity || "Unknown"}</p>
+                        <h2>Details of the restaurant? Menu?</h2>
                     </div>
                 </div>
-
                 <div className="col-4">
-
                     <div className="p-3 m-auto w-75">
-                        <div>
-                            <h1 className="mx-auto">Book your table</h1>
-
-                        </div>
-
-                        <div>
-                            <form onSubmit={handleSubmit}>
-                                <div className="form-group p-1">
-                                    <label htmlFor="Numero de personas">Number of guest</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="How many people will come?"
-                                        value={reservationInfo.number_of_people}
-                                        onChange={(e) => setReservationInfo({ ...reservationInfo, number_of_people: e.target.value })}
-                                        required
-                                        className="form-control"
-                                    />
-                                </div>
-
-                                <div className="form-group p-1">
-                                    <label htmlFor="Time">Time</label>
-                                    <input
-                                        type="text"
-                                        name="last_name"
-                                        placeholder="What time are you coming?"
-                                        value={reservationInfo.time}
-                                        onChange={(e) => setReservationInfo({ ...reservationInfo, time: e.target.value })}
-                                        required
-                                        className="form-control"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="Date">Date</label>
-                                    <DatePicker
-                                       
-                                       selected={reservationInfo.date}
-                                       onChange={(date) => setReservationInfo({ ...reservationInfo, date })}
-                                       dateFormat="yyyy-MM-dd"
-                                       placeholderText="Select a reservation date"
-                                       className="form-control"
-                                    />
-                                </div>
-
-                                <div className="form-group p-1">
-                                    <label htmlFor="occasion">Occasion</label>
-                                    <select
-                                        name="occasion"
-                                        value={reservationInfo.occasion}
-                                        onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
-                                        required
-                                        className="form-control"
-                                    >
-                                        <option value="">Select an occasion</option>
-                                        {ocasiones.map(ocas => (
-                                            <option key={ocas.id} value={ocas.id}>{ocas.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-
-                                <button type="submit" className="btn btn-success">Add reservation</button>
-
-                            </form>
-
-
-
-
-
-
-
-
-                        </div>
-
-
+                        <div><h1 className="mx-auto">Book your table</h1></div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group p-1">
+                                <label>Number of guests</label>
+                                <input
+                                    type="text"
+                                    placeholder="How many people?"
+                                    value={reservationInfo.number_of_people}
+                                    onChange={(e) => setReservationInfo({ ...reservationInfo, number_of_people: e.target.value })}
+                                    required
+                                    className="form-control"
+                                />
+                            </div>
+                            <div className="form-group p-1">
+                                <label>Time</label>
+                                <input
+                                    type="text"
+                                    placeholder="What time?"
+                                    value={reservationInfo.time}
+                                    onChange={(e) => setReservationInfo({ ...reservationInfo, time: e.target.value })}
+                                    required
+                                    className="form-control"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Date</label>
+                                <DatePicker
+                                    selected={reservationInfo.date}
+                                    onChange={(date) => setReservationInfo({ ...reservationInfo, date })}
+                                    dateFormat="yyyy-MM-dd"
+                                    placeholderText="Select a date"
+                                    className="form-control"
+                                />
+                            </div>
+                            <div className="form-group p-1">
+                                <label>Occasion</label>
+                                <select
+                                    value={reservationInfo.occasion}
+                                    onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
+                                    required
+                                    className="form-control"
+                                >
+                                    <option value="">Select an occasion</option>
+                                    {ocasiones.map(ocas => (
+                                        <option key={ocas.id} value={ocas.id}>{ocas.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button type="submit" className="btn btn-success">Add reservation</button>
+                        </form>
                     </div>
                 </div>
-
-
             </div>
         </div>
-
-
     );
 };
