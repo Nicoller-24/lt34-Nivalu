@@ -103,12 +103,7 @@ export const Crearrestaurante = () => {
                             {selectedLocation && (
                                 <MapComponent initialPosition={selectedLocation} />
                             )}
-                            {selectedLocation && (
-                                <div>
-                                    <p>Latitud: {selectedLocation.lat}</p>
-                                    <p>Longitud: {selectedLocation.lng}</p>
-                                </div>
-                            )}
+                            
                     </div>
                     <div className="form-group">
                         <label htmlFor="guests_capacity">Capacidad de invitados</label>

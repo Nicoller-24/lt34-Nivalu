@@ -9,7 +9,7 @@ export const Crudrestaurante = () => {
     const navigate = useNavigate();
     const [authRestaurantId, setAuthRestaurantId] = useState(null);
 
-    // Decodifica el token al cargar el componente para obtener el `restaurant_id`
+    
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {

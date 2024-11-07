@@ -219,7 +219,8 @@ def login():
     if email != user.email or password != user.password:
         return jsonify({"msg": "Bad email or password"}), 401
 
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=user.id)
+
     return jsonify(access_token=access_token, user_id= user.id)
 
 @api.route('/admins', methods=['GET'])
@@ -569,11 +570,29 @@ def get_chats_restaurant(id_restaurant):
 
 @api.route('/chat/client/<int:id_comensal>', methods=['GET'])
 def get_chats_client(id_comensal):
-    
-    chat = Chat.query.filter_by(id_comensal=id_comensal)
-    chats = list(map(lambda item: item.serialize(), chat)) 
+    chats = Chat.query.filter_by(id_comensal=id_comensal).all()
 
-    return jsonify(chats), 200
+    response_data = []
+    for chat in chats:
+        chat_data = chat.serialize()
+
+        restaurant = Restaurant.query.get(chat.id_restaurant)
+        
+        if restaurant:
+            chat_data["restaurant_details"] = {
+                "name": restaurant.name,
+                "location": restaurant.location,
+                "email": restaurant.email,
+                "phone_number": restaurant.phone_number,
+                "guests_capacity": restaurant.guests_capacity
+            }
+        else:
+            chat_data["restaurant_details"] = None 
+
+        response_data.append(chat_data)
+
+    return jsonify(response_data), 200
+
 
 @api.route('/messages/<int:restaurant_id>/<int:client_id>/<int:chat_id>', methods=['GET'])
 def get_messages(restaurant_id, client_id, chat_id):

@@ -83,7 +83,7 @@ const Layout = () => {
                         <Route element={<Mapautocompletate />} path="/mapa" />
                         <Route element={<ListReservationsUser />} path="/listReservationsUser" />
                         <Route element={<App/>} path="/openai" />
-                        <Route element={<Chat/>} path="/client/chat" />
+                        <Route element={<Chat/>} path="/client/chat/:id_restaurant/:id_client" />
                         <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
 
                         <Route element={<Crearcategoria />} path="/create/categories" />
