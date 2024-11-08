@@ -8,7 +8,7 @@ const RestaurantCategorySelector = ({ restaurantId, onCategorySelect }) => {
 
     useEffect(() => {
         // Fetch categories from API
-        fetch("/api/categories")  // Ensure this matches your API endpoint prefix
+        fetch(`${process.env.BACKEND_URL}/api/categories`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch categories");
@@ -38,19 +38,23 @@ const RestaurantCategorySelector = ({ restaurantId, onCategorySelect }) => {
     };
 
     const saveCategories = () => {
-        fetch(`/api/restaurant/${restaurantId}/categories`, {
+        fetch(`${process.env.BACKEND_URL}/api/restaurant/${restaurantId}/categories`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ category_ids: selectedCategories }),
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to update categories");
+                }
+                return response.json();
+            })
             .then((data) => {
                 console.log("Categories updated:", data);
                 onCategorySelect(selectedCategories); // Update parent component with selected categories
             })
             .catch((error) => console.error("Error updating categories:", error));
     };
-
     if (loading) {
         return <p>Loading categories...</p>;
     }

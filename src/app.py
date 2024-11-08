@@ -25,7 +25,7 @@ static_file_dir = os.path.join(os.path.dirname(
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:

@@ -7,9 +7,9 @@ db = SQLAlchemy()
 
 class Category(db.Model):
     __tablename__ = 'restaurant_category'
-    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False, unique=True)
+    restaurants = db.relationship('RestaurantCategory', back_populates='category')
     
     def __repr__(self):
         return f'<Category {self.name}>'
@@ -88,6 +88,7 @@ class Restaurant(db.Model):
     latitude = db.Column(db.Numeric, nullable=True) 
     longitude = db.Column(db.Numeric, nullable=True) 
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    categories = db.relationship('RestaurantCategory', back_populates='restaurant')
 
     def __repr__(self):
         return f'<Restaurant {self.email}>'
@@ -105,7 +106,7 @@ class Restaurant(db.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
             "is_active": self.is_active,
-            "categories": categories_list
+            "categories": [category.category.serialize() for category in self.categories]
             # do not serialize the password, it's a security breach
         }
 
@@ -167,8 +168,8 @@ class RestaurantCategory(db.Model):
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('restaurant_category.id'), primary_key=True)
 
-    restaurant = db.relationship('Restaurant', backref=db.backref('categories', lazy='dynamic'))
-    category = db.relationship('Category', backref=db.backref('restaurants', lazy='dynamic'))
+    restaurant = db.relationship('Restaurant', back_populates='categories')
+    category = db.relationship('Category', back_populates='restaurants')
 
 # Association Table for Client and Ocasiones
 class ClientOcasiones(db.Model):

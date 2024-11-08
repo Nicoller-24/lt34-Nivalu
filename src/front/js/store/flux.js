@@ -553,34 +553,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
-			saveRestaurant: async (restaurantData) => {
+			saveRestaurant: async (restaurantData, restaurantId) => {
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants`, {
-						method: 'PUT', // Use 'PUT' for updating existing restaurants
+					const response = await fetch(`${process.env.BACKEND_URL}/api/restaurant/${restaurantId}`, {
+						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
 						},
 						body: JSON.stringify(restaurantData),
 					});
-	
+			
 					if (!response.ok) {
 						throw new Error('Failed to save restaurant');
 					}
-	
-					const newRestaurant = await response.json();
-	
+			
+					const updatedRestaurant = await response.json();
+			
 					// Update the restaurants list in the store
 					setStore(prevState => ({
 						...prevState,
-						restaurants: [...prevState.restaurants, newRestaurant],
+						restaurants: prevState.restaurants.map(r => 
+							r.id === updatedRestaurant.id ? updatedRestaurant : r
+						),
 					}));
 				} catch (error) {
 					console.error("Error saving restaurant:", error);
 				}
 			},
 		}
-
-		
 	};
 
 };

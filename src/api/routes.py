@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 
-from api.models import db, User, Client, Reservations, Restaurant, Admin1, Ocasiones1, Category
+from api.models import db, User, Client, Reservations, Restaurant, Admin1, Ocasiones1, Category, RestaurantCategory
 from flask import Flask, request, jsonify, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -399,14 +399,15 @@ def set_restaurant_categories(restaurant_id):
     if not restaurant:
         return jsonify({"msg": "Restaurant not found"}), 404
     
-    # Clear existing categories
-    restaurant.categories = []
+    # Clear existing categories in a more reliable way
+    RestaurantCategory.query.filter_by(restaurant_id=restaurant.id).delete()
 
     # Add new categories from provided category IDs
     for category_id in category_ids:
         category = Category.query.get(category_id)
         if category:
-            restaurant.categories.append(RestaurantCategory(category=category))
+            new_association = RestaurantCategory(restaurant_id=restaurant.id, category_id=category.id)
+            db.session.add(new_association)
     
     db.session.commit()
     return jsonify({"msg": "Categories updated successfully"}), 200
