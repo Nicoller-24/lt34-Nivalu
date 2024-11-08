@@ -390,20 +390,26 @@ def get_categories():
 
     return jsonify(results), 200
 
-@api.route("/restaurant/<int:restaurant_id>/category", methods=["POST"])
-def set_restaurant_category(restaurant_id):
-    category_id = request.json.get("category_id")
+@api.route("/restaurant/<int:restaurant_id>/categories", methods=["POST"])
+def set_restaurant_categories(restaurant_id):
+    category_ids = request.json.get("category_ids", [])
+    
+    # Find the restaurant by ID
     restaurant = Restaurant.query.get(restaurant_id)
     if not restaurant:
         return jsonify({"msg": "Restaurant not found"}), 404
     
-    category = Category.query.get(category_id)
-    if not category:
-        return jsonify({"msg": "Category not found"}), 404
+    # Clear existing categories
+    restaurant.categories = []
+
+    # Add new categories from provided category IDs
+    for category_id in category_ids:
+        category = Category.query.get(category_id)
+        if category:
+            restaurant.categories.append(RestaurantCategory(category=category))
     
-    restaurant.category_id = category.id  # Assuming a category_id field in the Restaurant model
     db.session.commit()
-    return jsonify({"msg": "Category updated successfully"}), 200
+    return jsonify({"msg": "Categories updated successfully"}), 200
 
 @api.route('/categories/<int:category_id>', methods=['GET'])
 def get_category(category_id):
