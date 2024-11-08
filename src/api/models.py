@@ -1,9 +1,7 @@
+from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 
-
 db = SQLAlchemy()
-
-
 
 class Category(db.Model):
     __tablename__ = 'restaurant_category'
@@ -20,7 +18,7 @@ class Category(db.Model):
             "name": self.name,
         }
     
-class Ocasiones1 (db.Model):
+class Ocasiones1(db.Model):
     __tablename__ = 'ocasiones'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -48,9 +46,8 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
         }
-    
+
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
@@ -61,6 +58,9 @@ class Client(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
+    chats = db.relationship('Chat', backref='comensal', lazy=True)
+    messages = db.relationship('Message', backref='client', lazy=True)
+
     def __repr__(self):
         return f'<Client {self.email}>'
 
@@ -70,12 +70,11 @@ class Client(db.Model):
             "email": self.email,
             "name": self.name,
             "last_name": self.last_name,
-            "phone_number" : self.phone_number,
+            "phone_number": self.phone_number,
             "identification_number": self.identification_number,
             "is_active": self.is_active
-          # do not serialize the password, its a security breach
-        }    
-    
+        }
+
 class Restaurant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
@@ -85,10 +84,13 @@ class Restaurant(db.Model):
     guests_capacity = db.Column(db.String(80), unique=False, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     image_url = db.Column(db.String(120), unique=False, nullable=False)
-    latitude = db.Column(db.Numeric, nullable=True) 
-    longitude = db.Column(db.Numeric, nullable=True) 
+    latitude = db.Column(db.Numeric, nullable=True)
+    longitude = db.Column(db.Numeric, nullable=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     categories = db.relationship('RestaurantCategory', back_populates='restaurant')
+
+    chats = db.relationship('Chat', backref='restaurant', lazy=True)
+    messages = db.relationship('Message', backref='restaurant_messages', lazy=True)
 
     def __repr__(self):
         return f'<Restaurant {self.email}>'
@@ -131,43 +133,72 @@ class Admin1(db.Model):
             "name": self.name,
             "email": self.email,
             "is_active": self.is_active
-            # do not serialize the password, it's a  security breach
         }
 
 class Reservations(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # occasion = db.Column(db.String(120), nullable=True)
     time = db.Column(db.String(120), nullable=False)
     date = db.Column(db.String(120), nullable=False)
     number_of_people = db.Column(db.String(120), nullable=False)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=True)    
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=True)  
+    ocasiones_id= db.Column(db.Integer, db.ForeignKey('ocasiones.id'), nullable=True)   
     is_active = db.Column(db.Boolean(), nullable=True)
 
     client = db.relationship('Client', backref=db.backref('reservations', lazy=True))
     restaurant = db.relationship('Restaurant', backref=db.backref('reservations', lazy=True))
+    Ocasiones = db.relationship('Ocasiones1', backref=db.backref('reservations', lazy=True))
+    
+
 
     def __repr__(self):
         return f'<Reservations {self.time}, {self.date}>'
+
     def serialize(self):
         return {
-            "id":self.id,
+            "id": self.id,
             "client_id": self.client_id,
             "email_client": self.client.email if self.client else None,
             "restaurant_id": self.restaurant_id,
             "number_of_people": self.number_of_people,
             "time": self.time,
             "date":self.date,
+            "ocasiones_id": self.ocasiones_id,
             # "occasion":self.occasion,
         }
 
-# Association Table for Restaurant and Category
+class Chat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
+    id_comensal = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    messages = db.relationship('Message', backref='chat', lazy=True)
+
+    def __repr__(self):
+        return f'<Chat {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "id_comensal": self.id_comensal,
+            "id_restaurant": self.id_restaurant
+        }
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
+    id_comensal = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    id_chat = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
+    message = db.Column(db.String(120), nullable=False)
+    origin = db.Column(db.String(120), nullable=False)
+    message_date = db.Column(db.Date, nullable=False)
+    message_time = db.Column(db.Time, nullable=False)
+
+    id_chat = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
+
 class RestaurantCategory(db.Model):
     __tablename__ = 'restaurant_category_association'
-    
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('restaurant_category.id'), primary_key=True)
-
+    category_id = db.Column(db.Integer, db.ForeignKey('restaurant_category.id'), primary_key=True)  
     restaurant = db.relationship('Restaurant', back_populates='categories')
     category = db.relationship('Category', back_populates='restaurants')
 
@@ -215,3 +246,17 @@ def save_restaurant(body):
     db.session.commit()
     return restaurant, "Restaurante actualizado con éxito"
 
+    def __repr__(self):
+        return f'<Message {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "id_comensal": self.id_comensal,
+            "id_restaurant": self.id_restaurant,
+            "id_chat": self.id_chat,
+            "message": self.message,
+            "origin": self.origin,
+            "message_date": self.message_date.isoformat(),
+            "message_time": self.message_time.isoformat()
+        }

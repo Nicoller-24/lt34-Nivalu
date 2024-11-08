@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import RestaurantCategorySelector from "./setrestaurantcategory"; // Import as default
+import { jwtDecode } from "jwt-decode";
+
 
 export const Crudrestaurante = () => {
     const { store, actions } = useContext(Context);
@@ -9,6 +11,17 @@ export const Crudrestaurante = () => {
     
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
+    const [authRestaurantId, setAuthRestaurantId] = useState(null);
+
+    // Decodifica el token al cargar el componente para obtener el `restaurant_id`
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const decoded = jwtDecode(token);
+            setAuthRestaurantId(decoded.sub); 
+        }
+        actions.loadSomeData();
+    }, []);
 
     function salir() {
         actions.logoutrestaurant();

@@ -14,6 +14,8 @@ import { ListOfRestaurants } from "./pages/listOfRestaurants.js";
 import { LoginClient } from "./pages/loginClient.js";
 import { AboutRestaurant } from "./pages/aboutRestaurant.js";
 import { ListReservationsUser } from "./pages/listReservationsUser.js";
+import { SuccessPage } from "./pages/successPage.js";
+
 
 import { Crudrestaurante } from "./component/crudrestaurante";
 import { Singlerestaurant } from "./component/singlerestaurant";
@@ -23,6 +25,8 @@ import { Edit } from "./component/edit";
 import { Signuprestaurant } from "./component/signuprestaurant.js";
 import { Mapautocompletate } from "./component/mapautocompletate.js";
 import App from "./component/App.js";
+import Chat from "./component/chat.js";
+import Chatrestaurant from "./component/chatrestaurant.js";
 
 import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
@@ -80,6 +84,9 @@ const Layout = () => {
                         <Route element={<Mapautocompletate />} path="/mapa" />
                         <Route element={<ListReservationsUser />} path="/listReservationsUser" />
                         <Route element={<App/>} path="/openai" />
+                        <Route element={<Chat/>} path="/client/chat" />
+                        <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
+
                         <Route element={<Crearcategoria />} path="/create/categories" />
                         <Route element={<Crudcategoria />} path="/categories" />
                         <Route element={<EditCategory />} path="/edit/categories/:id" />
@@ -91,6 +98,8 @@ const Layout = () => {
                         <Route element={<Adminlogin />} path="/adminlogin/" />
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
+                        <Route element={<SuccessPage />} path="/reservaExitosa"/>
+
 
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

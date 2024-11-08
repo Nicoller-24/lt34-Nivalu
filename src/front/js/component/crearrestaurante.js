@@ -151,7 +151,9 @@ export const Crearrestaurante = () => {
                     </div>
 
                         <button type="button" className="btn btn-primary" style={{"marginRight": "10px"}} onClick={() => {actions.addNewRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone, inputPassword, image, selectedLocation.lat, selectedLocation.lng ); 
-                            setInputGuestCapacity("");
+                           
+                           
+                           setInputGuestCapacity("");
                             setInputname(""); 
                             setInputPhone("");
                             setInputEmail("") ; 
