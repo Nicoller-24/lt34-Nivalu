@@ -250,24 +250,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/login/admins", {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"email": inputEmail,
-						"password": inputPassword
-					}),
+					body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
 					redirect: "follow"
 				})
-					.then((response) => {
-						console.log(response.status)
-						if (response.status == 200) {
-							setStore({ admin_auth: true })
-						}
-						return response.json()
-					})
-					.then((data) => {
+				.then((response) => {
+					if (response.status === 200) {
+						setStore({ admin_auth: true });
+					}
+					return response.json();
+				})
+				.then((data) => {
+					if (data.access_token) { // Ensure token is present
 						localStorage.setItem("token", data.access_token);
-						console.log(data.access_token)
-						console.log(data)
-					})
+						console.log("Token stored:", data.access_token);
+					} else {
+						console.error("Login failed, no token received");
+					}
+				})
+				.catch((error) => {
+					console.error("Error in admin login:", error);
+				});
 			},
 
 			adminlogout: () => {
@@ -388,20 +390,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch((error) => console.error("Error al cargar categorias:", error));
 			},
 
-			addNewCategory:(name,) => {
+			addNewCategory: (name) => {
+				const token = localStorage.getItem('token'); // Match with 'setItem' key
+
+   				 if (!token) { 
+       			 console.error('JWT token is missing. User might not be authenticated.');
+        		return; }
+			
+				name = name.trim(); // Trim any whitespace from the category name
+			
+				if (!name) {
+					console.error('Category name is required'); // Log error if the name is empty
+					return; // Exit if the name is invalid
+				}
+			
+				console.log("Sending category name:", name); // Log the name being sent
+				console.log("Using JWT token:", token); // Log the token being used
+			
 				fetch(process.env.BACKEND_URL + '/api/create/categories', {
 					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"name": name,
-
-					}),
-					redirect: "follow",
+					headers: {
+						"Content-Type": "application/json", // Specify the content type
+						"Authorization": `Bearer ${token}` // Include the JWT token for authentication
+					},
+					body: JSON.stringify({ "name": name }), // Send the category name in the body
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataCategory());
+				.then((response) => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || 'Failed to create category'); // Throw an error with the message from the server
+						});
+					}
+					return response.json(); // Parse the response as JSON
+				})
+				.then((data) => {
+					console.log('Category created:', data); // Log success response
+					getActions().loadSomeDataCategory(); // Load updated categories
+				})
+				.catch((error) => {
+					console.error('Error creating category:', error); // Log any errors that occur
+				});
 			},
-
+			
 			editCategory: (categoryModif, id) => {
 				const requestOptions = {
 					method: 'PUT',
@@ -433,18 +463,60 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch((error) => console.error("Error al cargar ocasiones:", error));
 			},
 
-			addNewOcasion:(name,) => {
+			// addNewOcasion:(name,) => {
+			// 	fetch(process.env.BACKEND_URL + '/api/create/ocasiones', {
+			// 		method: 'POST',
+			// 		headers: { "Content-Type": "application/json" },
+			// 		body: JSON.stringify({
+			// 			"name": name,
+
+			// 		}),
+			// 		redirect: "follow",
+			// 	})
+			// 		.then((response) => response.text())
+			// 		.then(() => getActions().loadSomeDataOcasion());
+			// },
+
+			addNewOcasion: (name) => {
+				const token = localStorage.getItem('token'); // Match with 'setItem' key
+
+   				 if (!token) { 
+       			 console.error('JWT token is missing. User might not be authenticated.');
+        		return; }
+			
+				name = name.trim(); // Trim any whitespace from the category name
+			
+				if (!name) {
+					console.error('Ocasion name is required'); // Log error if the name is empty
+					return; // Exit if the name is invalid
+				}
+			
+				console.log("Sending ocasion name:", name); // Log the name being sent
+				console.log("Using JWT token:", token); // Log the token being used
+			
 				fetch(process.env.BACKEND_URL + '/api/create/ocasiones', {
 					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"name": name,
-
-					}),
-					redirect: "follow",
+					headers: {
+						"Content-Type": "application/json", // Specify the content type
+						"Authorization": `Bearer ${token}` // Include the JWT token for authentication
+					},
+					body: JSON.stringify({ "name": name }), // Send the category name in the body
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataOcasion());
+				.then((response) => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || 'Failed to create ocasion'); // Throw an error with the message from the server
+						});
+					}
+					return response.json(); // Parse the response as JSON
+				})
+				.then((data) => {
+					console.log('Ocasion created:', data); // Log success response
+					getActions().loadSomeDataOcasion(); // Load updated categories
+				})
+				.catch((error) => {
+					console.error('Error creating ocasion:', error); // Log any errors that occur
+				});
 			},
 
 			editOcasion: (ocasionModif, id) => {
@@ -467,9 +539,59 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataOcasion());
 			},
-		}
 
-		
+			setRestaurantCategory: (restaurantId, categoryId) => {
+				const token = localStorage.getItem("token");
+				fetch(process.env.BACKEND_URL + `/api/restaurant/${restaurantId}/category`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`
+					},
+					body: JSON.stringify({ category_id: categoryId })
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error("Failed to set restaurant category");
+					}
+					return response.json();
+				})
+				.then(data => {
+					console.log("Category set successfully:", data);
+				})
+				.catch(error => {
+					console.error("Error setting category:", error);
+				});
+			},
+
+			saveRestaurant: async (restaurantData, restaurantId) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/restaurant/${restaurantId}`, {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(restaurantData),
+					});
+			
+					if (!response.ok) {
+						throw new Error('Failed to save restaurant');
+					}
+			
+					const updatedRestaurant = await response.json();
+			
+					// Update the restaurants list in the store
+					setStore(prevState => ({
+						...prevState,
+						restaurants: prevState.restaurants.map(r => 
+							r.id === updatedRestaurant.id ? updatedRestaurant : r
+						),
+					}));
+				} catch (error) {
+					console.error("Error saving restaurant:", error);
+				}
+			},
+		}
 	};
 
 };

@@ -5,15 +5,19 @@ import { Link } from "react-router-dom";
 
 export const Crearcategoria = () => {
     const [inputName, setInputname] = useState("");
-
     const { store, actions } = useContext(Context);
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent the default form submission
+        actions.addNewCategory(inputName);
+        setInputname(""); // Clear the input after submission
+    };
 
     return (
         <>
             <div className="container">
                 <h1 style={{ marginTop: "100px" }}>Crea una nueva categoria </h1>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="name">Nombre de la categoria</label>
                         <input

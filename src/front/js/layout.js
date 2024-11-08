@@ -38,6 +38,7 @@ import { Adminhomepage } from "./component/adminhomepage";
 import { Crearcategoria } from "./component/crearcategoria";
 import { Crudcategoria } from "./component/crudcategoria";
 import { EditCategory } from "./component/editcategory";
+import RestaurantCategorySelector from "./component/setrestaurantcategory";
 
 import { Crearocasion } from "./component/crearocasion";
 import { Crudocasion } from "./component/crudocasion";
@@ -89,6 +90,7 @@ const Layout = () => {
                         <Route element={<Crearcategoria />} path="/create/categories" />
                         <Route element={<Crudcategoria />} path="/categories" />
                         <Route element={<EditCategory />} path="/edit/categories/:id" />
+                        <Route path="/restaurant/:restaurant_id/category" element={<RestaurantCategorySelector />} />
                         <Route element={<Crearocasion />} path="/create/ocasiones" />
                         <Route element={<Crudocasion />} path="/ocasiones" />
                         <Route element={<EditOcasion />} path="/edit/ocasiones/:id" />
