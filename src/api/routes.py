@@ -249,13 +249,20 @@ def get_admin(admin_id):
 @api.route("/signup/admins", methods=["POST"])
 def signup_admin():
     body = request.get_json()
+    
     admin = Admin1.query.filter_by(email=body["email"]).first()
-    if admin == None:
-        admin = Admin1(email=body["email"], name=body["name"], user_name=body["user_name"], password=body["password"], is_active=True)
+    if admin is None:
+        admin = Admin1(
+            email=body["email"],
+            name=body["name"],
+            user_name=body["user_name"],
+            image_url=body.get("image_url", ""),  # Store image URL
+            password=body["password"],
+            is_active=True
+        )
         db.session.add(admin)
         db.session.commit()
-        response_body = {"msg": "Usuario admin creado"}
-        return jsonify(response_body), 200
+        return jsonify({"msg": "Usuario admin creado"}), 200
     else:
         return jsonify({"msg": "El usuario admin ya existe"}), 401
     
@@ -276,7 +283,9 @@ def update_admin(admin_id):
     if "name" in body:
         admin.name = body["name"]
     if "user_name" in body:
-        admin.user_name = body["user_name"]  
+        admin.user_name = body["user_name"]
+    if "image_url" in body:
+        admin.image_url = body["image_url"]
     if "password" in body:
         admin.password = body["password"]
 
