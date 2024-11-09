@@ -30,9 +30,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			reservations: [],
 			categories: [],
 			categories_auth :false,
+			category: {},
 
 			ocasiones: [],
 			ocasiones_auth :false,
+			ocasion:{},
 
 			sessionUserId: null,
 		},
@@ -325,9 +327,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			traer_admin: (id) => {
-				fetch(process.env.BACKEND_URL + "/api/admins/" + id)
+				return fetch(`${process.env.BACKEND_URL}/api/admins/${id}`)
 					.then((response) => response.json())
-					.then((data) => setStore({admin: data}))
+					.then((data) => {
+						setStore({ admin: data });
+						return data; // Return fetched data to populate form fields
+					})
+					.catch(error => console.error("Error fetching admin data:", error));
+			},
+
+			editAdmin: (adminModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(adminModif)
+				};
+				fetch(`${process.env.BACKEND_URL}/api/edit/admins/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Admin updated:", data))
+					.catch(error => console.error("Error updating admin:", error));
 			},
 
 			changeColor: (index, color) => {
@@ -453,6 +471,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeDataCategory());
 			},
 
+			traer_categoria: (id) => {
+				return fetch(`${process.env.BACKEND_URL}/api/categories/${id}`)
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ category: data });
+						return data; // Return fetched data to populate form fields
+					})
+					.catch(error => console.error("Error fetching category data:", error));
+			},
+
+			editCategory: (categoryModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(categoryModif)
+				};
+				fetch(`${process.env.BACKEND_URL}/api/edit/categories/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Category updated:", data))
+					.catch(error => console.error("Error updating category:", error));
+			},
+
 			loadSomeDataOcasion: () => {
 				console.log("Se cargó la página");
 				fetch(process.env.BACKEND_URL + "/api/ocasiones")
@@ -538,6 +578,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 				})
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataOcasion());
+			},
+
+			traer_ocasion: (id) => {
+				return fetch(`${process.env.BACKEND_URL}/api/ocasiones/${id}`)
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ ocasion: data });
+						return data; // Return fetched data to populate form fields
+					})
+					.catch(error => console.error("Error fetching occasion data:", error));
+			},
+
+			editOcasion: (ocasionModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(ocasionModif)
+				};
+				fetch(`${process.env.BACKEND_URL}/api/edit/ocasiones/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Occasion updated:", data))
+					.catch(error => console.error("Error updating occasion:", error));
 			},
 
 			setRestaurantCategory: (restaurantId, categoryId) => {
