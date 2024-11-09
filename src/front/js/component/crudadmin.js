@@ -25,7 +25,6 @@ export const Crudadmin = () => {
                                 style={{ width: "150px", height: "150px", borderRadius: "150px", objectFit: "cover" }}
                                 alt="Admin"
                             />
-
                                 <div style={{ marginLeft: "10px", display: "flex", flexDirection: "column", padding: "5px" }}>
                                     <h3>{item.name}</h3>
 
