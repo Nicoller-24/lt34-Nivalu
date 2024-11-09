@@ -117,6 +117,7 @@ class Admin1(db.Model):
     user_name = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(80), unique=False, nullable=False)
+    image_url = db.Column(db.String(120), unique=False, nullable=True)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
@@ -132,6 +133,7 @@ class Admin1(db.Model):
             "user_name": self.user_name,
             "name": self.name,
             "email": self.email,
+            "image_url": self.image_url,
             "is_active": self.is_active
         }
 

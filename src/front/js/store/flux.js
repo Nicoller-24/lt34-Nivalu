@@ -330,6 +330,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				return fetch(`${process.env.BACKEND_URL}/api/admins/${id}`)
 					.then((response) => response.json())
 					.then((data) => {
+						console.log("Fetched admin data:", data); // Log to confirm `image_url` exists
 						setStore({ admin: data });
 						return data; // Return fetched data to populate form fields
 					})

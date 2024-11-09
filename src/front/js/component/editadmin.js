@@ -4,7 +4,36 @@ import { Context } from "../store/appContext";
 
 export const EditAdmin = () => { 
 	const { store, actions } = useContext(Context);
-	const { id } = useParams(); // Retrieve `id` from URL parameter
+	const { id } = useParams();
+
+	const preset_name = "nivalu";                         
+	const cloud_name = "duh7wjna3";                     
+
+	const [image, setImage] = useState('');      
+	const [loading, setLoading] = useState(false);
+
+	const uploadImage = async (e) => {
+		const files = e.target.files;
+		const data = new FormData();
+		data.append('file', files[0]);
+		data.append('upload_preset', preset_name);
+
+		setLoading(true);
+
+		try {
+			const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
+				method: 'POST',
+				body: data
+			});
+
+			const file = await response.json();
+			setImage(file.secure_url);  // Set new image URL
+			setLoading(false);
+		} catch (error) {
+			console.error('Error uploading image:', error);
+			setLoading(false);
+		}
+	};
 
 	const [updateData, setUpdateData] = useState({
 		name: '',
@@ -17,21 +46,22 @@ export const EditAdmin = () => {
 	useEffect(() => {
 		if (id) {
 			actions.traer_admin(id).then(admin => {
-				// Populate form fields with the fetched admin data
 				setUpdateData({
 					name: admin.name || '',
 					user_name: admin.user_name || '',
 					email: admin.email || '',
-					password: admin.password || '', // If password is not available, handle accordingly
+					password: admin.password || '',
 				});
+				setImage(admin.image_url || '');  // Load existing image URL if available
 			});
 		}
-	}, [id, actions]);
+	}, [id]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (id) {
-			actions.editAdmin(updateData, id); // Call the correctly named action
+			const updatedAdminData = { ...updateData, image_url: image };  // Include updated image URL
+			actions.editAdmin(updatedAdminData, id); // Call the correctly named action
 		}
 		setUpdateData({
 			name: '',
@@ -39,11 +69,12 @@ export const EditAdmin = () => {
 			email: '',
 			password: '',
 		});
+		setImage('');
 	};
 
 	return (
 		<div className="p-3 m-auto w-75">
-			<h1 className="mx-auto">Actualización de datos </h1>
+			<h1 className="mx-auto">Actualización de datos</h1>
 			<form onSubmit={handleSubmit}>
 				<div className="form-group p-1">
 					<label htmlFor="name">Nombre</label>
@@ -97,9 +128,17 @@ export const EditAdmin = () => {
 					/>
 				</div>
 
-				<Link to={"/admins"}>
-					O deseas volver
-				</Link>
+				<div className="form-group">
+					<label htmlFor="file">Foto</label>
+					<input type="file" className="form-control" name="file" id="file" onChange={uploadImage} />
+					{loading ? (
+						<h3>Loading...</h3>
+					) : (
+						image && <img src={image} alt="Admin" style={{ width: '100px', marginTop: '10px' }} />
+					)}
+				</div>
+
+				<Link to={"/admins"}>O deseas volver</Link>
 				<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
 			</form>
 		</div>
