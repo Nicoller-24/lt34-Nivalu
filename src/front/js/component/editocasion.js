@@ -10,6 +10,18 @@ export const EditOcasion = () => {
 		name: '',
 	});
 
+	// Fetch occasion data when component mounts
+	useEffect(() => {
+		if (id) {
+			actions.traer_ocasion(id).then(ocasion => {
+				// Populate form fields with the fetched occasion data
+				setUpdateData({
+					name: ocasion.name || '',
+				});
+			});
+		}
+	}, [id, actions]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (id) {
@@ -17,7 +29,6 @@ export const EditOcasion = () => {
 		}
 		setUpdateData({
 			name: '',
-
 		});
 	};
 
@@ -38,13 +49,11 @@ export const EditOcasion = () => {
 					/>
 				</div>
 
-					
-                    <Link to={"/ocasiones"}>
-                        O deseas volver
-                    </Link>
-						<button type="submit" className="btn btn-success m-3">Modificar Ocasion</button>
-					
-				</form>
-			</div>
-    );
+				<Link to={"/ocasiones"}>
+					O deseas volver
+				</Link>
+				<button type="submit" className="btn btn-success m-3">Modificar Ocasion</button>
+			</form>
+		</div>
+	);
 };

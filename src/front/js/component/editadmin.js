@@ -13,6 +13,21 @@ export const EditAdmin = () => {
 		password: '',
 	});
 
+	// Fetch admin data when component mounts
+	useEffect(() => {
+		if (id) {
+			actions.traer_admin(id).then(admin => {
+				// Populate form fields with the fetched admin data
+				setUpdateData({
+					name: admin.name || '',
+					user_name: admin.user_name || '',
+					email: admin.email || '',
+					password: admin.password || '', // If password is not available, handle accordingly
+				});
+			});
+		}
+	}, [id, actions]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (id) {
@@ -43,53 +58,50 @@ export const EditAdmin = () => {
 					/>
 				</div>
 
-					<div className="form-group">
-						<label htmlFor="email">Correo Electrónico</label>
-						<input
-							type="email"
-							name="email"
-							placeholder="Email"
-							value={updateData.email}
-							onChange={(e) => setUpdateData({ ...updateData, email: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
+				<div className="form-group">
+					<label htmlFor="email">Correo Electrónico</label>
+					<input
+						type="email"
+						name="email"
+						placeholder="Email"
+						value={updateData.email}
+						onChange={(e) => setUpdateData({ ...updateData, email: e.target.value })}
+						required
+						className="form-control"
+					/>
+				</div>
 
-					<div className="form-group">
-						<label htmlFor="user_name">Username</label>
-						<input
-							type="text"
-							name="user_name"
-							placeholder="Username"
-							value={updateData.user_name}
-							onChange={(e) => setUpdateData({ ...updateData, user_name: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
+				<div className="form-group">
+					<label htmlFor="user_name">Username</label>
+					<input
+						type="text"
+						name="user_name"
+						placeholder="Username"
+						value={updateData.user_name}
+						onChange={(e) => setUpdateData({ ...updateData, user_name: e.target.value })}
+						required
+						className="form-control"
+					/>
+				</div>
 
-					<div className="form-group">
-						<label htmlFor="password">Contraseña</label>
-						<input
-							type="password"
-							name="password"
-							placeholder="Contraseña"
-							value={updateData.password}
-							onChange={(e) => setUpdateData({ ...updateData, password: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
-					
-					
-					
-                    <Link to={"/admins"}>
-                        O deseas volver
-                    </Link>
-						<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
-					
-				</form>
-			</div>
-    );
+				<div className="form-group">
+					<label htmlFor="password">Contraseña</label>
+					<input
+						type="password"
+						name="password"
+						placeholder="Contraseña"
+						value={updateData.password}
+						onChange={(e) => setUpdateData({ ...updateData, password: e.target.value })}
+						required
+						className="form-control"
+					/>
+				</div>
+
+				<Link to={"/admins"}>
+					O deseas volver
+				</Link>
+				<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
+			</form>
+		</div>
+	);
 };
