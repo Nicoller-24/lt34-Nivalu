@@ -36,8 +36,10 @@ def get_restaurant(restaurant_id):
 def signup():
     body = request.get_json()
 
+    # Verifica si ya existe un restaurante con ese email
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
     if restaurant is None:
+        # Crea un nuevo restaurante
         restaurant = Restaurant(
             email=body["email"],
             guests_capacity=body["guests_capacity"],
@@ -53,18 +55,31 @@ def signup():
         db.session.add(restaurant)
         db.session.commit()
 
+        # Genera el token de acceso
         access_token = create_access_token(identity=restaurant.id)
 
+        # Crea la respuesta con todos los datos del restaurante
         response_body = {
             "msg": "Restaurante creado",
-            "access_token": access_token
+            "access_token": access_token,
+            "restaurant": {
+                "id": restaurant.id,
+                "email": restaurant.email,
+                "guests_capacity": restaurant.guests_capacity,
+                "location": restaurant.location,
+                "name": restaurant.name,
+                "phone_number": restaurant.phone_number,
+                "image_url": restaurant.image_url,
+                "latitude": restaurant.latitude,
+                "longitude": restaurant.longitude,
+                "is_active": restaurant.is_active
+            }
         }
         return jsonify(response_body), 201  
     else:
-        return jsonify({"msg": "El restaurante ya existe"}), 409  
+        return jsonify({"msg": "El restaurante ya existe"}), 409
+ 
 
-    
-    
 
 @api.route('/restaurant/<int:restaurant_id>', methods=['PUT'])
 def update_restaurant(restaurant_id):

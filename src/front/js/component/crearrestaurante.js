@@ -1,12 +1,9 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
-import { Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AddressAutocomplete from "./addressautocomplete";
-import MapComponent from "./mapcomponet";
-import { jwtDecode } from "jwt-decode";
+import MapComponent from "./mapcomponet"
+import jwtDecode from "jwt-decode";
 
 export const Crearrestaurante = () => {
     const [inputName, setInputname] = useState("");
@@ -14,39 +11,35 @@ export const Crearrestaurante = () => {
     const [inputPhone, setInputPhone] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [inputGuestCapacity, setInputGuestCapacity] = useState("");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { store, actions } = useContext(Context);
-    const [selectedAddress, setSelectedAddress] = useState(''); 
+    const [selectedAddress, setSelectedAddress] = useState(""); 
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [authRestaurantId, setAuthRestaurantId] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            const decoded = jwtDecode(token);
-            setAuthRestaurantId(decoded.sub);
-        }
-
-    }, []);
-    
     const preset_name = "nivalu";                         
-    const cloud_name = "duh7wjna3"                     
+    const cloud_name = "duh7wjna3";                     
+    const [image, setImage] = useState("");      
+    const [loading, setLoading] = useState(false); 
 
-    const [ image, setImage ] = useState('');      
-    const [ loading, setLoading ] = useState(false) 
-  
+    // Efecto para redirigir cuando se establece el ID del restaurante
+    useEffect(() => {
+        if (authRestaurantId) {
+            navigate(`/restaurants/${authRestaurantId}`);
+        }
+    }, [authRestaurantId, navigate]);
 
-    const uploadImage = async (e)=>{            
-        const files = e.target.files            
-        const data = new FormData()             
-        data.append('file', files[0])           
-        data.append('upload_preset',preset_name)  
+    const uploadImage = async (e) => {            
+        const files = e.target.files;            
+        const data = new FormData();             
+        data.append("file", files[0]);           
+        data.append("upload_preset", preset_name);  
 
-        setLoading(true)                        
+        setLoading(true);                        
 
         try {
             const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
-                method: 'POST',
+                method: "POST",
                 body: data
             });
 
@@ -54,12 +47,10 @@ export const Crearrestaurante = () => {
             setImage(file.secure_url);              
             setLoading(false);                      
         } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error("Error uploading image:", error);
             setLoading(false);
         }
-
-    }
-
+    };
 
     const handleAddressSelect = (address, location) => {
         setSelectedAddress(address);
@@ -70,10 +61,6 @@ export const Crearrestaurante = () => {
 
     return (
         <>  
-
-        {store.restaurant_auth ? <Navigate to={`/restaurants/${authRestaurantId}`}/> :(
-
-
             <div className="container">
                 <h1 style={{ marginTop: "100px" }}>Crea un nuevo restaurante</h1>
 
@@ -109,12 +96,11 @@ export const Crearrestaurante = () => {
                         />
                     </div>
                     <div className="form-group">
-                            <label htmlFor="address">Dirección</label>
-                            <AddressAutocomplete onAddressSelect={handleAddressSelect} />
-                            {selectedLocation && (
-                                <MapComponent initialPosition={selectedLocation} />
-                            )}
-                            
+                        <label htmlFor="address">Dirección</label>
+                        <AddressAutocomplete onAddressSelect={handleAddressSelect} />
+                        {selectedLocation && (
+                            <MapComponent initialPosition={selectedLocation} />
+                        )}
                     </div>
                     <div className="form-group">
                         <label htmlFor="guests_capacity">Capacidad de invitados</label>
@@ -126,7 +112,6 @@ export const Crearrestaurante = () => {
                             onChange={(e) => setInputGuestCapacity(e.target.value)}
                         />
                     </div>
-
                     <div className="form-group">
                         <label htmlFor="password">Contraseña</label>
                         <input
@@ -137,43 +122,58 @@ export const Crearrestaurante = () => {
                             onChange={(e) => setInputPassword(e.target.value)}
                         />
                     </div>
-
-                    <div  className="form-group">
-                    <label htmlFor="file">Foto</label>
-                        <input type="file"
-                        className="form-control"
-                        name="file"
-                        id="file"
-                        placeholder='Upload an image'
-                        // accept='image/png, image/jpeg' 
-                        onChange={(e)=>uploadImage(e)}
+                    <div className="form-group">
+                        <label htmlFor="file">Foto</label>
+                        <input 
+                            type="file"
+                            className="form-control"
+                            name="file"
+                            id="file"
+                            placeholder="Upload an image"
+                            onChange={(e) => uploadImage(e)}
                         />
-
                         {loading ? (
                             <h3>Loading...</h3>
                         ) : (
-                        <img src={image} alt="imagen subida"/>
+                            <img src={image} alt="imagen subida" />
                         )}
                     </div>
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        style={{ marginRight: "10px" }}
+                        onClick={async () => {
+                            const newRestaurant = await actions.addNewRestaurant(
+                                inputEmail,
+                                inputGuestCapacity,
+                                selectedAddress,
+                                inputName,
+                                inputPhone,
+                                inputPassword,
+                                image,
+                                selectedLocation.lat,
+                                selectedLocation.lng
+                            );
 
-                        <button type="button" className="btn btn-primary" style={{"marginRight": "10px"}} onClick={() => {actions.addNewRestaurant(inputEmail, inputGuestCapacity, selectedAddress, inputName, inputPhone, inputPassword, image, selectedLocation.lat, selectedLocation.lng ); 
-                           
-                           
-                           setInputGuestCapacity("");
-                            setInputname(""); 
+                            if (newRestaurant) {
+                                setAuthRestaurantId(newRestaurant.id); // Establece el ID del restaurante recién creado
+                            }
+
+                            setInputGuestCapacity("");
+                            setInputname("");
                             setInputPhone("");
-                            setInputEmail("") ; 
+                            setInputEmail("");
                             setInputPassword("");
-                            setImage("")
-                        }}>
-                            Crear Restaurante
-                        </button>
+                            setImage("");
+                        }}
+                    >
+                        Crear Restaurante
+                    </button>
                     <Link to={"/restauranteselect"}>
                         O deseas volver
                     </Link>
                 </form>
             </div>
-        )}
         </>
     );
 };

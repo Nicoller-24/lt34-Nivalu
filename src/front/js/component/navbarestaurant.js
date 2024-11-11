@@ -33,10 +33,10 @@ export const NavbarRestaurant = (props) => {
     };
 
     useEffect(() => {
-        if (props.id) {
+        
             traer_restaurante();
-        }
-    }, [props.id]); 
+        
+    }, []); 
     
     return (
         <>

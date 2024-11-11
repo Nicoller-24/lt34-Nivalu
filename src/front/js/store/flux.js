@@ -172,9 +172,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeData());
 			},
-
 			addNewRestaurant: (email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
-				fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
+				return fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -191,7 +190,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					redirect: "follow",
 				})
 				.then((response) => {
-					console.log(response.status)
+					console.log(response.status);
 					if (response.status === 201) { 
 						setStore({ restaurant_auth: true });
 					}
@@ -201,12 +200,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (data.access_token) {
 						localStorage.setItem("token", data.access_token);
 						console.log("Token de acceso:", data.access_token);
-						getActions().loadSomeData()
-
+						getActions().loadSomeData();
+					}
+			
+					// Si la respuesta contiene el objeto del restaurante, lo devolvemos para su uso
+					if (data.restaurant) {
+						console.log("Detalles del restaurante:", data.restaurant);
+						return data.restaurant;
 					}
 				})
-				.catch((error) => console.error("Error al crear el restaurante:", error));
-			},
+				.catch((error) => {
+					console.error("Error al crear el restaurante:", error);
+					return null; // Devolvemos null en caso de error para manejarlo en el frontend
+				});
+			}
+			,
 			traer_restaurante: (id) => {
 				return fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())
