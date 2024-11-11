@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import RestaurantCategorySelector from "./setrestaurantcategory"; // Import as default
 import { jwtDecode } from "jwt-decode";
 import { NavbarRestaurant } from "./navbarestaurant";
 import { useParams } from "react-router-dom";
@@ -11,6 +12,9 @@ export const Crudrestaurante = () => {
     const { store, actions } = useContext(Context);
     const params = useParams();
     const navigate = useNavigate();
+    
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
     const [authRestaurantId, setAuthRestaurantId] = useState(null);
 
     useEffect(() => {
@@ -22,6 +26,31 @@ export const Crudrestaurante = () => {
         actions.loadSomeData();
     }, []);
 
+    function salir() {
+        actions.logoutrestaurant();
+        navigate("/restauranteselect");
+        store.restaurant_auth = false;
+    }
+
+    useEffect(() => {
+        actions.loadSomeData();
+    }, []);
+
+    // Handle category selection from RestaurantCategorySelector
+    const handleCategorySelect = (categories) => {
+        setSelectedCategories(categories);
+    };
+
+    // Save selected categories for the restaurant
+    const handleSaveRestaurantCategories = () => {
+        if (selectedCategories.length > 0 && selectedRestaurantId) {
+            actions.setRestaurantCategory(selectedRestaurantId, selectedCategories);
+            setSelectedRestaurantId(null); // Close the category selector after saving
+            navigate("/restaurants");
+        } else {
+            alert("Please select at least one category for the restaurant.");
+        }
+    };
     return (
         <>
             {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
@@ -75,12 +104,23 @@ export const Crudrestaurante = () => {
                                     <button onClick={() => actions.removeRestaurant(item.id)} className="action-button">
                                         Delete
                                     </button>
+                                    <button onClick={() => setSelectedRestaurantId(item.id)} style={{ backgroundColor: "white", border: "0px" }}>
+                                         Select Categories
+                                    </button>
                                 </div>
                             )}
                         </li>
                     );
                 })}
             </ul>
+            {selectedRestaurantId && (
+                <>
+                    <RestaurantCategorySelector
+                        restaurantId={selectedRestaurantId}
+                        onCategorySelect={handleCategorySelect}
+                    />
+                </>
+            )}
         </>
     );
 };
