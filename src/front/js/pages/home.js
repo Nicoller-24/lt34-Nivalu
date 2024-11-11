@@ -22,11 +22,8 @@ export const Home = () => {
 					Read documentation
 				</a>
 			</p>
-			<Link to="/client/chat">
-				<button className="btn btn-primary">client chat</button>
-			</Link>
-			<Link to="/restaurant/chat">
-				<button className="btn btn-primary">chat</button>
+			<Link to="/restaurant/view">
+				<button className="btn btn-primary">restaurant view</button>
 			</Link>
 			<Link to="/adminhomepage">
 				<button className="btn btn-primary">admins</button>

@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import AddressAutocomplete from "./addressautocomplete";
 import MapComponent from "./mapcomponet";
+import { jwtDecode } from "jwt-decode";
 
 export const Crearrestaurante = () => {
     const [inputName, setInputname] = useState("");
@@ -17,6 +18,16 @@ export const Crearrestaurante = () => {
     const { store, actions } = useContext(Context);
     const [selectedAddress, setSelectedAddress] = useState(''); 
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const [authRestaurantId, setAuthRestaurantId] = useState(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const decoded = jwtDecode(token);
+            setAuthRestaurantId(decoded.sub);
+        }
+
+    }, []);
     
     const preset_name = "nivalu";                         
     const cloud_name = "duh7wjna3"                     
@@ -60,7 +71,7 @@ export const Crearrestaurante = () => {
     return (
         <>  
 
-        {store.restaurant_auth ? <Navigate to="/restaurants"/> :(
+        {store.restaurant_auth ? <Navigate to={`/restaurants/${authRestaurantId}`}/> :(
 
 
             <div className="container">

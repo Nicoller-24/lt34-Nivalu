@@ -5,11 +5,18 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Navigate} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
+
 
 export const Signuprestaurant = () => {
 	const { store, actions } = useContext(Context);
 	const [inputEmail, setInputEmail] = useState("");
 	const [inputPassword, setInputPassword] = useState("");
+    const [authRestaurantId, setAuthRestaurantId] = useState(null);
+
+
+
 
 	function sendData(e) {
 		e.preventDefault();
@@ -19,7 +26,7 @@ export const Signuprestaurant = () => {
 
 	return (
 		<> 
-         {store.restaurant_auth ? <Navigate to="/restaurants"/> :(
+         {store.restaurant_auth ? <Navigate to={`/restaurants/${authRestaurantId}`}/> :(
 			<div
 				className="container"
 				style={{
@@ -58,7 +65,14 @@ export const Signuprestaurant = () => {
 						/>
 					</div>
                         <button
-                            onClick={() =>{actions.loginrestaurant(inputEmail, inputPassword)}}
+                            onClick={() =>{
+								actions.loginrestaurant(inputEmail, inputPassword);
+								const token = localStorage.getItem("token");
+								if (token) {
+									const decoded = jwtDecode(token);
+									setAuthRestaurantId(decoded.sub); 
+								}
+							}}
                             type="submit"
                             style={{
                                 backgroundColor: "#008CBA",

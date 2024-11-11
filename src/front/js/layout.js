@@ -27,6 +27,7 @@ import { Mapautocompletate } from "./component/mapautocompletate.js";
 import App from "./component/App.js";
 import Chat from "./component/chat.js";
 import Chatrestaurant from "./component/chatrestaurant.js";
+import { Restaurantview } from "./pages/restaurantview.js";
 
 import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
@@ -60,7 +61,7 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
+                    
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
@@ -72,7 +73,7 @@ const Layout = () => {
                         <Route element={<AddClients />} path="/adduser" />
                         <Route element={<UserList />} path="/userList" />
                         <Route element={<EditClient />} path="/updateInfo" />
-                        <Route element={<Crudrestaurante />} path="/restaurants" />
+                        <Route element={<Crudrestaurante />} path="/restaurants/:id" />
                         <Route element={<Crearrestaurante />} path="/signup/restaurants" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Singlerestaurant />} path="/restaurant/:id" />
@@ -85,6 +86,7 @@ const Layout = () => {
                         <Route element={<App/>} path="/openai" />
                         <Route element={<Chat/>} path="/client/chat/:id_restaurant/:id_client" />
                         <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
+                        <Route element={<Restaurantview/>} path="/restaurant/view" />
 
                         <Route element={<Crearcategoria />} path="/create/categories" />
                         <Route element={<Crudcategoria />} path="/categories" />
@@ -101,7 +103,7 @@ const Layout = () => {
 
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    <Footer />
+                   
                 </ScrollToTop>
             </BrowserRouter>
         </div>

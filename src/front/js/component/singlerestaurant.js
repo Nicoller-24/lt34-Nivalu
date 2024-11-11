@@ -3,7 +3,8 @@ import { Context } from "../store/appContext";
 import { Link, useParams } from "react-router-dom";
 import SingleMapComponent from "./singlemapcompnent";
 import { Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavbarRestaurant } from "./navbarestaurant";
+import "../../styles/singlerestaurant.css"; // Archivo CSS para personalizar estilos
 
 export const Singlerestaurant = () => {
     const { store, actions } = useContext(Context);
@@ -11,62 +12,59 @@ export const Singlerestaurant = () => {
     
     const [initialPosition, setInitialPosition] = useState(null);
     const [restaurant, setRestaurant] = useState({});
-    const [selectedAddress, setSelectedAddress] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState(null);
-
-    const traer_restaurante = () => {
-        fetch(`${process.env.BACKEND_URL}/api/restaurant/${params.id}`)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Datos del restaurante:", data);
-                setRestaurant(data);
-                if (data.latitude && data.longitude) {
-                    setInitialPosition({
-                        lat: parseFloat(data.latitude),
-                        lng: parseFloat(data.longitude),
-                    });
-                }
-            })
-            .catch((error) => console.error("Error al cargar el restaurante:", error));
-    };
 
     useEffect(() => {
+        const traer_restaurante = () => {
+            fetch(`${process.env.BACKEND_URL}/api/restaurant/${params.id}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    setRestaurant(data);
+                    if (data.latitude && data.longitude) {
+                        setInitialPosition({
+                            lat: parseFloat(data.latitude),
+                            lng: parseFloat(data.longitude),
+                        });
+                    }
+                })
+                .catch((error) => console.error("Error al cargar el restaurante:", error));
+        };
+
         traer_restaurante();
     }, [params.id]);
 
-    const handleAddressSelect = (location) => {
-        setSelectedLocation(location);
-        console.log("Coordenadas seleccionadas:", location);
-    };
-
     return (
         <>
-        {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
-            {restaurant.image_url && (
-                <img
-                    src={restaurant.image_url}
-                    style={{ width: "400px", height: "400px", objectFit: "cover" }}
-                    alt={restaurant.name}
-                />
-            )}
-            <h1>{restaurant.name}</h1>
-            <h3>{restaurant.phone_number}</h3>
-            <h3>{restaurant.location}</h3>
+            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+            <NavbarRestaurant id={params.id} />
+            <div className="restaurant-container">
+                {restaurant.image_url && (
+                    <img
+                        src={restaurant.image_url}
+                        className="restaurant-image"
+                        alt={restaurant.name}
+                    />
+                )}
+                <div className="restaurant-info">
+                    <h1 className="restaurant-name">{restaurant.name}</h1>
+                    <h3 className="restaurant-phone">{restaurant.phone_number}</h3>
+                    <h3 className="restaurant-location">{restaurant.location}</h3>
 
-            {initialPosition && (
-                <SingleMapComponent
-                    initialPosition={initialPosition}
-                    onLocationSelect={handleAddressSelect}
-                />
-            )}
-            
-            <Link to={"/restaurant/chat/" + params.id}>
-                <button type="button" class="btn btn-primary">ver chats</button>
-            </Link>
-
-            <Link to="/restaurants">
-                O deseas volver
-            </Link>
+                    {initialPosition && (
+                        <SingleMapComponent
+                            initialPosition={initialPosition}
+                        />
+                    )}
+                    
+                    <div className="buttons-container">
+                        <Link to={`/restaurant/chat/${params.id}`}>
+                            <button type="button" className="btn btn-primary chat-button">View Chats</button>
+                        </Link>
+                        <Link to={`/restaurants/${params.id}`} className="back-link">
+                            or Go Back
+                        </Link>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

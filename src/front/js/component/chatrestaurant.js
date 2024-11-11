@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, useParams, Navigate } from "react-router-dom";
 import "../../styles/chat.css";
+import { NavbarRestaurant } from "./navbarestaurant";
 
 const Chatrestaurant = () => {
   const { store, actions } = useContext(Context);
@@ -62,14 +63,11 @@ const Chatrestaurant = () => {
     getChats();
   }, []);
 
-  // Este useEffect se activa cuando cambia `comensalId` o `chatId`
   useEffect(() => {
     if (comensalId && chatId) {
       const interval = setInterval(() => {
         getMessages(params.id, comensalId, chatId, selectedComensal);
       }, 2000);
-
-      // Limpia el intervalo cuando se cambia `comensalId` o `chatId`
       return () => clearInterval(interval);
     }
   }, [comensalId, chatId, params.id, selectedComensal]);
@@ -77,6 +75,7 @@ const Chatrestaurant = () => {
   return (
     <>
       {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+      <NavbarRestaurant  id={params.id}/>
       <div className="container">
         <div className="row clearfix">
           <div className="col-lg-12">
@@ -96,9 +95,6 @@ const Chatrestaurant = () => {
                       <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar" />
                       <div className="about">
                         <div className="name">{item.comensal_details.name} {item.comensal_details.last_name}</div>
-                        <div className="status">
-                          <i className="fa fa-circle offline"></i> left 7 mins ago
-                        </div>
                       </div>
                     </li>
                   ))}
@@ -122,7 +118,7 @@ const Chatrestaurant = () => {
                             <path fillRule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z"></path>
                             <path fillRule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z"></path>
                           </svg>
-                          Regresar
+                          Come back
                         </button>
                       </div>
                     </Link>
