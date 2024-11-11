@@ -15,6 +15,7 @@ import { LoginClient } from "./pages/loginClient.js";
 import { AboutRestaurant } from "./pages/aboutRestaurant.js";
 import { ListReservationsUser } from "./pages/listReservationsUser.js";
 import { SuccessPage } from "./pages/successPage.js";
+import { ListReservationsRestaurant } from "./pages/listReservationsRestaurant.js";
 
 
 import { Crudrestaurante } from "./component/crudrestaurante";
@@ -99,6 +100,9 @@ const Layout = () => {
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
                         <Route element={<SuccessPage />} path="/reservaExitosa"/>
+                        <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant"/>
+
+
 
 
                         <Route element={<h1>Not found!</h1>} />

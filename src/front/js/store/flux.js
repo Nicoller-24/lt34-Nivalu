@@ -37,6 +37,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			ocasion:{},
 
 			sessionUserId: null,
+			sessionRestaurantId: null,
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -44,7 +45,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				getActions().changeColor(0, "green");
 			},
 
+			verifyTokenRestaurant: () => {
+				const token = localStorage.get_reservationsRestaurant('jwt-token');
 
+				if(token != null){
+					setStore({ authenticatedBuyer: true })
+					return(token)
+				}
+			
+			},
 			loadUsers: () => {
 				fetch(process.env.BACKEND_URL + '/api/clients')
 					.then(response => response.json())
@@ -237,6 +246,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					.then((data) => {
 						localStorage.setItem("token", data.access_token);
+						setStore({ auth: true, sessionRestaurantId: data.restaurant_id});
+
 						console.log(data.access_token)
 						console.log(data)
 					})
@@ -399,6 +410,70 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch(error => console.error("Error deleting reservation:", error));
 			},
 
+			acceptReservation: (reservationId) => {
+				const store = getStore();
+				const updatedReservations = store.reservations.map((reservation) => {
+					if (reservation.id === reservationId) {
+						return { ...reservation, state: "accepted" };
+					}
+					return reservation;
+				});
+			
+				// Actualizar el estado en el store antes de enviar la solicitud PUT
+				setStore({ reservations: updatedReservations });
+			
+				fetch(`${process.env.BACKEND_URL}/api/reservations/accept/${reservationId}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("Failed to accept reservation");
+						}
+						return response.json();
+					})
+					.then((data) => {
+						console.log(`Reservation ${reservationId} accepted successfully`, data);
+					})
+					.catch((error) => {
+						console.error("Error accepting reservation:", error);
+					});
+			},
+
+			rejectReservation: (reservationId) => {
+				const store = getStore();
+				const updatedReservations = store.reservations.map((reservation) => {
+					if (reservation.id === reservationId) {
+						return { ...reservation, state: "rejected" };
+					}
+					return reservation;
+				});
+			
+				// Actualizar el estado en el store antes de enviar la solicitud PUT
+				setStore({ reservations: updatedReservations });
+			
+				fetch(`${process.env.BACKEND_URL}/api/reservations/reject/${reservationId}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("Failed to reject reservation");
+						}
+						return response.json();
+					})
+					.then((data) => {
+						console.log(`Reservation ${reservationId} rejected successfully`, data);
+					})
+					.catch((error) => {
+						console.error("Error rejecting reservation:", error);
+					});
+			},
+			
 			loadSomeDataCategory: () => {
 				console.log("Se cargó la página");
 				fetch(process.env.BACKEND_URL + "/api/categories")

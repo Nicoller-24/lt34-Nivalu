@@ -52,8 +52,13 @@ export const Home = () => {
 			<Link to="/listOfRestaurants">
 				<button className="btn btn-primary">Lista de Restaurantes</button>
 			</Link>
-			<Link to="/listReservationsUser"><button className="btn btn-primary">Acive reservations</button>
+			<Link to="/listReservationsUser"><button className="btn btn-primary">Acive reservations Client</button>
 			</Link>
+
+			<Link to="/reservationsRestaurant"><button className="btn btn-primary">Acive reservations Restaurant</button>
+			</Link>
+
+			
 		</div>
 	);
 };
