@@ -10,6 +10,18 @@ export const EditCategory = () => {
 		name: '',
 	});
 
+	// Fetch category data when component mounts
+	useEffect(() => {
+		if (id) {
+			actions.traer_categoria(id).then(category => {
+				// Populate form fields with the fetched category data
+				setUpdateData({
+					name: category.name || '',
+				});
+			});
+		}
+	}, [id, actions]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (id) {
@@ -17,7 +29,6 @@ export const EditCategory = () => {
 		}
 		setUpdateData({
 			name: '',
-
 		});
 	};
 
@@ -38,13 +49,11 @@ export const EditCategory = () => {
 					/>
 				</div>
 
-					
-                    <Link to={"/categories"}>
-                        O deseas volver
-                    </Link>
-						<button type="submit" className="btn btn-success m-3">Modificar Categoria</button>
-					
-				</form>
-			</div>
-    );
+				<Link to={"/categories"}>
+					O deseas volver
+				</Link>
+				<button type="submit" className="btn btn-success m-3">Modificar Categoria</button>
+			</form>
+		</div>
+	);
 };

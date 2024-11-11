@@ -30,9 +30,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			reservations: [],
 			categories: [],
 			categories_auth :false,
+			category: {},
 
 			ocasiones: [],
 			ocasiones_auth :false,
+			ocasion:{},
 
 			sessionUserId: null,
 			sessionRestaurantId: null,
@@ -182,7 +184,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeData());
 			},
 
-			addNewRestaurant:(email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
+			addNewRestaurant: (email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
 				fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
@@ -201,13 +203,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 				})
 				.then((response) => {
 					console.log(response.status)
-					if (response.status == 200) {
-						setStore({ restaurant_auth: true })
+					if (response.status === 201) { 
+						setStore({ restaurant_auth: true });
 					}
-					return response.json()
+					return response.json();
 				})
-			},
+				.then((data) => {
+					if (data.access_token) {
+						localStorage.setItem("token", data.access_token);
+						console.log("Token de acceso:", data.access_token);
+						getActions().loadSomeData()
 
+					}
+				})
+				.catch((error) => console.error("Error al crear el restaurante:", error));
+			},
 			traer_restaurante: (id) => {
 				return fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())
@@ -245,6 +255,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logoutrestaurant: () => {
 				console.log("logout")
 				localStorage.removeItem("token");
+				console.log(localStorage)
 				setStore({ auth: false })
 			},
 
@@ -252,24 +263,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/login/admins", {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"email": inputEmail,
-						"password": inputPassword
-					}),
+					body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
 					redirect: "follow"
 				})
-					.then((response) => {
-						console.log(response.status)
-						if (response.status == 200) {
-							setStore({ admin_auth: true })
-						}
-						return response.json()
-					})
-					.then((data) => {
+				.then((response) => {
+					if (response.status === 200) {
+						setStore({ admin_auth: true });
+					}
+					return response.json();
+				})
+				.then((data) => {
+					if (data.access_token) { // Ensure token is present
 						localStorage.setItem("token", data.access_token);
-						console.log(data.access_token)
-						console.log(data)
-					})
+						console.log("Token stored:", data.access_token);
+					} else {
+						console.error("Login failed, no token received");
+					}
+				})
+				.catch((error) => {
+					console.error("Error in admin login:", error);
+				});
 			},
 
 			adminlogout: () => {
@@ -325,9 +338,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			traer_admin: (id) => {
-				fetch(process.env.BACKEND_URL + "/api/admins/" + id)
+				return fetch(`${process.env.BACKEND_URL}/api/admins/${id}`)
 					.then((response) => response.json())
-					.then((data) => setStore({admin: data}))
+					.then((data) => {
+						console.log("Fetched admin data:", data); // Log to confirm `image_url` exists
+						setStore({ admin: data });
+						return data; // Return fetched data to populate form fields
+					})
+					.catch(error => console.error("Error fetching admin data:", error));
+			},
+
+			editAdmin: (adminModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(adminModif)
+				};
+				fetch(`${process.env.BACKEND_URL}/api/edit/admins/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Admin updated:", data))
+					.catch(error => console.error("Error updating admin:", error));
 			},
 
 			changeColor: (index, color) => {
@@ -454,20 +484,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch((error) => console.error("Error al cargar categorias:", error));
 			},
 
-			addNewCategory:(name,) => {
+			addNewCategory: (name) => {
+				const token = localStorage.getItem('token'); // Match with 'setItem' key
+
+   				 if (!token) { 
+       			 console.error('JWT token is missing. User might not be authenticated.');
+        		return; }
+			
+				name = name.trim(); // Trim any whitespace from the category name
+			
+				if (!name) {
+					console.error('Category name is required'); // Log error if the name is empty
+					return; // Exit if the name is invalid
+				}
+			
+				console.log("Sending category name:", name); // Log the name being sent
+				console.log("Using JWT token:", token); // Log the token being used
+			
 				fetch(process.env.BACKEND_URL + '/api/create/categories', {
 					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"name": name,
-
-					}),
-					redirect: "follow",
+					headers: {
+						"Content-Type": "application/json", // Specify the content type
+						"Authorization": `Bearer ${token}` // Include the JWT token for authentication
+					},
+					body: JSON.stringify({ "name": name }), // Send the category name in the body
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataCategory());
+				.then((response) => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || 'Failed to create category'); // Throw an error with the message from the server
+						});
+					}
+					return response.json(); // Parse the response as JSON
+				})
+				.then((data) => {
+					console.log('Category created:', data); // Log success response
+					getActions().loadSomeDataCategory(); // Load updated categories
+				})
+				.catch((error) => {
+					console.error('Error creating category:', error); // Log any errors that occur
+				});
 			},
-
+			
 			editCategory: (categoryModif, id) => {
 				const requestOptions = {
 					method: 'PUT',
@@ -489,6 +547,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().loadSomeDataCategory());
 			},
 
+			traer_categoria: (id) => {
+				return fetch(`${process.env.BACKEND_URL}/api/categories/${id}`)
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ category: data });
+						return data; // Return fetched data to populate form fields
+					})
+					.catch(error => console.error("Error fetching category data:", error));
+			},
+
+			editCategory: (categoryModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(categoryModif)
+				};
+				fetch(`${process.env.BACKEND_URL}/api/edit/categories/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Category updated:", data))
+					.catch(error => console.error("Error updating category:", error));
+			},
+
 			loadSomeDataOcasion: () => {
 				console.log("Se cargó la página");
 				fetch(process.env.BACKEND_URL + "/api/ocasiones")
@@ -499,18 +579,60 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch((error) => console.error("Error al cargar ocasiones:", error));
 			},
 
-			addNewOcasion:(name,) => {
+			// addNewOcasion:(name,) => {
+			// 	fetch(process.env.BACKEND_URL + '/api/create/ocasiones', {
+			// 		method: 'POST',
+			// 		headers: { "Content-Type": "application/json" },
+			// 		body: JSON.stringify({
+			// 			"name": name,
+
+			// 		}),
+			// 		redirect: "follow",
+			// 	})
+			// 		.then((response) => response.text())
+			// 		.then(() => getActions().loadSomeDataOcasion());
+			// },
+
+			addNewOcasion: (name) => {
+				const token = localStorage.getItem('token'); // Match with 'setItem' key
+
+   				 if (!token) { 
+       			 console.error('JWT token is missing. User might not be authenticated.');
+        		return; }
+			
+				name = name.trim(); // Trim any whitespace from the category name
+			
+				if (!name) {
+					console.error('Ocasion name is required'); // Log error if the name is empty
+					return; // Exit if the name is invalid
+				}
+			
+				console.log("Sending ocasion name:", name); // Log the name being sent
+				console.log("Using JWT token:", token); // Log the token being used
+			
 				fetch(process.env.BACKEND_URL + '/api/create/ocasiones', {
 					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"name": name,
-
-					}),
-					redirect: "follow",
+					headers: {
+						"Content-Type": "application/json", // Specify the content type
+						"Authorization": `Bearer ${token}` // Include the JWT token for authentication
+					},
+					body: JSON.stringify({ "name": name }), // Send the category name in the body
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataOcasion());
+				.then((response) => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || 'Failed to create ocasion'); // Throw an error with the message from the server
+						});
+					}
+					return response.json(); // Parse the response as JSON
+				})
+				.then((data) => {
+					console.log('Ocasion created:', data); // Log success response
+					getActions().loadSomeDataOcasion(); // Load updated categories
+				})
+				.catch((error) => {
+					console.error('Error creating ocasion:', error); // Log any errors that occur
+				});
 			},
 
 			editOcasion: (ocasionModif, id) => {
@@ -533,9 +655,81 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataOcasion());
 			},
-		}
 
-		
+			traer_ocasion: (id) => {
+				return fetch(`${process.env.BACKEND_URL}/api/ocasiones/${id}`)
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ ocasion: data });
+						return data; // Return fetched data to populate form fields
+					})
+					.catch(error => console.error("Error fetching occasion data:", error));
+			},
+
+			editOcasion: (ocasionModif, id) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(ocasionModif)
+				};
+				fetch(`${process.env.BACKEND_URL}/api/edit/ocasiones/${id}`, requestOptions)
+					.then(response => response.json())
+					.then(data => console.log("Occasion updated:", data))
+					.catch(error => console.error("Error updating occasion:", error));
+			},
+
+			setRestaurantCategory: (restaurantId, categoryId) => {
+				const token = localStorage.getItem("token");
+				fetch(process.env.BACKEND_URL + `/api/restaurant/${restaurantId}/category`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`
+					},
+					body: JSON.stringify({ category_id: categoryId })
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error("Failed to set restaurant category");
+					}
+					return response.json();
+				})
+				.then(data => {
+					console.log("Category set successfully:", data);
+				})
+				.catch(error => {
+					console.error("Error setting category:", error);
+				});
+			},
+
+			saveRestaurant: async (restaurantData, restaurantId) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/restaurant/${restaurantId}`, {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(restaurantData),
+					});
+			
+					if (!response.ok) {
+						throw new Error('Failed to save restaurant');
+					}
+			
+					const updatedRestaurant = await response.json();
+			
+					// Update the restaurants list in the store
+					setStore(prevState => ({
+						...prevState,
+						restaurants: prevState.restaurants.map(r => 
+							r.id === updatedRestaurant.id ? updatedRestaurant : r
+						),
+					}));
+				} catch (error) {
+					console.error("Error saving restaurant:", error);
+				}
+			},
+		}
 	};
 
 };
