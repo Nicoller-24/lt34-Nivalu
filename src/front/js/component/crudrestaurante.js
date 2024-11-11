@@ -34,6 +34,12 @@ export const Crudrestaurante = () => {
                 </button>
             </Link>
 
+            <Link to={"/reservationsRestaurant"}>
+                <button onClick={() => store.restaurant_auth = false} type="button" className="btn btn-primary">
+                    active reservations
+                </button>
+            </Link>
+
 
             <ul className="list-group">
                 {store.restaurants.map((item, index) => {

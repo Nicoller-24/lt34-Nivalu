@@ -183,7 +183,7 @@ def login_restaurant():
         return jsonify({"msg": "Bad email or password"}), 401
     
     access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
+    return jsonify(access_token=access_token, restaurant_id= restaurant.id)
 
     return jsonify(response_body), 200
 
@@ -305,6 +305,43 @@ def get_reservationsUser(client_id):
     
     # Serializar cada reserva en una lista de JSON
     return jsonify([reservation.serialize() for reservation in reservationsUser]), 200
+
+@api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
+def get_reservationsRestaurant(restaurant_id):
+    reservationsRestaurant = Reservations.query.filter_by(restaurant_id= restaurant_id).all()  # Obtener todas las reservas del restaurante
+    if not reservationsRestaurant:
+        return jsonify({"message": "Reservations not found"}), 404
+    
+    # Serializar cada reserva en una lista de JSON
+    return jsonify([reservation.serialize() for reservation in reservationsRestaurant]), 200
+
+@api.route('/reservations/accept/<int:reservation_id>', methods=['PUT'])
+def accept_reservation(reservation_id):
+    # Buscar la reserva por ID
+    reservation = Reservations.query.get(reservation_id)
+    
+    if not reservation:
+        return jsonify({"message": "Reservation not found"}), 404
+
+    # Cambiar el estado de la reserva a "aceptada"
+    reservation.state = "accepted"
+    db.session.commit()
+
+    return jsonify({"message": "Reservation accepted successfully", "reservation": reservation.serialize()}), 200
+
+@api.route('/reservations/reject/<int:reservation_id>', methods=['PUT'])
+def reject_reservation(reservation_id):
+    reservation = Reservations.query.get(reservation_id)
+    if not reservation:
+        return jsonify({"message": "Reservation not found"}), 404
+    
+    try:
+        reservation.state = "rejected"  # Cambia el estado a rechazado
+        db.session.commit()
+        return jsonify({"message": "Reservation rejected successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Error rejecting reservation", "error": str(e)}), 500
 
 
 
