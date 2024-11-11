@@ -36,7 +36,6 @@ export const Crudrestaurante = () => {
         actions.loadSomeData();
     }, []);
 
-    // Handle category selection from RestaurantCategorySelector
     const handleCategorySelect = (categories) => {
         setSelectedCategories(categories);
     };
