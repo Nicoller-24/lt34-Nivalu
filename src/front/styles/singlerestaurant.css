@@ -1,0 +1,73 @@
+.restaurant-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.restaurant-image {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.restaurant-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.restaurant-name {
+    font-size: 2rem;
+    color: #333;
+    margin: 10px 0;
+}
+
+.restaurant-phone,
+.restaurant-location {
+    font-size: 1.2rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.chat-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.chat-button:hover {
+    background-color: #0056b3;
+}
+
+.back-link {
+    font-size: 1rem;
+    color: #007bff;
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.back-link:hover {
+    color: #0056b3;
+}

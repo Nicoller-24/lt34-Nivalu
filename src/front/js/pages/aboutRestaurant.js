@@ -4,7 +4,8 @@ import SingleMapComponent from "../component/singlemapcompnent";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { setHours, setMinutes } from 'date-fns';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 
 
@@ -21,6 +22,42 @@ export const AboutRestaurant = () => {
     });
     const [initialPosition, setInitialPosition] = useState(null);
     const [ocasiones, setOcasiones] = useState([]);
+
+    const [authClientId, setAuthClientId] = useState(null);
+
+    function getChats() {
+        fetch(`${process.env.BACKEND_URL}/api/chat/client/${authClientId}`)
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error al cargar los chats:", error));
+      }
+
+    function createChat (id_restaurant, id_comensal)  {
+        fetch(process.env.BACKEND_URL + '/api/chat/post/', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                "id_restaurant": id_restaurant,
+                "id_comensal": id_comensal
+            }),
+            redirect: "follow",
+        })
+        .then((response) => {
+            console.log(response.json());
+            getChats()
+        })
+        .catch((error) => console.error("Error al crear el restaurante:", error));
+    }
+
+    
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const decoded = jwtDecode(token);
+            setAuthClientId(decoded.sub); 
+            
+        }
+    }, []);
 
     useEffect(() => {
         const restaurantId = getQueryParam('id_restaurant');
@@ -48,6 +85,7 @@ export const AboutRestaurant = () => {
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
+
     }
 
     const handleSubmit = (e) => {
@@ -156,8 +194,16 @@ export const AboutRestaurant = () => {
                     </select>
                 </div>
 
-                <button type="submit" className="btn btn-success w-100">Add reservation</button>   
+                     <button type="submit" className="btn btn-success w-100">Add reservation</button>   
                          </form>
+                        <Link to={`/client/chat/${unitrestaurant.id}/${authClientId}`}>
+                            <button onClick={()=>{
+                                console.log(typeof(authClientId) , typeof(unitrestaurant.id));
+                                createChat(unitrestaurant.id, authClientId);
+                                getChats();
+                                
+                                }} style={{"marginTop": "10px"}} className="btn btn-success w-100">Start a chat</button>
+                        </Link>
                     </div>
                 </div>
             </div>
