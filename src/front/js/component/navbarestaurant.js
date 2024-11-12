@@ -128,7 +128,7 @@ export const NavbarRestaurant = (props) => {
                         <li><Link className="dropdown-item" to={`/restaurant/${props.id}`}>Profile</Link></li>
                         <li><Link className="dropdown-item" to={`/restaurants/${props.id}`}>View Restaurants</Link></li>
                         <li><Link className="dropdown-item" to="/reservations/requests">Reservation Requests</Link></li>
-                        <li><Link className="dropdown-item" to="/reservations">Reservations</Link></li>
+                        <li><Link className="dropdown-item" to={"/reservationsRestaurant"}>Reservations</Link></li>
                         <hr className="dropdown-divider" />
                         <li><Link className="dropdown-item" to={"/restaurant/chat/" + props.id}>Chats</Link></li>
                         <li><Link className="dropdown-item" to={`/edit/restaurant/${props.id}`}>Edit Profile</Link></li>

@@ -56,6 +56,7 @@ export const Crudrestaurante = () => {
                 gap: "1.5rem",
                 padding: "2rem"
             }}>
+
                 {store.restaurants.map((item, index) => (
                     <div
                         key={index}
