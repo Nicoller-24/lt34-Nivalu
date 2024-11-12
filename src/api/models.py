@@ -8,6 +8,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False, unique=True)
     restaurants = db.relationship('RestaurantCategory', back_populates='category')
+    image_url = db.Column(db.String(120), unique=False, nullable=True)
     
     def __repr__(self):
         return f'<Category {self.name}>'
@@ -16,6 +17,8 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "image_url": self.image_url
+
         }
     
 class Ocasiones1(db.Model):
@@ -46,6 +49,7 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "image_url": self.image_url,
         }
 
 class Client(db.Model):

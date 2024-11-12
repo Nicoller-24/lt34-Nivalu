@@ -20,11 +20,11 @@ export const Crudadmin = () => {
                     return (
                         <li key={index} className="list-group-item d-flex justify-content-between">
                             <div className="d-flex">
-                            <img
-                                src={item.image_url}
-                                style={{ width: "150px", height: "150px", borderRadius: "150px", objectFit: "cover" }}
-                                alt="Admin"
-                            />
+                                <img
+                                    src={item.image_url}
+                                    style={{ width: "150px", height: "150px", borderRadius: "150px", objectFit: "cover" }}
+                                    alt="Admin"
+                                />
                                 <div style={{ marginLeft: "10px", display: "flex", flexDirection: "column", padding: "5px" }}>
                                     <h3>{item.name}</h3>
 
