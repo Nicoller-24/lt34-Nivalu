@@ -223,9 +223,9 @@ def login_restaurant():
     if email != restaurant.email or password != restaurant.password:
         return jsonify({"msg": "Bad email or password"}), 401
     
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token, restaurant_id= restaurant.id)
-   
+    # Usar el id del restaurante como identidad en el token
+    access_token = create_access_token(identity=restaurant.id)
+    return jsonify(access_token=access_token, restaurant_id=restaurant.id)
 
 
 

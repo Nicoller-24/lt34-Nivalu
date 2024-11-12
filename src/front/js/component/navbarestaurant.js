@@ -1,67 +1,54 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
-import { useContext } from "react";
-import { Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useEffect } from "react";
 
 export const NavbarRestaurant = (props) => {
     const { store, actions } = useContext(Context);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [restaurant, setRestaurant] = useState({});
+    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
-
-    
-    
-    function salir() {
+    const salir = () => {
         actions.logoutrestaurant();
         navigate("/restauranteselect");
         store.restaurant_auth = false;
-    }
-    
+    };
+
     const traer_restaurante = () => {
         fetch(`${process.env.BACKEND_URL}/api/restaurant/${props.id}`)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log("Datos del restaurante:", data);
-            setRestaurant(data);
-        })
-        .catch((error) => console.error("Error al cargar el restaurante:", error));
+            .then((response) => response.json())
+            .then((data) => setRestaurant(data))
+            .catch((error) => console.error("Error al cargar el restaurante:", error));
     };
 
     useEffect(() => {
-        
-            traer_restaurante();
-        
-    }, []); 
-    
+        traer_restaurante();
+    }, []);
+
+    const toggleOffcanvas = () => {
+        setOffcanvasOpen(!offcanvasOpen);
+        document.body.classList.toggle("offcanvas-open", !offcanvasOpen);
+    };
+
     return (
         <>
-            <nav className="navbar" style={{ backgroundColor: "#ffffff" }}>
+            <nav className="navbar shadow-sm" style={{ backgroundColor: "#ffffff", boxShadow: "0px 4px 8px rgba(0, 0, 255, 0.2)" }}>
                 <div className="container-fluid d-flex justify-content-between align-items-center">
-                    {/* Logo */}
                     <div className="navbar-brand d-flex align-items-center">
                         <img src="https://via.placeholder.com/40" alt="Logo" style={{ width: "40px", height: "40px" }} />
                         <h1 className="ms-2" style={{ fontSize: "1.5rem", color: "#050090" }}>Nivalu</h1>
-                        {/* Button to open the offcanvas menu */}
                         <button
+                            className="offcanvas-button ms-2"
+                            onClick={toggleOffcanvas}
                             style={{ backgroundColor: "white", border: "none" }}
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasScrolling"
-                            aria-controls="offcanvasScrolling"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#050090" className="bi bi-list" viewBox="0 0 16 16">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#050090" viewBox="0 0 16 16">
                                 <path fillRule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
                             </svg>
                         </button>
                     </div>
-
-                    {/* Message and profile icons on the right */}
+                    
                     <ul className="navbar-nav d-flex flex-row align-items-center">
-                        {/* Message icon */}
                         <li className="nav-item position-relative mx-3">
                             <Link className="nav-link" to={`/restaurant/chat/${props.id}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#050090" className="bi bi-chat-left-text" viewBox="0 0 16 16">
@@ -71,7 +58,6 @@ export const NavbarRestaurant = (props) => {
                             </Link>
                         </li>
 
-                        {/* Profile dropdown */}
                         <li className="nav-item dropdown mx-3">
                             <a
                                 className="nav-link dropdown-toggle d-flex align-items-center"
@@ -90,10 +76,10 @@ export const NavbarRestaurant = (props) => {
                                 aria-labelledby="navbarDropdown"
                                 style={{
                                     position: "absolute",
-                                    top: "100%", // So it displays below the profile link
+                                    top: "100%", 
                                     right: "0",
                                     zIndex: "1000",
-                                    minWidth: "200px", // Adjust width as needed
+                                    minWidth: "200px", 
                                 }}
                             >
                                 <li><Link className="dropdown-item" to={`/restaurant/${props.id}`}>View Profile</Link></li>
@@ -109,36 +95,49 @@ export const NavbarRestaurant = (props) => {
                 </div>
             </nav>
 
-            {/* Offcanvas side menu below the navbar */}
+            {/* Offcanvas side menu styled */}
             <div
-                className="offcanvas offcanvas-start"
-                style={{ top: "73px", width: "260px" }}
-                data-bs-scroll="true"
-                data-bs-backdrop="false"
-                tabIndex="-1"
-                id="offcanvasScrolling"
-                aria-labelledby="offcanvasScrollingLabel"
+                style={{
+                    position: "fixed",
+                    top: "74px",
+                    left: offcanvasOpen ? "0" : "-250px",
+                    width: "264px",
+                    height: "100%",
+                    backgroundColor: "#ffffff",
+                    transition: "left 0.3s ease",
+                    zIndex: 9,
+                    padding: "20px",
+                    boxShadow: "2px 0px 5px rgba(0, 0, 0, 0.1)",
+                    overflowY: "auto"
+                }}
             >
-                <div className="offcanvas-header">
-                    <h5 className="offcanvas-title" id="offcanvasScrollingLabel">Navigation</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div className="offcanvas-body">
-                    <ul className="list-unstyled">
-                        <li><Link className="dropdown-item" to={`/restaurant/${props.id}`}>Profile</Link></li>
-                        <li><Link className="dropdown-item" to={`/restaurants/${props.id}`}>View Restaurants</Link></li>
-                        <li><Link className="dropdown-item" to="/reservations/requests">Reservation Requests</Link></li>
-                        <li><Link className="dropdown-item" to={"/reservationsRestaurant"}>Reservations</Link></li>
-                        <hr className="dropdown-divider" />
-                        <li><Link className="dropdown-item" to={"/restaurant/chat/" + props.id}>Chats</Link></li>
-                        <li><Link className="dropdown-item" to={`/edit/restaurant/${props.id}`}>Edit Profile</Link></li>
-                        {store.restaurant_auth ? (
-                        <li onClick={() => salir()}  className="dropdown-item">
-                            Log out
-                        </li>) : null}
-                    </ul>
-                </div>
+                <ul className="list-unstyled">
+                    <li><Link className="dropdown-item" to={`/restaurant/${props.id}`}><i className="bi bi-person"></i> Perfil</Link></li>
+                    <li><Link className="dropdown-item" to={`/restaurants/${props.id}`}><i className="bi bi-building"></i> Ver Restaurantes</Link></li>
+                    <li><Link className="dropdown-item" to="/reservations/requests"><i className="bi bi-calendar-check"></i> Solicitudes de Reserva</Link></li>
+                    <li><Link className="dropdown-item" to={"/reservationsRestaurant"}><i className="bi bi-journal-check"></i> Reservaciones</Link></li>
+                    <hr className="dropdown-divider" />
+                    <li><Link className="dropdown-item" to={"/restaurant/chat/" + props.id}><i className="bi bi-chat-dots"></i> Chats</Link></li>
+                    <li><Link className="dropdown-item" to={`/edit/restaurant/${props.id}`}><i className="bi bi-gear"></i> Editar Perfil</Link></li>
+                    {store.restaurant_auth ? (
+                        <li onClick={() => salir()} className="dropdown-item"><i className="bi bi-box-arrow-right"></i> Log out</li>
+                    ) : null}
+                </ul>
             </div>
+
+            <style>{`
+                .offcanvas-open .page-content {
+                    margin-left: 250px;
+                    transition: margin-left 0.3s ease;
+                }
+                .navbar {
+                    box-shadow: 0px 4px 8px rgba(0, 0, 255, 0.2);
+                }
+                .dropdown-item i {
+                    margin-right: 8px;
+                    color: #050090;
+                }
+            `}</style>
         </>
     );
 };

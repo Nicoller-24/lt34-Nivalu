@@ -235,31 +235,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 			}
 			,
-			loginrestaurant: (inputEmail, inputPassword) => {
-				fetch(process.env.BACKEND_URL + "/api/login/restaurant", {
-					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"email": inputEmail,
-						"password": inputPassword
-					}),
-					redirect: "follow"
-				})
-					.then((response) => {
-						console.log(response.status)
-						if (response.status == 200) {
-							setStore({ restaurant_auth: true })
-						}
-						return response.json()
-					})
-					.then((data) => {
+			loginrestaurant: async (inputEmail, inputPassword) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/login/restaurant", {
+						method: 'POST',
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
+						redirect: "follow"
+					});
+			
+					if (response.status === 200) {
+						const data = await response.json();
 						localStorage.setItem("token", data.access_token);
-						setStore({ auth: true, sessionRestaurantId: data.restaurant_id});
-
-						console.log(data.access_token)
-						console.log(data)
-					})
-			},
+						setStore({ restaurant_auth: true, auth: true, sessionRestaurantId: data.restaurant_id });
+						return data;  // devolvemos data para usarla en el componente
+					} else {
+						console.error("Error en la autenticación: ", response.status);
+						return null;
+					}
+				} catch (error) {
+					console.error("Error en loginrestaurant:", error);
+					return null;
+				}
+			}
+			,
 			logoutrestaurant: () => {
 				console.log("logout")
 				localStorage.removeItem("token");
