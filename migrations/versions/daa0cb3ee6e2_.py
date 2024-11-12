@@ -1,10 +1,5 @@
 """empty message
 
-<<<<<<<< HEAD:migrations/versions/1dbfcf15384c_.py
-Revision ID: 1dbfcf15384c
-Revises: 
-Create Date: 2024-11-12 01:21:31.830021
-========
 <<<<<<<< HEAD:migrations/versions/daa0cb3ee6e2_.py
 Revision ID: daa0cb3ee6e2
 Revises: 
@@ -14,7 +9,6 @@ Revision ID: 552c49075e7b
 Revises: 
 Create Date: 2024-11-11 19:21:38.620159
 >>>>>>>> develop:migrations/versions/552c49075e7b_.py
->>>>>>>> develop:migrations/versions/552c49075e7b_.py
 
 """
 from alembic import op
@@ -22,14 +16,10 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-<<<<<<<< HEAD:migrations/versions/1dbfcf15384c_.py
-revision = '1dbfcf15384c'
-========
 <<<<<<<< HEAD:migrations/versions/daa0cb3ee6e2_.py
 revision = 'daa0cb3ee6e2'
 ========
 revision = '552c49075e7b'
->>>>>>>> develop:migrations/versions/552c49075e7b_.py
 >>>>>>>> develop:migrations/versions/552c49075e7b_.py
 down_revision = None
 branch_labels = None
@@ -86,7 +76,6 @@ def upgrade():
     op.create_table('restaurant_category',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=120), nullable=False),
-    sa.Column('image_url', sa.String(length=120), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )

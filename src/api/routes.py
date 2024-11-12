@@ -44,8 +44,10 @@ def get_restaurant(restaurant_id):
 def signup():
     body = request.get_json()
 
+    # Verifica si ya existe un restaurante con ese email
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
     if restaurant is None:
+        # Crea un nuevo restaurante
         restaurant = Restaurant(
             email=body["email"],
             guests_capacity=body["guests_capacity"],
@@ -61,18 +63,31 @@ def signup():
         db.session.add(restaurant)
         db.session.commit()
 
+        # Genera el token de acceso
         access_token = create_access_token(identity=restaurant.id)
 
+        # Crea la respuesta con todos los datos del restaurante
         response_body = {
             "msg": "Restaurante creado",
-            "access_token": access_token
+            "access_token": access_token,
+            "restaurant": {
+                "id": restaurant.id,
+                "email": restaurant.email,
+                "guests_capacity": restaurant.guests_capacity,
+                "location": restaurant.location,
+                "name": restaurant.name,
+                "phone_number": restaurant.phone_number,
+                "image_url": restaurant.image_url,
+                "latitude": restaurant.latitude,
+                "longitude": restaurant.longitude,
+                "is_active": restaurant.is_active
+            }
         }
         return jsonify(response_body), 201  
     else:
-        return jsonify({"msg": "El restaurante ya existe"}), 409  
+        return jsonify({"msg": "El restaurante ya existe"}), 409
+ 
 
-    
-    
 
 @api.route('/restaurant/<int:restaurant_id>', methods=['PUT'])
 def update_restaurant(restaurant_id):
@@ -208,9 +223,9 @@ def login_restaurant():
     if email != restaurant.email or password != restaurant.password:
         return jsonify({"msg": "Bad email or password"}), 401
     
-    access_token = create_access_token(identity=restaurant.id)
-
-    return jsonify(access_token=access_token), 200
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token, restaurant_id= restaurant.id)
+   
 
 
 
@@ -227,7 +242,8 @@ def login():
     if email != user.email or password != user.password:
         return jsonify({"msg": "Bad email or password"}), 401
 
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=user.id)
+
     return jsonify(access_token=access_token, user_id= user.id)
 
 @api.route('/admins', methods=['GET'])
@@ -335,6 +351,43 @@ def get_reservationsUser(client_id):
     
     # Serializar cada reserva en una lista de JSON
     return jsonify([reservation.serialize() for reservation in reservationsUser]), 200
+
+@api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
+def get_reservationsRestaurant(restaurant_id):
+    reservationsRestaurant = Reservations.query.filter_by(restaurant_id= restaurant_id).all()  # Obtener todas las reservas del restaurante
+    if not reservationsRestaurant:
+        return jsonify({"message": "Reservations not found"}), 404
+    
+    # Serializar cada reserva en una lista de JSON
+    return jsonify([reservation.serialize() for reservation in reservationsRestaurant]), 200
+
+@api.route('/reservations/accept/<int:reservation_id>', methods=['PUT'])
+def accept_reservation(reservation_id):
+    # Buscar la reserva por ID
+    reservation = Reservations.query.get(reservation_id)
+    
+    if not reservation:
+        return jsonify({"message": "Reservation not found"}), 404
+
+    # Cambiar el estado de la reserva a "aceptada"
+    reservation.state = "accepted"
+    db.session.commit()
+
+    return jsonify({"message": "Reservation accepted successfully", "reservation": reservation.serialize()}), 200
+
+@api.route('/reservations/reject/<int:reservation_id>', methods=['PUT'])
+def reject_reservation(reservation_id):
+    reservation = Reservations.query.get(reservation_id)
+    if not reservation:
+        return jsonify({"message": "Reservation not found"}), 404
+    
+    try:
+        reservation.state = "rejected"  # Cambia el estado a rechazado
+        db.session.commit()
+        return jsonify({"message": "Reservation rejected successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Error rejecting reservation", "error": str(e)}), 500
 
 
 
@@ -617,11 +670,29 @@ def get_chats_restaurant(id_restaurant):
 
 @api.route('/chat/client/<int:id_comensal>', methods=['GET'])
 def get_chats_client(id_comensal):
-    
-    chat = Chat.query.filter_by(id_comensal=id_comensal)
-    chats = list(map(lambda item: item.serialize(), chat)) 
+    chats = Chat.query.filter_by(id_comensal=id_comensal).all()
 
-    return jsonify(chats), 200
+    response_data = []
+    for chat in chats:
+        chat_data = chat.serialize()
+
+        restaurant = Restaurant.query.get(chat.id_restaurant)
+        
+        if restaurant:
+            chat_data["restaurant_details"] = {
+                "name": restaurant.name,
+                "location": restaurant.location,
+                "email": restaurant.email,
+                "phone_number": restaurant.phone_number,
+                "guests_capacity": restaurant.guests_capacity
+            }
+        else:
+            chat_data["restaurant_details"] = None 
+
+        response_data.append(chat_data)
+
+    return jsonify(response_data), 200
+
 
 @api.route('/messages/<int:restaurant_id>/<int:client_id>/<int:chat_id>', methods=['GET'])
 def get_messages(restaurant_id, client_id, chat_id):

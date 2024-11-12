@@ -22,11 +22,8 @@ export const Home = () => {
 					Read documentation
 				</a>
 			</p>
-			<Link to="/client/chat">
-				<button className="btn btn-primary">client chat</button>
-			</Link>
-			<Link to="/restaurant/chat">
-				<button className="btn btn-primary">chat</button>
+			<Link to="/restaurant/view">
+				<button className="btn btn-primary">restaurant view</button>
 			</Link>
 			<Link to="/adminhomepage">
 				<button className="btn btn-primary">admins</button>
@@ -52,8 +49,13 @@ export const Home = () => {
 			<Link to="/listOfRestaurants">
 				<button className="btn btn-primary">Lista de Restaurantes</button>
 			</Link>
-			<Link to="/listReservationsUser"><button className="btn btn-primary">Acive reservations</button>
+			<Link to="/listReservationsUser"><button className="btn btn-primary">Acive reservations Client</button>
 			</Link>
+
+			<Link to="/reservationsRestaurant"><button className="btn btn-primary">Acive reservations Restaurant</button>
+			</Link>
+
+			
 		</div>
 	);
 };

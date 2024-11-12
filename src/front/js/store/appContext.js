@@ -30,13 +30,6 @@ const injectContext = PassedComponent => {
 			 **/
 			state.actions.getMessage();
 			state.actions.loadSomeDataAdmin();
-			// state.actions.removeAdmin();
-			// state.actions.addAdmin();
-			// state.actions.putAdmin();
-			// state.actions.traer_admin();
-			
-			// <---- calling this function from the flux.js actions
-			state.actions.loadSomeData()// <---- calling this function from the flux.js actions
 			state.actions.loginClient()
 			state.actions.loadSomeDataCategory()
 			state.actions.loadSomeDataOcasion()
