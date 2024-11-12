@@ -7,10 +7,11 @@ export const ListOfRestaurants = () => {
     const { store, actions } = useContext(Context);
     const [selectedCategory, setSelectedCategory] = useState(""); // State to store selected category
 
+    // Load categories only once on component mount
     useEffect(() => {
-        actions.loadSomeData(); // Load restaurants
         actions.loadSomeDataCategory(); // Load categories
-    }, [actions]);
+        actions.loadSomeData(); // Load restaurants
+    }, []); // Empty dependency array to ensure this only runs once
 
     // Filter restaurants based on selected category
     const filteredRestaurants = selectedCategory
@@ -27,6 +28,7 @@ export const ListOfRestaurants = () => {
         <div className="container">
             <h1 className="m-5">Restaurants</h1>
 
+            {/* Dropdown to select category */}
             <div className="form-group">
                 <label htmlFor="categorySelect">Filter by Category:</label>
                 <select 
@@ -42,6 +44,7 @@ export const ListOfRestaurants = () => {
                 </select>
             </div>
 
+            {/* Display filtered restaurants */}
             <div className="row flex-row flex-nowrap" style={{ overflowX: "auto" }}>
                 {filteredRestaurants && filteredRestaurants.map((restaurant, index) => (
                     <div key={index} className="col-md-4">
