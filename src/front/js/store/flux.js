@@ -305,6 +305,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/admins")
 					.then((response) => response.json())
 					.then((data) => {
+						console.log("Fetched admins:", data); 
 						setStore({ admins: data })
 					})
 					.catch((error) => console.error("Error al cargar los usuarios de admin:", error));
@@ -317,7 +318,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataAdmin());
 			},
-			addNewAdmin:(email, name, user_name, password) => {
+			addNewAdmin:(email, name, user_name, password, image) => {
 				fetch(process.env.BACKEND_URL + '/api/signup/admins', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
@@ -326,6 +327,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"name": name,
 						"user_name": user_name,
 						"password": password,
+						"image_url": image,
 					}),
 					redirect: "follow",
 				})
@@ -483,69 +485,77 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			loadSomeDataCategory: () => {
-				console.log("Se cargó la página");
-				fetch(process.env.BACKEND_URL + "/api/categories")
-					.then((response) => response.json())
-					.then((data) => {
-						setStore({ categories: data })
-					})
-					.catch((error) => console.error("Error al cargar categorias:", error));
+				const store = getStore();
+				if (store.categories.length === 0) { // Fetch only if categories array is empty
+					console.log("Loading categories...");
+					fetch(process.env.BACKEND_URL + "/api/categories")
+						.then((response) => response.json())
+						.then((data) => {
+							setStore({ categories: data });
+							console.log("Categories loaded:", data);
+						})
+						.catch((error) => console.error("Error loading categories:", error));
+				}
 			},
 
-			addNewCategory: (name) => {
-				const token = localStorage.getItem('token'); // Match with 'setItem' key
-
-   				 if (!token) { 
-       			 console.error('JWT token is missing. User might not be authenticated.');
-        		return; }
-			
-				name = name.trim(); // Trim any whitespace from the category name
-			
-				if (!name) {
-					console.error('Category name is required'); // Log error if the name is empty
-					return; // Exit if the name is invalid
+			addNewCategory: (name, imageUrl) => {
+				const token = localStorage.getItem('token');
+				if (!token) {
+					console.error('JWT token is missing. User might not be authenticated.');
+					return;
 				}
 			
-				console.log("Sending category name:", name); // Log the name being sent
-				console.log("Using JWT token:", token); // Log the token being used
+				// Create FormData to handle file uploads and text data together
+				const formData = new FormData();
+				formData.append("name", name);
+				formData.append("image_url", imageUrl);  // Append image URL correctly
 			
 				fetch(process.env.BACKEND_URL + '/api/create/categories', {
 					method: 'POST',
 					headers: {
-						"Content-Type": "application/json", // Specify the content type
-						"Authorization": `Bearer ${token}` // Include the JWT token for authentication
+						"Authorization": `Bearer ${token}`,  // Only Authorization header is needed with FormData
 					},
-					body: JSON.stringify({ "name": name }), // Send the category name in the body
+					body: formData,  // Send FormData
 				})
 				.then((response) => {
 					if (!response.ok) {
 						return response.json().then(err => {
-							throw new Error(err.message || 'Failed to create category'); // Throw an error with the message from the server
+							throw new Error(err.message || 'Failed to create category');
 						});
 					}
-					return response.json(); // Parse the response as JSON
+					return response.json();
 				})
 				.then((data) => {
-					console.log('Category created:', data); // Log success response
-					getActions().loadSomeDataCategory(); // Load updated categories
+					console.log('Category created:', data);
+					getActions().loadSomeDataCategory();  // Refresh categories
 				})
 				.catch((error) => {
-					console.error('Error creating category:', error); // Log any errors that occur
+					console.error('Error creating category:', error);
 				});
 			},
 			
 			editCategory: (categoryModif, id) => {
 				const requestOptions = {
 					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify(categoryModif)
 				};
+			
 				fetch(process.env.BACKEND_URL + `/api/edit/categories/${id}`, requestOptions)
-					.then(response => response.json())
+					.then(response => {
+						if (!response.ok) {
+							return response.json().then(err => {
+								throw new Error(err.message || 'Failed to update category');
+							});
+						}
+						return response.json();
+					})
 					.then(data => console.log("Category updated:", data))
 					.catch(error => console.error("Error updating category:", error));
 			},
-
+			
 			removeCategory: (idToDelete) => {
 				fetch(process.env.BACKEND_URL + "/api/categories/" + idToDelete, {
 					method: "DELETE",

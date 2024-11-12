@@ -24,7 +24,11 @@ export const Crudcategoria = () => {
                 {store.categories.map((item, index) => {
                     return (
                         <li key={index} className="list-group-item d-flex justify-content-between">
-                            
+                            <img
+                                src={item.image_url}
+                                style={{ width: "150px", height: "150px", borderRadius: "150px", objectFit: "cover" }}
+                                alt="Admin"
+                            />
                             <div className="d-flex">
                                 <div style={{ marginLeft: "10px", display: "flex", flexDirection: "column", padding: "5px" }}>
                                     <h3>{item.name}</h3>
