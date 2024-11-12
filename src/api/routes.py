@@ -451,22 +451,22 @@ def get_category(category_id):
 @api.route("/create/categories", methods=["POST"])
 @jwt_required()
 def create_category():
-    body = request.get_json()
-    print("Received body:", body)  # Log the received data
+    name = request.form.get("name")
+    image_url = request.form.get("image_url")  # Access image_url from form data
 
-    if "name" not in body:
+    if not name:
         return jsonify({"msg": "Falta el nombre de la categoría"}), 400
 
-    category = Category.query.filter_by(name=body["name"]).first()
+    # Check if category exists
+    category = Category.query.filter_by(name=name).first()
     
     if category is None:
-        category = Category(name=body["name"])
+        # Create a new category with name and image_url
+        category = Category(name=name, image_url=image_url)
         db.session.add(category)
         db.session.commit()
-        response_body = {"msg": "Categoria creado"}
-        return jsonify(response_body), 200
+        return jsonify({"msg": "Categoria creado", "category": category.serialize()}), 200
     else:
-        print("Category already exists:", body["name"])  # Log existing category case
         return jsonify({"msg": "La categoria ya existe"}), 400
 
 @api.route('edit/categories/<int:category_id>', methods=['PUT'])
@@ -475,17 +475,18 @@ def update_categories(category_id):
     category = Category.query.filter_by(id=category_id).first()
 
     if category is None:
-        return jsonify({"error": "Categoria no encontrado"}), 404
+        return jsonify({"error": "Categoria no encontrada"}), 404
 
+    # Update the name if provided
     if "name" in body:
-        existing_category = Category.query.filter_by(name=body["name"]).first()  
-        if existing_category and existing_category.id != category_id:
-            return jsonify({"error": "La categoria ya está en uso"}), 400
-        
-        category.name = body["name"] 
+        category.name = body["name"]
+
+    # Update the image_url if provided
+    if "image_url" in body:
+        category.image_url = body["image_url"]
 
     db.session.commit()
-    return jsonify({"msg": "Categoria actualizada!", "category": category.serialize()}), 200 
+    return jsonify({"msg": "Categoria actualizada!", "category": category.serialize()}), 200
     
 @api.route('/categories/<int:category_id>', methods=['DELETE'])
 def delete_category(category_id):
