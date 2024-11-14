@@ -28,6 +28,7 @@ import { Mapautocompletate } from "./component/mapautocompletate.js";
 import App from "./component/App.js";
 import Chat from "./component/chat.js";
 import Chatrestaurant from "./component/chatrestaurant.js";
+import { FilterRestaurantsByLocation } from "./component/filterRestaurantsByLocation.js";
 
 import { Crudadmin } from "./component/crudadmin";
 import { Crearadmin } from "./component/crearadmin";
@@ -101,6 +102,9 @@ const Layout = () => {
                         <Route element={<LoginClient />} path="/loginClients" />
                         <Route element={<SuccessPage />} path="/reservaExitosa"/>
                         <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant"/>
+                        <Route element={<FilterRestaurantsByLocation />} path="/filterNearbyRestaurants"/>
+
+
 
 
 
