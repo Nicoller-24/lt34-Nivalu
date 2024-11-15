@@ -225,7 +225,7 @@ export const NavbarRestaurant = ({ id, onToggle }) => {
                                     display: reservationsOpen ? "block" : "none" // Oculta el elemento cuando está cerrado
                                 }}
                             >
-                                <li><Link to="/reservations/requests" className="dropdown-item" style={{ color: "#050090" }}>Reservation Requests</Link></li>
+                                <li><Link to="/reservationsRestaurant" className="dropdown-item" style={{ color: "#050090" }}>Reservation Requests</Link></li>
                                 <li><Link to="/reservations/active" className="dropdown-item" style={{ color: "#050090" }}>Active Reservations</Link></li>
                             </ul>
                         )}

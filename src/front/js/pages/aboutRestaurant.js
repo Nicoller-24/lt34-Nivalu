@@ -3,13 +3,9 @@ import { Context } from "../store/appContext";
 import SingleMapComponent from "../component/singlemapcompnent";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { setHours, setMinutes } from 'date-fns';
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-
-
-// Inside your component
 export const AboutRestaurant = () => {
     const { store, actions } = useContext(Context);
     const [unitrestaurant, setUnitRestaurant] = useState(null);
@@ -17,52 +13,47 @@ export const AboutRestaurant = () => {
     const [reservationInfo, setReservationInfo] = useState({
         number_of_people: '',
         date: null,
-        time: null, // change to date object for time picker compatibility
+        time: null,
         occasion: ''
     });
     const [initialPosition, setInitialPosition] = useState(null);
     const [ocasiones, setOcasiones] = useState([]);
-
     const [authClientId, setAuthClientId] = useState(null);
 
-    function getChats() {
-        fetch(`${process.env.BACKEND_URL}/api/chat/client/${authClientId}`)
-          .then((response) => response.json())
-          .then((data) => console.log(data))
-          .catch((error) => console.error("Error al cargar los chats:", error));
-      }
+    const createChat = async (id_restaurant, id_comensal) => {
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/chat/post/`, {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id_restaurant,
+                    id_comensal,
+                }),
+            });
+            const data = await response.json();
+            console.log("Chat creado exitosamente:", data);
 
-    function createChat (id_restaurant, id_comensal)  {
-        fetch(process.env.BACKEND_URL + '/api/chat/post/', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                "id_restaurant": id_restaurant,
-                "id_comensal": id_comensal
-            }),
-            redirect: "follow",
-        })
-        .then((response) => {
-            console.log(response.json());
-            getChats()
-        })
-        .catch((error) => console.error("Error al crear el restaurante:", error));
-    }
+            // Navegar al chat recién creado
+            navigate(`/client/chat/${id_restaurant}/${authClientId}`);
+        } catch (error) {
+            console.error("Error al crear el chat:", error);
+        }
+    };
 
-    
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
             const decoded = jwtDecode(token);
-            setAuthClientId(decoded.sub); 
-            
+            setAuthClientId(decoded.sub);
         }
     }, []);
 
     useEffect(() => {
         const restaurantId = getQueryParam('id_restaurant');
         if (restaurantId) {
-            const foundRestaurant = store.restaurants.find(restaurant => restaurant.id === parseInt(restaurantId));
+            const foundRestaurant = store.restaurants.find(
+                (restaurant) => restaurant.id === parseInt(restaurantId)
+            );
             if (foundRestaurant) {
                 setUnitRestaurant(foundRestaurant);
                 setInitialPosition({
@@ -82,11 +73,10 @@ export const AboutRestaurant = () => {
         fetchOcasiones();
     }, []);
 
-    function getQueryParam(param) {
+    const getQueryParam = (param) => {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
-
-    }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -114,7 +104,7 @@ export const AboutRestaurant = () => {
         <div className="container text-align">
             <div className="row">
                 <div className="col-8">
-                <h1 className="display-4">{unitrestaurant.name}</h1>
+                    <h1 className="display-4">{unitrestaurant.name}</h1>
                     <img
                         src={unitrestaurant.image_url || "fallback_image_url"}
                         className="card-img-top img-fluid rounded shadow-lg"
@@ -125,13 +115,11 @@ export const AboutRestaurant = () => {
                             e.target.src = 'https://phohoangminh.com/img/placeholders/burger_placeholder.png?v=1';
                         }}
                     />
-                   
+
                     <div className="content-wrapper">
                         <p className="lead">Location: {unitrestaurant.location || "Unknown"}</p>
                         {initialPosition && (
-                            <SingleMapComponent
-                                initialPosition={initialPosition}
-                            />
+                            <SingleMapComponent initialPosition={initialPosition} />
                         )}
                         <p className="lead">Phone Number: {unitrestaurant.phone_number || "Unknown"}</p>
                         <p className="lead">Email: {unitrestaurant.email || "Unknown"}</p>
@@ -143,67 +131,66 @@ export const AboutRestaurant = () => {
                     <div className="p-3 m-auto w-75">
                         <div><h1 className="mx-auto">Book your table</h1></div>
                         <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label className="form-label">Number of guests: </label>
-                    <input
-                        type="number"
-                        value={reservationInfo.number_of_people}
-                        onChange={(e) => setReservationInfo({ ...reservationInfo, number_of_people: e.target.value })}
-                        className="form-control"
-                        required
-                    />
-                </div>
+                            <div className="mb-3">
+                                <label className="form-label">Number of guests: </label>
+                                <input
+                                    type="number"
+                                    value={reservationInfo.number_of_people}
+                                    onChange={(e) => setReservationInfo({ ...reservationInfo, number_of_people: e.target.value })}
+                                    className="form-control"
+                                    required
+                                />
+                            </div>
 
-                <div className="mb-3">
-                    <label className="form-label">Time: </label>
-                    <DatePicker
-                        selected={reservationInfo.time}
-                        onChange={(time) => setReservationInfo({ ...reservationInfo, time })}
-                        showTimeSelect
-                        showTimeSelectOnly
-                        timeIntervals={60}
-                        timeCaption="Time"
-                        dateFormat="h:mm aa"
-                        className="form-control"
-                    />
-                </div>
+                            <div className="mb-3">
+                                <label className="form-label">Time: </label>
+                                <DatePicker
+                                    selected={reservationInfo.time}
+                                    onChange={(time) => setReservationInfo({ ...reservationInfo, time })}
+                                    showTimeSelect
+                                    showTimeSelectOnly
+                                    timeIntervals={60}
+                                    timeCaption="Time"
+                                    dateFormat="h:mm aa"
+                                    className="form-control"
+                                />
+                            </div>
 
-                <div className="mb-3">
-                    <label className="form-label">Date: </label>
-                    <DatePicker
-                        selected={reservationInfo.date}
-                        onChange={(date) => setReservationInfo({ ...reservationInfo, date })}
-                        dateFormat="yyyy-MM-dd"
-                        className="form-control"
-                    />
-                </div>
+                            <div className="mb-3">
+                                <label className="form-label">Date: </label>
+                                <DatePicker
+                                    selected={reservationInfo.date}
+                                    onChange={(date) => setReservationInfo({ ...reservationInfo, date })}
+                                    dateFormat="yyyy-MM-dd"
+                                    className="form-control"
+                                />
+                            </div>
 
-                <div className="mb-3">
-                    <label className="form-label">Occasion: </label>
-                    <select
-                        value={reservationInfo.occasion}
-                        onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
-                        className="form-control"
-                    >
-                        <option value="">Select an occasion</option>
-                        {ocasiones.map((ocas) => (
-                            <option key={ocas.id} value={ocas.id}>
-                                {ocas.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                            <div className="mb-3">
+                                <label className="form-label">Occasion: </label>
+                                <select
+                                    value={reservationInfo.occasion}
+                                    onChange={(e) => setReservationInfo({ ...reservationInfo, occasion: e.target.value })}
+                                    className="form-control"
+                                >
+                                    <option value="">Select an occasion</option>
+                                    {ocasiones.map((ocas) => (
+                                        <option key={ocas.id} value={ocas.id}>
+                                            {ocas.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                     <button type="submit" className="btn btn-success w-100">Add reservation</button>   
-                         </form>
-                        <Link to={`/client/chat/${unitrestaurant.id}/${authClientId}`}>
-                            <button onClick={()=>{
-                                console.log(typeof(authClientId) , typeof(unitrestaurant.id));
-                                createChat(unitrestaurant.id, authClientId);
-                                getChats();
-                                
-                                }} style={{"marginTop": "10px"}} className="btn btn-success w-100">Start a chat</button>
-                        </Link>
+                            <button type="submit" className="btn btn-success w-100">Add reservation</button>
+                        </form>
+                        <button
+                            onClick={() => createChat(unitrestaurant.id, authClientId)}
+                            style={{ marginTop: "10px" }}
+                            className="btn btn-success w-100"
+                        >
+                            Start a chat
+                        </button>
                     </div>
                 </div>
             </div>

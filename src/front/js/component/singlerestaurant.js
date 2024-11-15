@@ -7,7 +7,7 @@ import { NavbarRestaurant } from "./navbarestaurant";
 export const Singlerestaurant = () => {
     const { store } = useContext(Context);
     const params = useParams();
-    
+
     const [initialPosition, setInitialPosition] = useState(null);
     const [restaurant, setRestaurant] = useState({});
     const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
@@ -44,14 +44,15 @@ export const Singlerestaurant = () => {
                     style={{
                         display: "flex",
                         alignItems: "center",
-                        backgroundColor: "#f7f8fc",
+                        backgroundColor: "white",
                         padding: "1.5rem",
                         borderRadius: "10px",
+                        width: "calc(100% - 400px)", // Ajusta dinámicamente el ancho
                         maxWidth: "800px",
                         margin: "4rem auto",
                         boxShadow: "rgba(0, 0, 255, 0.2) 0px 1px 20px 5px",
-                        marginLeft: isOffcanvasOpen ? "400px" : "auto",
-                        transition: "margin-left 0.3s ease",
+                        marginLeft: isOffcanvasOpen ? "400px" : "calc((100% - 800px) / 2)", // Desplaza suavemente
+                        transition: "margin-left 0.3s ease-in-out", // Transición suave
                     }}
                 >
                     {/* Imagen a la izquierda */}
@@ -65,27 +66,33 @@ export const Singlerestaurant = () => {
                                 borderRadius: "50%",
                                 objectFit: "cover",
                                 marginRight: "1.5rem",
-                                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)"
+                                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                             }}
                         />
                     )}
                     
                     {/* Información a la derecha */}
                     <div style={{ flex: 1 }}>
-                        <h1 style={{
-                            fontSize: "1.5rem",
-                            color: "#333",
-                            fontWeight: "bold",
-                            marginBottom: "0.5rem"
-                        }}>{restaurant.name}</h1>
+                        <h1
+                            style={{
+                                fontSize: "1.5rem",
+                                color: "#333",
+                                fontWeight: "bold",
+                                marginBottom: "0.5rem",
+                            }}
+                        >
+                            {restaurant.name}
+                        </h1>
 
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "0.5rem",
-                            color: "#555",
-                            marginBottom: "1rem"
-                        }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0.5rem",
+                                color: "#555",
+                                marginBottom: "1rem",
+                            }}
+                        >
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#17a2b8" className="bi bi-geo-alt-fill" viewBox="0 0 16 16">
                                     <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
@@ -108,23 +115,23 @@ export const Singlerestaurant = () => {
 
                         {initialPosition && (
                             <div style={{ width: "100%", marginBottom: "1rem" }}>
-                                <SingleMapComponent
-                                    initialPosition={initialPosition}
-                                />
+                                <SingleMapComponent initialPosition={initialPosition} />
                             </div>
                         )}
 
                         <div style={{ display: "flex", gap: "1rem" }}>
                             <Link to={`/restaurant/chat/${params.id}`}>
-                                <button style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    padding: "0.5rem 1rem",
-                                    borderRadius: "5px",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    transition: "background-color 0.3s ease"
-                                }}>
+                                <button
+                                    style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "0.5rem 1rem",
+                                        borderRadius: "5px",
+                                        border: "none",
+                                        cursor: "pointer",
+                                        transition: "background-color 0.3s ease",
+                                    }}
+                                >
                                     View Chats
                                 </button>
                             </Link>

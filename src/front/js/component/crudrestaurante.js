@@ -43,8 +43,8 @@ export const Crudrestaurante = () => {
                 style={{ 
                     paddingTop: "80px", 
                     padding: "2rem", 
-                    marginLeft: isOffcanvasOpen ? "335px" : "auto", 
-                    transition: "margin-left 0.3s ease" 
+                    marginLeft: isOffcanvasOpen ? "300px" : "0", // Ajuste de desplazamiento suave
+                    transition: "margin-left 0.3s ease-in-out", // Transición uniforme
                 }}
             >
                 <div style={{
@@ -64,7 +64,7 @@ export const Crudrestaurante = () => {
                                 padding: "1.5rem",
                                 boxShadow: "rgba(0, 0, 255, 0.2) 0px 1px 20px 5px",
                                 maxWidth: "400px",
-                                transition: "transform 0.3s",
+                                transition: "transform 0.3s ease-in-out",
                             }}
                             onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-5px)"}
                             onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}

@@ -145,7 +145,7 @@ export const Edit = () => {
                 style={{
                     display: "flex",
                     gap: "20px",
-                    padding: "2rem",
+                    padding: "3rem",
                     marginTop: "1rem",
                     transition: "margin-left 0.3s ease",
                     marginLeft: offcanvasOpen ? "300px" : "0"
@@ -155,7 +155,7 @@ export const Edit = () => {
                 <div style={{
                     width: "30%",
                     padding: "1rem",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                    boxShadow: "rgba(0, 0, 255, 0.2) 0px 1px 20px 5px",
                     borderRadius: "10px",
                     backgroundColor: "#f8f9fa",
                     textAlign: "center"
@@ -177,7 +177,7 @@ export const Edit = () => {
                 <div style={{
                     flex: 1,
                     padding: "1rem",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                    boxShadow: "rgba(0, 0, 255, 0.2) 0px 1px 20px 5px",
                     borderRadius: "10px",
                     backgroundColor: "#ffffff"
                 }}>
