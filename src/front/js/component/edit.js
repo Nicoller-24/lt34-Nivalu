@@ -15,6 +15,7 @@ export const Edit = () => {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
     
     const { store, actions } = useContext(Context);
     const params = useParams();
@@ -129,11 +130,27 @@ export const Edit = () => {
         setSelectedLocation(location);
     };
 
+    // Función para manejar el estado del offcanvas y desplazar el contenido
+    const handleOffcanvasToggle = (isOpen) => {
+        setOffcanvasOpen(isOpen);
+    };
+
     return (
         <>
-            <NavbarRestaurant id={params.id} />
+            <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}> {/* Fondo para todo el componente */}
+            <NavbarRestaurant id={params.id} onToggle={handleOffcanvasToggle} />
 
-            <div style={{ display: "flex", gap: "20px", padding: "2rem" }}>
+            <div 
+                className="page-content"
+                style={{
+                    display: "flex",
+                    gap: "20px",
+                    padding: "2rem",
+                    marginTop: "1rem",
+                    transition: "margin-left 0.3s ease",
+                    marginLeft: offcanvasOpen ? "300px" : "0"
+                }}
+            >
                 {/* Left section - Profile Image */}
                 <div style={{
                     width: "30%",
@@ -253,6 +270,7 @@ export const Edit = () => {
                     </form>
                 </div>
             </div>
+        </div>
         </>
     );
 };

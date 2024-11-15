@@ -13,6 +13,7 @@ export const Crudrestaurante = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
     const [authRestaurantId, setAuthRestaurantId] = useState(null);
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -27,18 +28,31 @@ export const Crudrestaurante = () => {
         setSelectedCategories(categories);
     };
 
-    return (
-        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh"}}>
-            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
-            <NavbarRestaurant id={params.id} />
+    const handleToggleOffcanvas = (state) => {
+        setIsOffcanvasOpen(state);
+    };
 
-            <div className="page-content" style={{ padding: "2rem" }}>
+    return (
+        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+
+            <NavbarRestaurant id={params.id} onToggle={handleToggleOffcanvas} />
+
+            <div 
+                className="page-content" 
+                style={{ 
+                    paddingTop: "80px", 
+                    padding: "2rem", 
+                    marginLeft: isOffcanvasOpen ? "335px" : "auto", 
+                    transition: "margin-left 0.3s ease" 
+                }}
+            >
                 <div style={{
+                    marginTop: "90px",
                     display: "grid",
                     gridTemplateColumns: "repeat(3, 1fr)",
                     gap: "1.5rem",
                 }}>
-
                     {store.restaurants.map((item, index) => (
                         <div
                             key={index}
@@ -48,7 +62,7 @@ export const Crudrestaurante = () => {
                                 backgroundColor: "#ffffff",
                                 borderRadius: "12px",
                                 padding: "1.5rem",
-                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                boxShadow: "rgba(0, 0, 255, 0.2) 0px 1px 20px 5px",
                                 maxWidth: "400px",
                                 transition: "transform 0.3s",
                             }}

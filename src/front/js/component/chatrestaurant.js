@@ -5,33 +5,46 @@ import "../../styles/chat.css";
 import { NavbarRestaurant } from "./navbarestaurant";
 
 const Chatrestaurant = () => {
-  const { store, actions } = useContext(Context);
+  const { store } = useContext(Context);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessages] = useState("");
   const [chats, setChats] = useState([]);
   const [selectedComensal, setSelectedComensal] = useState(""); 
+  const [offcanvasOpen, setOffcanvasOpen] = useState(false);
   const params = useParams();
   const [chatId, setChatId] = useState(null);
   const [comensalId, setComensalId] = useState(null);
 
-  function getMessages(id_restaurant, id_client, id_chat, comensal_name) {
-    fetch(`${process.env.BACKEND_URL}/api/messages/${id_restaurant}/${id_client}/${id_chat}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setMessages(Array.isArray(data) ? data : []);
-        setSelectedComensal(comensal_name);
-      })
-      .catch((error) => console.error("Error al cargar los mensajes:", error));
-  }
+  const handleToggleOffcanvas = (isOpen) => {
+    setOffcanvasOpen(isOpen);
+  };
 
-  function getChats() {
+  const getMessages = (id_restaurant, id_client, id_chat, comensal_name) => {
+    const url = `${process.env.BACKEND_URL}/api/messages/${id_restaurant}/${id_client}/${id_chat}`;
+    console.log("Fetching messages from:", url);
+
+    fetch(url)
+        .then((response) => {
+            if (!response.ok) throw new Error("Error en la respuesta de la red");
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Mensajes recibidos:", data);
+            setMessages(Array.isArray(data) ? data : []);
+            setSelectedComensal(comensal_name);
+        })
+        .catch((error) => console.error("Error al cargar los mensajes:", error));
+};
+
+
+  const getChats = () => {
     fetch(`${process.env.BACKEND_URL}/api/chat/restaurant/${params.id}`)
       .then((response) => response.json())
       .then((data) => setChats(data))
       .catch((error) => console.error("Error al cargar los chats:", error));
-  }
+  };
 
-  function sendMessage(id_restaurant, id_comensal, id_chat, message) {
+  const sendMessage = (id_restaurant, id_comensal, id_chat, message) => {
     const currentDate = new Date();
     const message_date = currentDate.toISOString().split("T")[0];
     const message_time = currentDate.toTimeString().split(" ")[0];
@@ -57,7 +70,7 @@ const Chatrestaurant = () => {
       setInputMessages("");
     })
     .catch(error => console.error("Error al enviar el mensaje:", error));
-  }
+  };
 
   useEffect(() => {
     getChats();
@@ -73,10 +86,22 @@ const Chatrestaurant = () => {
   }, [comensalId, chatId, params.id, selectedComensal]);
 
   return (
-    <>
+    <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh", paddingTop: "8rem" }}> {/* Fondo para todo el componente */}
       {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
-      <NavbarRestaurant  id={params.id}/>
-      <div className="container">
+      <NavbarRestaurant id={params.id} onToggle={handleToggleOffcanvas} />
+      
+      <div
+        className={`chat-container ${offcanvasOpen ? "offcanvas-open" : ""}`}
+        style={{
+          boxShadow: "rgba(0, 0, 255, 0.2) 0px 1px 20px 5px",
+          marginLeft: offcanvasOpen ? "341px" : "106px",
+          width: offcanvasOpen ? "70%" : "82%",
+          transition: "all 0.3s ease",
+          backgroundColor: "#ffffff", // Fondo para el contenido del chat
+          borderRadius: "8px",
+          padding: "2rem",
+        }}
+      >
         <div className="row clearfix">
           <div className="col-lg-12">
             <div className="card chat-app">
@@ -169,14 +194,13 @@ const Chatrestaurant = () => {
                       onChange={(e) => setInputMessages(e.target.value)}
                     />
                   </div>
-                  <button onClick={() => getMessages(params.id, comensalId, chatId, selectedComensal)}>Obtener nuevos mensajes</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
