@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
+import { Navigate } from "react-router-dom";
 import { NavbarRestaurant } from "../component/navbarestaurant";
 
 export const ListReservationsRestaurant = () => {
-    const { store, actions } = useContext(Context); // Usar el contexto dentro del componente
-    const [reservations, setReservations] = useState([]); // Definir el estado de reservas
-    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false); // Estado para el offcanvas
+    const { store, actions } = useContext(Context);
+    const [reservations, setReservations] = useState([]);
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
 
     const getReservationsPerRestaurant = () => {
-        const restaurantId = store.sessionRestaurantId; // Usar store.sessionRestaurantId para obtener el ID
+        const restaurantId = store.sessionRestaurantId;
 
         fetch(`${process.env.BACKEND_URL}/api/reservationsRestaurant/${restaurantId}`, {
             method: "GET",
@@ -20,7 +21,7 @@ export const ListReservationsRestaurant = () => {
                 return response.json();
             })
             .then((data) => {
-                setReservations(data); // Actualizar el estado con las reservas
+                setReservations(data);
             })
             .catch((error) => {
                 console.error("Error fetching reservations:", error);
@@ -28,96 +29,103 @@ export const ListReservationsRestaurant = () => {
     };
 
     useEffect(() => {
-        getReservationsPerRestaurant(); // Llamar a la función para obtener las reservas al cargar el componente
-    }, []); // Se ejecuta solo una vez al cargar el componente
+        getReservationsPerRestaurant();
+    }, []);
 
-    // Manejar el estado del offcanvas
     const handleOffcanvasToggle = (isOpen) => {
         setIsOffcanvasOpen(isOpen);
     };
 
     return (
         <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
-            {/* Navbar con manejo de offcanvas */}
+            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
             <NavbarRestaurant id={store.sessionRestaurantId} onToggle={handleOffcanvasToggle} />
 
-            {/* Contenedor principal con desplazamiento */}
             <div
                 className="page-content"
                 style={{
-                    padding: "3rem",
+                    padding: "2rem",
                     marginTop: "4rem",
-                    transition: "margin-left 0.3s ease", // Transición suave
-                    marginLeft: isOffcanvasOpen ? "300px" : "0", // Desplazar contenido si el offcanvas está abierto
+                    transition: "margin-left 0.3s ease",
+                    marginLeft: isOffcanvasOpen ? "300px" : "0",
                 }}
             >
-                {/* Tarjeta contenedora */}
+                 <h1
+                        style={{
+                            fontSize: "2rem",
+                            fontFamily: "Nunito, sans-serif",        
+                            color: "#012970"
+                        }}
+                    >
+                        Reservation Requests
+                    </h1>
                 <div
                     style={{
                         backgroundColor: "white",
                         borderRadius: "10px",
-                        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                        boxShadow: "rgba(0, 0, 255, 0.2) 0px 1px 6px 4px",
                         padding: "2rem",
-                        maxWidth: "900px",
-                        margin: "0 auto", // Centrar la tarjeta
                     }}
                 >
-                    <h2 style={{ marginBottom: "2rem", textAlign: "center", color: "#333" }}>Your Reservations</h2>
+                    <h2
+                        style={{
+                            marginBottom: "1.5rem",
+                            color: "#012970",
+                            fontFamily: "Nunito, sans-serif",
+                        }}
+                    >
+                        Your Reservations
+                    </h2>
 
                     {reservations.length > 0 ? (
-                        reservations.map((reservation) => (
-                            <div
-                                key={reservation.id}
-                                style={{
-                                    marginBottom: "1.5rem",
-                                    padding: "1rem",
-                                    border: "1px solid #ddd",
-                                    borderRadius: "8px",
-                                    backgroundColor: "#f9f9f9",
-                                }}
-                            >
-                                <h4>Reservation Creation Date: {new Date(reservation.created_at).toLocaleDateString()}</h4>
-                                <table className="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Client ID</th>
-                                            <th>Reservation Date</th>
-                                            <th>Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{reservation.client_id}</td>
-                                            <td>{reservation.date}</td>
-                                            <td>{reservation.time}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-                                    <button
-                                        type="button"
-                                        className="btn btn-danger"
-                                        onClick={() => actions.deleteReservation(reservation.id)}
-                                    >
-                                        Delete
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-success"
-                                        onClick={() => actions.acceptReservation(reservation.id)}
-                                    >
-                                        Accept
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-warning"
-                                        onClick={() => actions.rejectReservation(reservation.id)}
-                                    >
-                                        Reject
-                                    </button>
-                                </div>
-                            </div>
-                        ))
+                        <table className="table table-striped" style={{ width: "100%", margin: 0 }}>
+                            <thead style={{ backgroundColor: "#012970", color: "white" }}>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Client Name</th>
+                                    <th>Client Phone</th>
+                                    <th>Reservation Date</th>
+                                    <th>Time</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {reservations.map((reservation, index) => (
+                                    <tr key={reservation.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{reservation.client_details.name} {reservation.client_details.last_name}</td>
+                                        <td>{reservation.client_details.phone_number}</td>
+                                        <td>{reservation.date}</td>
+                                        <td>{reservation.time}</td>
+                                        <td>
+                                            <div style={{ display: "flex", gap: "0.5rem" }}>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-danger"
+                                                    onClick={() => actions.deleteReservation(reservation.id)}
+                                                >
+                                                    Delete
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-success"
+                                                    onClick={() => actions.acceptReservation(reservation.id)}
+                                                >
+                                                    Accept
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-warning"
+                                                    onClick={() => actions.rejectReservation(reservation.id)}
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     ) : (
                         <p style={{ textAlign: "center", color: "#555" }}>No reservations yet</p>
                     )}
