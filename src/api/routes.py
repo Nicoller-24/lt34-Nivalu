@@ -354,26 +354,31 @@ def get_reservationsUser(client_id):
 
 @api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
 def get_reservationsRestaurant(restaurant_id):
-    reservationsRestaurant = Reservations.query.filter_by(restaurant_id= restaurant_id).all()  # Obtener todas las reservas del restaurante
+    # Obtener todas las reservas del restaurante
+    reservationsRestaurant = Reservations.query.filter_by(restaurant_id=restaurant_id).all()
+
     if not reservationsRestaurant:
         return jsonify({"message": "Reservations not found"}), 404
-    
-    # Serializar cada reserva en una lista de JSON
-    return jsonify([reservation.serialize() for reservation in reservationsRestaurant]), 200
 
-@api.route('/reservations/accept/<int:reservation_id>', methods=['PUT'])
-def accept_reservation(reservation_id):
-    # Buscar la reserva por ID
-    reservation = Reservations.query.get(reservation_id)
-    
-    if not reservation:
-        return jsonify({"message": "Reservation not found"}), 404
+    # Serializar reservas con detalles del cliente
+    serialized_reservations = []
+    for reservation in reservationsRestaurant:
+        client = Client.query.get(reservation.client_id)  # Obtener cliente asociado
+        client_details = {
+            "name": client.name,
+            "last_name": client.last_name,
+            "email": client.email,
+            "phone_number": client.phone_number
+        } if client else None
 
-    # Cambiar el estado de la reserva a "aceptada"
-    reservation.state = "accepted"
-    db.session.commit()
+        serialized_reservation = {
+            **reservation.serialize(),  # Serialización estándar de la reserva
+            "client_details": client_details  # Agregar detalles del cliente
+        }
+        serialized_reservations.append(serialized_reservation)
 
-    return jsonify({"message": "Reservation accepted successfully", "reservation": reservation.serialize()}), 200
+    return jsonify(serialized_reservations), 200
+
 
 @api.route('/reservations/reject/<int:reservation_id>', methods=['PUT'])
 def reject_reservation(reservation_id):
