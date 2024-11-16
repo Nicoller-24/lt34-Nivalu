@@ -193,51 +193,32 @@ export const NavbarRestaurant = ({ id, onToggle }) => {
                     color: "#050090"
                 }}
             >
-                <ul className="list-unstyled">
-                    <li><Link className="dropdown-item" to={`/restaurant/${id}`} style={{ color: "#050090" }}><i className="bi bi-person"></i> Profile</Link></li>
-                    <li><Link className="dropdown-item" to={`/restaurants/${id}`} style={{ color: "#050090" }}><i className="bi bi-building"></i> View Restaurants</Link></li>
-                    
-                    <li 
-                        className="dropdown-item" 
-                        onClick={toggleReservationsDropdown} 
-                        style={{ cursor: "pointer", color: "#050090", transition: "color 0.3s ease" }}
-                    >
-                        <div className="d-flex align-items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#050090" className="bi bi-calendar-check" viewBox="0 0 16 16">
-                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1zm-3 3v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1zm11.5 2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H12V5h.5zm0 0h-9v3h9V5z"/>
+                <ul 
+                className="list-unstyled"
+                style={{ fontFamily: '"Open Sans", sans-serif', fontSize: "16px", }}
+                >
+                    <li>
+                        <Link className="dropdown-item" to={`/restaurant/${id}`} style={{ color: "#012970" , }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#899bbd" class="bi bi-person" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                             </svg>
-                            <span className="ms-2">Reservations</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#050090" viewBox="0 0 16 16" style={{ marginLeft: "auto" }}>
-                                <path fillRule="evenodd" d="M4.646 7.646a.5.5 0 0 1 .708-.708L8 11.293l3.646-3.647a.5.5 0 1 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4z"/>
-                            </svg>
-                        </div>
-                        {reservationsOpen && (
-                            <ul 
-                                style={{
-                                    paddingLeft: "20px",
-                                    color: "#050090",
-                                    transition: "max-height 2s ease-in-out, opacity 2s ease-in-out, transform 2s ease-in-out", // Transiciones más largas y suaves
-                                    maxHeight: reservationsOpen ? "200px" : "0",
-                                    overflow: "hidden",
-                                    opacity: reservationsOpen ? 1 : 0,
-                                    transform: reservationsOpen ? "scaleY(1)" : "scaleY(0)", // Efecto de escala en el eje Y
-                                    transformOrigin: "top", // Origina la escala desde la parte superior
-                                    display: reservationsOpen ? "block" : "none" // Oculta el elemento cuando está cerrado
-                                }}
-                            >
-                                <li><Link to="/reservationsRestaurant" className="dropdown-item" style={{ color: "#050090" }}>Reservation Requests</Link></li>
-                                <li><Link to="/reservations/active" className="dropdown-item" style={{ color: "#050090" }}>Active Reservations</Link></li>
-                            </ul>
-                        )}
-
-
+                            Profile
+                        </Link>
                     </li>
-
+                    <li>
+                        <Link className="dropdown-item" to={`/restaurants/${id}`} style={{ color: "#012970" }}>
+                            <svg style={{ verticalAlign: "-4px", marginRight: "8px"}}xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#899bbd" class="bi bi-list-ul" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                            </svg>
+                             View Restaurants
+                        </Link>
+                    </li>
+                    <li><Link to="/reservationsRestaurant" className="dropdown-item" style={{ color: "#012970" }}>Reservation Requests</Link></li>
                     <hr className="dropdown-divider" />
-                    <li><Link className="dropdown-item" to={`/restaurant/chat/${id}`} style={{ color: "#050090" }}><i className="bi bi-chat-dots"></i> Chats</Link></li>
-                    <li><Link className="dropdown-item" to={`/edit/restaurant/${id}`} style={{ color: "#050090" }}><i className="bi bi-gear"></i> Edit Profile</Link></li>
+                    <li><Link className="dropdown-item" to={`/restaurant/chat/${id}`} style={{ color: "#012970" }}><i className="bi bi-chat-dots"></i> Chats</Link></li>
+                    <li><Link className="dropdown-item" to={`/edit/restaurant/${id}`} style={{ color: "#012970" }}><i className="bi bi-gear"></i> Edit Profile</Link></li>
                     {store.restaurant_auth ? (
-                        <li onClick={logout} className="dropdown-item" style={{ color: "#050090" }}><i className="bi bi-box-arrow-right"></i> Log out</li>
+                        <li onClick={logout} className="dropdown-item" style={{ color: "#012970" }}><i className="bi bi-box-arrow-right"></i> Log out</li>
                     ) : null}
                 </ul>
             </div>

@@ -145,7 +145,7 @@ export const Edit = () => {
                 style={{
                     display: "flex",
                     gap: "20px",
-                    padding: "3rem",
+                    padding: "4rem",
                     marginTop: "1rem",
                     transition: "margin-left 0.3s ease",
                     marginLeft: offcanvasOpen ? "300px" : "0"
