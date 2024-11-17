@@ -109,7 +109,7 @@ const Layout = () => {
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
                         <Route element={<SuccessPage />} path="/reservaExitosa"/>
-                        <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant"/>
+                        <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant/:id"/>
 
 
 

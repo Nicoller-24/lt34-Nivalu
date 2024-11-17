@@ -373,12 +373,32 @@ def get_reservationsUser(client_id):
 
 @api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
 def get_reservationsRestaurant(restaurant_id):
-    reservationsRestaurant = Reservations.query.filter_by(restaurant_id= restaurant_id).all()  # Obtener todas las reservas del restaurante
-    if not reservationsRestaurant:
-        return jsonify({"message": "Reservations not found"}), 404
-    
-    # Serializar cada reserva en una lista de JSON
-    return jsonify([reservation.serialize() for reservation in reservationsRestaurant]), 200
+    try:
+        reservationsRestaurant = Reservations.query.filter_by(restaurant_id=restaurant_id).all()  # Obtener todas las reservas del restaurante
+        if not reservationsRestaurant:
+            return jsonify({"message": "Reservations not found"}), 404
+
+       
+        serialized_reservations = []
+        for reservation in reservationsRestaurant:
+           
+            client = Client.query.get(reservation.client_id)
+            client_details = {
+                "name": client.name,
+                "last_name": client.last_name,
+                "email": client.email,
+                "phone_number": client.phone_number
+            } if client else None
+
+            serialized_reservations.append({
+                **reservation.serialize(),
+                "client_details": client_details
+            })
+
+        return jsonify(serialized_reservations), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @api.route('/reservations/accept/<int:reservation_id>', methods=['PUT'])
 def accept_reservation(reservation_id):
