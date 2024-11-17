@@ -265,22 +265,38 @@ def get_admin(admin_id):
 @api.route("/signup/admins", methods=["POST"])
 def signup_admin():
     body = request.get_json()
-    
+
     admin = Admin1.query.filter_by(email=body["email"]).first()
     if admin is None:
         admin = Admin1(
             email=body["email"],
             name=body["name"],
             user_name=body["user_name"],
-            image_url=body.get("image_url", ""),  # Store image URL
+            image_url=body.get("image_url", ""),  
             password=body["password"],
             is_active=True
         )
         db.session.add(admin)
         db.session.commit()
-        return jsonify({"msg": "Usuario admin creado"}), 200
+
+        access_token = create_access_token(identity=admin.id)
+
+        response_body = {
+            "msg": "Administrador creado",
+            "access_token": access_token,
+            "admin": {
+                "id": admin.id,
+                "email": admin.email,
+                "name": admin.name,
+                "user_name": admin.user_name,
+                "image_url": admin.image_url,
+                "is_active": admin.is_active
+            }
+        }
+        return jsonify(response_body), 201
     else:
-        return jsonify({"msg": "El usuario admin ya existe"}), 401
+        return jsonify({"msg": "El administrador ya existe"}), 409
+
     
 @api.route('edit/admins/<int:admin_id>', methods=['PUT'])
 def update_admin(admin_id):  
@@ -330,9 +346,12 @@ def login_admin():
     if admin is None:
         return jsonify({"msg": "Could not find an admin with that email."}), 401
 
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token), 200  # Return 200 status for successful login
+    if email != admin.email or password != admin.password:
+        return jsonify({"msg": "Bad email or password"}), 401
 
+    access_token = create_access_token(identity=admin.id)
+
+    return jsonify(access_token=access_token, admin_id=admin.id), 200
 
 @api.route('/reservations', methods=['GET'])
 def get_reservations():
@@ -354,31 +373,26 @@ def get_reservationsUser(client_id):
 
 @api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
 def get_reservationsRestaurant(restaurant_id):
-    # Obtener todas las reservas del restaurante
-    reservationsRestaurant = Reservations.query.filter_by(restaurant_id=restaurant_id).all()
-
+    reservationsRestaurant = Reservations.query.filter_by(restaurant_id= restaurant_id).all()  # Obtener todas las reservas del restaurante
     if not reservationsRestaurant:
         return jsonify({"message": "Reservations not found"}), 404
+    
+    # Serializar cada reserva en una lista de JSON
+    return jsonify([reservation.serialize() for reservation in reservationsRestaurant]), 200
 
-    # Serializar reservas con detalles del cliente
-    serialized_reservations = []
-    for reservation in reservationsRestaurant:
-        client = Client.query.get(reservation.client_id)  # Obtener cliente asociado
-        client_details = {
-            "name": client.name,
-            "last_name": client.last_name,
-            "email": client.email,
-            "phone_number": client.phone_number
-        } if client else None
+@api.route('/reservations/accept/<int:reservation_id>', methods=['PUT'])
+def accept_reservation(reservation_id):
+    # Buscar la reserva por ID
+    reservation = Reservations.query.get(reservation_id)
+    
+    if not reservation:
+        return jsonify({"message": "Reservation not found"}), 404
 
-        serialized_reservation = {
-            **reservation.serialize(),  # Serialización estándar de la reserva
-            "client_details": client_details  # Agregar detalles del cliente
-        }
-        serialized_reservations.append(serialized_reservation)
+    # Cambiar el estado de la reserva a "aceptada"
+    reservation.state = "accepted"
+    db.session.commit()
 
-    return jsonify(serialized_reservations), 200
-
+    return jsonify({"message": "Reservation accepted successfully", "reservation": reservation.serialize()}), 200
 
 @api.route('/reservations/reject/<int:reservation_id>', methods=['PUT'])
 def reject_reservation(reservation_id):
