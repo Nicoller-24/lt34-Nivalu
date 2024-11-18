@@ -18,7 +18,7 @@ export const ListOfRestaurants = () => {
     return (
 		<div className="container">
 			<h1 className="m-5">Restaurants</h1>
-			<FilterRestaurantsByLocation/>
+		
 			<div className="row flex-row flex-nowrap" style={{ overflowX: "auto" }}>
 				{store.restaurants && store.restaurants.map((restaurant, index) => (
 					<div key={index} className="col-md-4">

@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Navigate} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import logo from "../../img/nivalulogo.jpg";
 
 // export const Signuprestaurant = () => {
 export const Adminlogin = () => {
@@ -20,95 +22,81 @@ export const Adminlogin = () => {
 
 	return (
 		<> 
-         {store.admin_auth ? <Navigate to="/admins"/> :(
-			<div
-				className="container"
-				style={{
-					backgroundColor: "white",
-					width: "30%",
-					paddingBottom: "10%",
-					marginTop: "12%",
-				}}
-			>
-				<h1 style={{ marginLeft: "25%" }}>Iniciar sesión</h1>
-				<form onSubmit={sendData}>
-					<div className="mb-3">
-						<label htmlFor="Email" className="form-label">
-							Email
-						</label>
-						<input
-							type="email"
-							className="form-control"
-							id="Email"
-							placeholder="Email"
-							onChange={(e) => setInputEmail(e.target.value)}
-							value={inputEmail}
-						/>
-					</div>
-					<div className="mb-3">
-						<label htmlFor="Password" className="form-label">
-							Password
-						</label>
-						<input
-							type="password"
-							className="form-control"
-							id="Password"
-							placeholder="Password"
-							onChange={(e) => setInputPassword(e.target.value)}
-							value={inputPassword}
-						/>
-					</div>
-                        <button
-                            onClick={() =>{actions.adminlogin(inputEmail, inputPassword)}} 
-                            // cambiar en flux loginadmin
-                            type="submit"
-                            style={{
-                                backgroundColor: "#008CBA",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "10px",
-                                padding: "10px 20px",
-                                fontSize: "16px",
-                                cursor: "pointer",
-                                transition: "background-color 0.3s ease",
-                            }}
-                            onMouseOver={(e) =>
-                                (e.target.style.backgroundColor = "#007bb5")
-                            }
-                            onMouseOut={(e) =>
-                                (e.target.style.backgroundColor = "#008CBA")
-                            }
-                        >
-                            iniciar sesión
-                        </button>
-					<Link to="/admineselect">
-                    {/* agregar pagina de admin select */}
-						<button
-							style={{
-								backgroundColor: "#008CBA",
-								color: "white",
-								border: "none",
-								borderRadius: "10px",
-								padding: "10px 20px",
-								fontSize: "16px",
-								cursor: "pointer",
-								transition: "background-color 0.3s ease",
-								marginLeft: "5%",
-							}}
-							onMouseOver={(e) =>
-								(e.target.style.backgroundColor = "#007bb5")
-							}
-							onMouseOut={(e) =>
-								(e.target.style.backgroundColor = "#008CBA")
-							}
-						>
-							Volver
-						</button>
-					</Link>
-				</form>
-				<Link to="/">Volver al inicio</Link>
-			</div>  
-         ) }
+          {store.admin_auth ? (
+                <Navigate to="/admins" />
+            ) : (
+                <div className="container">
+                    <div className="row justify-content-center">
+                        <div className="col-lg-4 col-md-6">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="text-center mb-3">
+                                        <img
+                                            src={logo}
+                                            alt="Nivalu Logo"
+                                            className="mb-3"
+                                            style={{ width: "150px" }}
+                                        />
+                                        <h3 className="h4 text-gray-900">
+                                            Nivalu Administrador
+                                        </h3>
+                                    </div>
+                                    <form onSubmit={sendData}>
+                                        <div className="form-group mb-3">
+                                            <input
+                                                type="email"
+                                                className="form-control form-control-user"
+                                                id="Email"
+                                                placeholder="Correo electrónico"
+                                                onChange={(e) =>
+                                                    setInputEmail(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                value={inputEmail}
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <input
+                                                type="password"
+                                                className="form-control form-control-user"
+                                                id="Password"
+                                                placeholder="Contraseña"
+                                                onChange={(e) =>
+                                                    setInputPassword(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                value={inputPassword}
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={() =>
+                                                actions.adminlogin(
+                                                    inputEmail,
+                                                    inputPassword
+                                                )
+                                            }
+                                            type="submit"
+                                            className="btn btn-primary btn-user btn-block w-100"
+                                        >
+                                            Iniciar Sesión
+                                        </button>
+                                    </form>
+                                    <hr />
+                                    <div className="text-center">
+                                        <Link to="/signup/admins">
+                                            <span className="small">
+                                                Aun no tienes una cuenta? Registrate!
+                                            </span>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 		</>
 	);
 };

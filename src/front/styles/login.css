@@ -1,0 +1,22 @@
+body {
+    background-color: #f8f9fc;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background-color: #e75b1e;
+    border-color: #e75b1e;
+}
+
+.btn-primary:hover {
+    background-color: #d14812;
+    border-color: #d14812;
+}
