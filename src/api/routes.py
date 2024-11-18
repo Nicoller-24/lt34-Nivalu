@@ -12,6 +12,8 @@ from flask import jsonify, request
 from werkzeug.security import check_password_hash
 from flask import Flask
 from flask_cors import CORS
+from geopy.distance import geodesic
+
 
 app = Flask(__name__)
 CORS(app)  # This will allow all origins
@@ -805,5 +807,32 @@ def delete_chat_and_messages(id):
         response_body = {"msg": "No se encontró el chat"}
     
     return jsonify(response_body), 200
+
+@api.route('/restaurants_nearby', methods=['GET'])
+def get_nearby_restaurants():
+    client_lat = request.args.get('lat')
+    client_lon = request.args.get('lon')
+
+    # Verificar si las coordenadas existen
+    if client_lat is None or client_lon is None:
+        return jsonify({"error": "Missing latitude or longitude"}), 400
+
+    # Convertir a float después de validar
+    client_lat = float(client_lat)
+    client_lon = float(client_lon)
+
+    distance_threshold = 5  # 5 km de radio
+    restaurants = Restaurant.query.all()
+    nearby_restaurants = []
+
+    for restaurant in restaurants:
+        if restaurant.latitude and restaurant.longitude:
+            rest_location = (float(restaurant.latitude), float(restaurant.longitude))
+            client_location = (client_lat, client_lon)
+            distance = geodesic(client_location, rest_location).km
+            if distance <= distance_threshold:
+                nearby_restaurants.append(restaurant.serialize())
+
+    return jsonify(nearby_restaurants)
 
 
