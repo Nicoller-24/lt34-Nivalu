@@ -1,59 +1,141 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
+import { Link, useParams } from "react-router-dom";
+import { NavbarAdmin } from "./navbaradmin";
 
-export const EditOcasion = () => { 
-	const { store, actions } = useContext(Context);
-	const { id } = useParams(); // Retrieve `id` from URL parameter
+export const EditOcasion = () => {
+    const { actions } = useContext(Context);
+    const params = useParams();
 
-	const [updateData, setUpdateData] = useState({
-		name: '',
-	});
+    const [updateData, setUpdateData] = useState({
+        name: "",
+    });
 
-	// Fetch occasion data when component mounts
-	useEffect(() => {
-		if (id) {
-			actions.traer_ocasion(id).then(ocasion => {
-				// Populate form fields with the fetched occasion data
-				setUpdateData({
-					name: ocasion.name || '',
-				});
-			});
-		}
-	}, [id, actions]);
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		if (id) {
-			actions.editOcasion(updateData, id); // Call the correctly named action
-		}
-		setUpdateData({
-			name: '',
-		});
-	};
+    const handleToggleOffcanvas = (state) => {
+        setIsOffcanvasOpen(state);
+    };
 
-	return (
-		<div className="p-3 m-auto w-75">
-			<h1 className="mx-auto">Actualización de datos </h1>
-			<form onSubmit={handleSubmit}>
-				<div className="form-group p-1">
-					<label htmlFor="name">Nombre</label>
-					<input
-						type="text"
-						name="name"
-						placeholder="Nombre"
-						value={updateData.name}
-						onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
-						required
-						className="form-control"
-					/>
-				</div>
+    // Fetch occasion data when the component mounts
+    useEffect(() => {
+        if (params.id) {
+            actions.traer_ocasion(params.id).then((ocasion) => {
+                setUpdateData({
+                    name: ocasion.name || "",
+                });
+            });
+        }
+    }, [params.id, actions]);
 
-				<Link to={"/ocasiones"}>
-					O deseas volver
-				</Link>
-				<button type="submit" className="btn btn-success m-3">Modificar Ocasion</button>
-			</form>
-		</div>
-	);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (params.id) {
+            actions.editOcasion(updateData, params.id);
+        }
+        setUpdateData({
+            name: "",
+        });
+		actions.loadSomeDataCategory();
+    };
+
+    return (
+        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+            <NavbarAdmin id={params.id_admin} onToggle={handleToggleOffcanvas} />
+            <div
+                className="page-content"
+                style={{
+                    padding: "2rem",
+                    transition: "margin-left 0.3s ease",
+                    marginLeft: isOffcanvasOpen ? "300px" : "0",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1rem",
+                }}
+            >
+                <h3
+                    style={{
+                        fontFamily: '"Poppins", sans-serif',
+                        color: "#012970",
+                        fontWeight: "500",
+                        paddingTop: "4rem",
+                    }}
+                >
+                    Edit Occasion
+                </h3>
+                <div
+                    style={{
+                        flex: 1,
+                        padding: "2rem",
+                        boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
+                        borderRadius: "10px",
+                        backgroundColor: "#ffffff",
+                        maxWidth: "600px",
+                    }}
+                >
+                    <form
+                        style={{
+                            fontFamily: '"Open Sans", sans-serif',
+                            marginTop: "2rem",
+                        }}
+                        onSubmit={handleSubmit}
+                    >
+                        <div style={{ marginBottom: "1rem" }}>
+                            <label
+                                style={{
+                                    fontFamily: '"Poppins", sans-serif',
+                                    color: "#012970",
+                                    marginBottom: "0.5rem",
+                                    display: "block",
+                                }}
+                            >
+                                Occasion Name
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={updateData.name}
+                                onChange={(e) =>
+                                    setUpdateData({ ...updateData, name: e.target.value })
+                                }
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="btn"
+                            style={{
+                                marginTop: "1rem",
+                                width: "100%",
+                                padding: "0.5rem",
+                                borderRadius: "5px",
+                                backgroundColor: "#e75b1e",
+                                color: "#fff",
+                            }}
+                        >
+                            Save Changes
+                        </button>
+                        <Link to={`/ocasiones/${params.id_admin}`}>
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                style={{
+                                    marginTop: "0.5rem",
+                                    width: "100%",
+                                    padding: "0.5rem",
+                                    backgroundColor: "#6c757d",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                Or Go Back
+                            </button>
+                        </Link>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
 };

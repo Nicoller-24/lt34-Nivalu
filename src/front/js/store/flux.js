@@ -16,29 +16,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			admins: [],
 			admin: {},
-			admin_auth : false,
-
+			admin_auth: false,
 		
-			users:[],
+			users: [],
 			auth: false,
-			restaurants: [
-
-			],
+			restaurants: [],
 			restaurante: {},
-			restaurant_auth : false,
-
+			restaurant_auth: false,
+		
 			reservations: [],
 			categories: [],
-			categories_auth :false,
+			categories_auth: false,
 			category: {},
-
+		
 			ocasiones: [],
-			ocasiones_auth :false,
-			ocasion:{},
-
+			ocasiones_auth: false,
+			ocasion: {},
+		
 			sessionUserId: null,
 			sessionRestaurantId: null,
-		},
+			sessionAdminId: null, 
+		},		
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
@@ -265,33 +263,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log(localStorage)
 				setStore({ auth: false })
 			},
-
-			adminlogin: (inputEmail, inputPassword) => {
-				fetch(process.env.BACKEND_URL + "/api/login/admins", {
-					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
-					redirect: "follow"
-				})
-				.then((response) => {
+			adminlogin: async (inputEmail, inputPassword) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/login/admins", {
+						method: 'POST',
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
+						redirect: "follow"
+					});
+			
 					if (response.status === 200) {
-						setStore({ admin_auth: true });
-					}
-					return response.json();
-				})
-				.then((data) => {
-					if (data.access_token) { // Ensure token is present
+						const data = await response.json();
 						localStorage.setItem("token", data.access_token);
-						console.log("Token stored:", data.access_token);
+						setStore({ admin_auth: true, auth: true, sessionAdminId: data.admin_id }); 
+						return data;
 					} else {
-						console.error("Login failed, no token received");
+						console.error("Error en la autenticación del admin: ", response.status);
+						return null;
 					}
-				})
-				.catch((error) => {
-					console.error("Error in admin login:", error);
-				});
+				} catch (error) {
+					console.error("Error en adminlogin:", error);
+					return null;
+				}
 			},
-
+						
 			adminlogout: () => {
 				console.log("logout")
 				localStorage.removeItem("token");
@@ -317,8 +312,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataAdmin());
 			},
-			addNewAdmin:(email, name, user_name, password, image) => {
-				fetch(process.env.BACKEND_URL + '/api/signup/admins', {
+			addNewAdmin: (email, name, user_name, password, image) => {
+				return fetch(process.env.BACKEND_URL + '/api/signup/admins', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -326,24 +321,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"name": name,
 						"user_name": user_name,
 						"password": password,
-						"image_url": image,
+						"image_url": image
 					}),
 					redirect: "follow",
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataAdmin());
-			},
+				.then((response) => {
+					console.log(response.status);
+					if (response.status === 201) { 
+						setStore({ admin_auth: true });
+					}
+					return response.json();
+				})
+				.then((data) => {
+					if (data.access_token) {
+						localStorage.setItem("token", data.access_token);
+						console.log("Token de acceso:", data.access_token);
+						getActions().loadSomeDataAdmin();
+					}
 			
-			editAdmin: (adminModif, id) => {
-				const requestOptions = {
-					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(adminModif)
-				};
-				fetch(process.env.BACKEND_URL + `/api/edit/admins/${id}`, requestOptions)
-					.then(response => response.json())
-					.then(data => console.log("Admin updated:", data))
-					.catch(error => console.error("Error updating admin:", error));
+					if (data.admin) {
+						console.log("Detalles del administrador:", data.admin);
+						return data.admin;
+					}
+				})
+				.catch((error) => {
+					console.error("Error al crear el administrador:", error);
+					return null; 
+				});
 			},
 
 			traer_admin: (id) => {

@@ -2,16 +2,19 @@ import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { Navigate } from "react-router-dom";
 import { NavbarRestaurant } from "../component/navbarestaurant";
+import { useParams } from "react-router-dom";
 
 export const ListReservationsRestaurant = () => {
     const { store, actions } = useContext(Context);
     const [reservations, setReservations] = useState([]);
     const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+    const params = useParams();
+
 
     const getReservationsPerRestaurant = () => {
         const restaurantId = store.sessionRestaurantId;
 
-        fetch(`${process.env.BACKEND_URL}/api/reservationsRestaurant/${restaurantId}`, {
+        fetch(`${process.env.BACKEND_URL}/api/reservationsRestaurant/${params.id}`, {
             method: "GET",
         })
             .then((response) => {
@@ -38,7 +41,7 @@ export const ListReservationsRestaurant = () => {
 
     return (
         <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
-            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+            
             <NavbarRestaurant id={store.sessionRestaurantId} onToggle={handleOffcanvasToggle} />
 
             <div

@@ -67,13 +67,14 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    
-                    {store.restaurant_auth ? null  : <Navbar style={{display: "none"}}/>}
+                
+                {store.restaurant_auth  || store.admin_auth ? null  : <Navbar style={{display: "none"}}/>}
+                
 
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
-                        <Route element={<Crudadmin />} path="/admins" />
+                        <Route element={<Crudadmin />} path="/admins/list/:id" />
                         <Route element={<Crearadmin />} path="/signup/admins" />
                         <Route element={<Oneadmin />} path="/admins/:id" />
                         <Route element={<EditAdmin />} path="/edit/admins/:id" />
@@ -96,19 +97,19 @@ const Layout = () => {
                         <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
                         <Route element={<Restaurantview/>} path="/restaurant/view" />
 
-                        <Route element={<Crearcategoria />} path="/create/categories" />
-                        <Route element={<Crudcategoria />} path="/categories" />
-                        <Route element={<EditCategory />} path="/edit/categories/:id" />
+                        <Route element={<Crearcategoria />} path="/create/categories/:id" />
+                        <Route element={<Crudcategoria />} path="/categories/:id" />
+                        <Route element={<EditCategory />} path="/edit/categories/:id/:id_admin" />
                         <Route path="/restaurant/:restaurant_id/category" element={<RestaurantCategorySelector />} />
-                        <Route element={<Crearocasion />} path="/create/ocasiones" />
-                        <Route element={<Crudocasion />} path="/ocasiones" />
-                        <Route element={<EditOcasion />} path="/edit/ocasiones/:id" />
+                        <Route element={<Crearocasion />} path="/create/ocasiones/:id" />
+                        <Route element={<Crudocasion />} path="/ocasiones/:id" />
+                        <Route element={<EditOcasion />} path="/edit/ocasiones/:id/:id_admin" />
                         <Route element={<ListOfRestaurants />} path="/listOfRestaurants" />
                         <Route element={<Adminlogin />} path="/adminlogin/" />
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
                         <Route element={<SuccessPage />} path="/reservaExitosa"/>
-                        <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant"/>
+                        <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant/:id"/>
 
 
 
