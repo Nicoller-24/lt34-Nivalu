@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import AddressAutocomplete from "./addressautocomplete";
 import MapComponent from "./mapcomponet";
+import { NavbarRestaurant } from "./navbarestaurant";
+import { Navigate } from "react-router-dom";
 
 export const Edit = () => {
     const [restaurantData, setRestaurantData] = useState(null);
@@ -14,14 +16,16 @@ export const Edit = () => {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
-    
+    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+
     const { store, actions } = useContext(Context);
     const params = useParams();
+    const navigate = useNavigate();
 
-    const preset_name = "nivalu";                         
-    const cloud_name = "duh7wjna3";                     
+    const preset_name = "nivalu";
+    const cloud_name = "duh7wjna3";
 
-    const [image, setImage] = useState('');      
+    const [image, setImage] = useState('');
     const [loading, setLoading] = useState(false);
 
     const uploadImage = async (e) => {
@@ -47,8 +51,7 @@ export const Edit = () => {
         }
     };
 
-    // Fetch restaurant details
-    function traer_restaurante() {
+    const traer_restaurante = () => {
         fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`)
             .then((response) => response.json())
             .then((data) => {
@@ -69,17 +72,15 @@ export const Edit = () => {
                 setInputGuestCapacity(data.guests_capacity || "");
             })
             .catch((error) => console.error("Error loading restaurant:", error));
-    }
+    };
 
-    // Fetch all categories
-    function fetchCategories() {
+    const fetchCategories = () => {
         fetch(process.env.BACKEND_URL + "/api/categories")
             .then((response) => response.json())
             .then((data) => setCategories(data))
             .catch((error) => console.error("Error loading categories:", error));
-    }
+    };
 
-    // Handle category selection
     const handleCategoryChange = (categoryId) => {
         setSelectedCategories((prevSelected) =>
             prevSelected.includes(categoryId)
@@ -88,8 +89,8 @@ export const Edit = () => {
         );
     };
 
-    function putRestaurant() {
-        fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`, {
+    const putRestaurant = () => {
+        return fetch(process.env.BACKEND_URL + `/api/restaurant/${params.id}`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -104,15 +105,10 @@ export const Edit = () => {
                 category_ids: selectedCategories,
             }),
         })
-        .then((response) => {
-            actions.loadSomeData();
-            return response.text();
-        })
-        .then((result) => {
-            console.log("Result:", result);
-        })
-        .catch((error) => console.error("Error saving restaurant:", error));
-    }
+            .then((response) => response.text())
+            .then(() => actions.loadSomeData())
+            .catch((error) => console.error("Error saving restaurant:", error));
+    };
 
     useEffect(() => {
         traer_restaurante();
@@ -121,6 +117,7 @@ export const Edit = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        putRestaurant().then(() => navigate(`/restaurant/${params.id}`));
     };
 
     const handleAddressSelect = (address, location) => {
@@ -128,116 +125,175 @@ export const Edit = () => {
         setSelectedLocation(location);
     };
 
+    const handleOffcanvasToggle = (isOpen) => {
+        setOffcanvasOpen(isOpen);
+    };
+
     return (
-        <div className="container" style={{ backgroundColor: "white", width: "70%", paddingBottom: "10%" }}>
-            <h1 style={{ marginLeft: "30%" }}>Edit Restaurant</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="Email" className="form-label">Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="Email"
-                        placeholder="Email"
-                        onChange={(e) => setInputEmail(e.target.value)}
-                        value={inputEmail}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="guestscapacity" className="form-label">Guests capacity</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="guestscapacity"
-                        placeholder="Guests capacity"
-                        onChange={(e) => setInputGuestCapacity(e.target.value)}
-                        value={inputGuestCapacity}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="Address" className="form-label">Address</label>
-                    <AddressAutocomplete
-                        onAddressSelect={handleAddressSelect}
-                        initialAddress={selectedAddress}
-                    />
-                    {selectedLocation && (
-                        <MapComponent
-                            initialPosition={selectedLocation}
-                            onLocationSelect={(location) => setSelectedLocation(location)}
-                        />
-                    )}
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        placeholder="Name"
-                        onChange={(e) => setInputName(e.target.value)}
-                        value={inputName}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="Phone" className="form-label">Phone</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="Phone"
-                        placeholder="Phone"
-                        onChange={(e) => setInputPhone(e.target.value)}
-                        value={inputPhone}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="file">Photo</label>
-                    <input
-                        type="file"
-                        className="form-control"
-                        name="file"
-                        id="file"
-                        placeholder="Upload an image"
-                        onChange={uploadImage}
-                    />
-                    {loading ? (
-                        <h3>Loading...</h3>
-                    ) : (
-                        <img src={image} alt="Uploaded or current" style={{ width: "100%", marginTop: "10px" }} />
-                    )}
-                </div>
-                <div className="mb-3">
-                    <h3>Select Categories</h3>
-                    <ul>
-                        {categories.map((category) => (
-                            <li key={category.id}>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value={category.id}
-                                        checked={selectedCategories.includes(category.id)}
-                                        onChange={() => handleCategoryChange(category.id)}
-                                    />
-                                    {category.name}
-                                </label>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <Link to="/restaurants">
-                    <button
-                        onClick={putRestaurant}
-                        type="submit"
-                        className="btn btn-primary w-100 mb-4"
+        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+            <NavbarRestaurant id={params.id} onToggle={handleOffcanvasToggle} />
+
+            <div
+                className="page-content"
+                style={{
+                    padding: "2rem",
+                    transition: "margin-left 0.3s ease",
+                    marginLeft: offcanvasOpen ? "300px" : "0",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1rem",
+                }}
+            >
+                <h1
+                    style={{
+                        fontSize: "2rem",
+                        fontFamily: "Nunito, sans-serif",
+                        color: "#012970",
+                        marginTop: "4rem"
+                       
+                    }}
+                >
+                    Edit your profile
+                </h1>
+                <div
+                    style={{
+                        display: "flex",
+                        gap: "20px",
+                    }}
+                >
+                    <div
+                        style={{
+                            width: "30%",
+                            padding: "1rem",
+                            boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
+                            borderRadius: "10px",
+                            backgroundColor: "white",
+                            textAlign: "center",
+                            height: "fit-content"
+                        }}
                     >
-                        Save
-                    </button>
-                </Link>
-                <Link to="/restaurants">
-                    <button type="button" className="btn btn-secondary w-100">
-                        Back
-                    </button>
-                </Link>
-            </form>
+                        <h3 style={{fontFamily: '"Poppins", sans-serif', color: "#012970", fontWeight: "500"}} >Profile Photo</h3>
+                        {loading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <img
+                                src={image}
+                                alt="Profile"
+                                style={{
+                                    width: "100%",
+                                    borderRadius: "50%",
+                                    marginBottom: "1rem",
+                                }}
+                            />
+                        )}
+                        <input className="form-control" type="file" onChange={uploadImage} style={{ marginTop: "1rem" }} />
+                    </div>
+
+                    <div
+                        style={{
+                            flex: 1,
+                            padding: "1rem",
+                            boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
+                            borderRadius: "10px",
+                            backgroundColor: "#ffffff",
+                        }}
+                    >
+                        <h3 style={{fontFamily: '"Poppins", sans-serif', color: "#012970", fontWeight: "500"}}>Account Details</h3>
+                        <form style={{fontFamily: '"Open Sans", sans-serif'}} onSubmit={handleSubmit}>
+                            <div style={{ display: "flex", gap: "20px" }}>
+                                <div style={{ flex: 1 }}>
+                                    <label>Name</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={inputName}
+                                        onChange={(e) => setInputName(e.target.value)}
+                                    />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        value={inputEmail}
+                                        onChange={(e) => setInputEmail(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: "flex", gap: "20px", marginTop: "1rem" }}>
+                                <div style={{ flex: 1 }}>
+                                    <label>Phone</label>
+                                    <input
+                                        type="tel"
+                                        className="form-control"
+                                        value={inputPhone}
+                                        onChange={(e) => setInputPhone(e.target.value)}
+                                    />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <label>Guest Capacity</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        value={inputGuestCapacity}
+                                        onChange={(e) => setInputGuestCapacity(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ marginTop: "1rem" }}>
+                                <label>Address</label>
+                                <AddressAutocomplete
+                                    onAddressSelect={handleAddressSelect}
+                                    initialAddress={selectedAddress}
+                                />
+                                {selectedLocation && (
+                                    <MapComponent
+                                        initialPosition={selectedLocation}
+                                        onLocationSelect={(location) =>
+                                            setSelectedLocation(location)
+                                        }
+                                    />
+                                )}
+                            </div>
+                            <div style={{ marginTop: "1rem" }}>
+                                <label>Select Categories</label>
+                                <div>
+                                    {categories.map((category) => (
+                                        <label key={category.id} style={{ display: "block" }}>
+                                            <input
+                                                type="checkbox"
+                                                value={category.id}
+                                                checked={selectedCategories.includes(category.id)}
+                                                onChange={() =>
+                                                    handleCategoryChange(category.id)
+                                                }
+                                            />
+                                            {category.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                style={{
+                                    marginTop: "1rem",
+                                    width: "100%",
+                                    padding: "0.5rem",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    backgroundColor: "#e75b1e",
+                                    color: "#fff",
+                                }}
+                            >
+                                Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

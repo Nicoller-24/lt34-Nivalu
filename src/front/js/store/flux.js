@@ -16,29 +16,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			admins: [],
 			admin: {},
-			admin_auth : false,
-
+			admin_auth: false,
 		
-			users:[],
+			users: [],
 			auth: false,
-			restaurants: [
-
-			],
+			restaurants: [],
 			restaurante: {},
-			restaurant_auth : false,
-
+			restaurant_auth: false,
+		
 			reservations: [],
 			categories: [],
-			categories_auth :false,
+			categories_auth: false,
 			category: {},
-
+		
 			ocasiones: [],
-			ocasiones_auth :false,
-			ocasion:{},
-
+			ocasiones_auth: false,
+			ocasion: {},
+		
 			sessionUserId: null,
 			sessionRestaurantId: null,
-		},
+			sessionAdminId: null, 
+		},		
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
@@ -183,9 +181,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeData());
 			},
-
 			addNewRestaurant: (email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
-				fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
+				return fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -202,7 +199,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					redirect: "follow",
 				})
 				.then((response) => {
-					console.log(response.status)
+					console.log(response.status);
 					if (response.status === 201) { 
 						setStore({ restaurant_auth: true });
 					}
@@ -212,12 +209,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (data.access_token) {
 						localStorage.setItem("token", data.access_token);
 						console.log("Token de acceso:", data.access_token);
-						getActions().loadSomeData()
-
+						getActions().loadSomeData();
+					}
+			
+					// Si la respuesta contiene el objeto del restaurante, lo devolvemos para su uso
+					if (data.restaurant) {
+						console.log("Detalles del restaurante:", data.restaurant);
+						return data.restaurant;
 					}
 				})
-				.catch((error) => console.error("Error al crear el restaurante:", error));
-			},
+				.catch((error) => {
+					console.error("Error al crear el restaurante:", error);
+					return null; // Devolvemos null en caso de error para manejarlo en el frontend
+				});
+			}
+			,
 			traer_restaurante: (id) => {
 				return fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())
@@ -227,64 +233,60 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 			}
 			,
-			loginrestaurant: (inputEmail, inputPassword) => {
-				fetch(process.env.BACKEND_URL + "/api/login/restaurant", {
-					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						"email": inputEmail,
-						"password": inputPassword
-					}),
-					redirect: "follow"
-				})
-					.then((response) => {
-						console.log(response.status)
-						if (response.status == 200) {
-							setStore({ restaurant_auth: true })
-						}
-						return response.json()
-					})
-					.then((data) => {
+			loginrestaurant: async (inputEmail, inputPassword) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/login/restaurant", {
+						method: 'POST',
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
+						redirect: "follow"
+					});
+			
+					if (response.status === 200) {
+						const data = await response.json();
 						localStorage.setItem("token", data.access_token);
-						setStore({ auth: true, sessionRestaurantId: data.restaurant_id});
-
-						console.log(data.access_token)
-						console.log(data)
-					})
-			},
+						setStore({ restaurant_auth: true, auth: true, sessionRestaurantId: data.restaurant_id });
+						return data;  // devolvemos data para usarla en el componente
+					} else {
+						console.error("Error en la autenticación: ", response.status);
+						return null;
+					}
+				} catch (error) {
+					console.error("Error en loginrestaurant:", error);
+					return null;
+				}
+			}
+			,
 			logoutrestaurant: () => {
 				console.log("logout")
 				localStorage.removeItem("token");
 				console.log(localStorage)
 				setStore({ auth: false })
 			},
-
-			adminlogin: (inputEmail, inputPassword) => {
-				fetch(process.env.BACKEND_URL + "/api/login/admins", {
-					method: 'POST',
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
-					redirect: "follow"
-				})
-				.then((response) => {
+			adminlogin: async (inputEmail, inputPassword) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/login/admins", {
+						method: 'POST',
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ "email": inputEmail, "password": inputPassword }),
+						redirect: "follow"
+					});
+			
 					if (response.status === 200) {
-						setStore({ admin_auth: true });
-					}
-					return response.json();
-				})
-				.then((data) => {
-					if (data.access_token) { // Ensure token is present
+						const data = await response.json();
 						localStorage.setItem("token", data.access_token);
-						console.log("Token stored:", data.access_token);
+						setStore({ admin_auth: true, auth: true, sessionAdminId: data.admin_id }); 
+						return data;
 					} else {
-						console.error("Login failed, no token received");
+						console.error("Error en la autenticación del admin: ", response.status);
+						return null;
 					}
-				})
-				.catch((error) => {
-					console.error("Error in admin login:", error);
-				});
+				} catch (error) {
+					console.error("Error en adminlogin:", error);
+					return null;
+				}
 			},
-
+						
 			adminlogout: () => {
 				console.log("logout")
 				localStorage.removeItem("token");
@@ -297,6 +299,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/admins")
 					.then((response) => response.json())
 					.then((data) => {
+						console.log("Fetched admins:", data); 
 						setStore({ admins: data })
 					})
 					.catch((error) => console.error("Error al cargar los usuarios de admin:", error));
@@ -309,8 +312,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeDataAdmin());
 			},
-			addNewAdmin:(email, name, user_name, password) => {
-				fetch(process.env.BACKEND_URL + '/api/signup/admins', {
+			addNewAdmin: (email, name, user_name, password, image) => {
+				return fetch(process.env.BACKEND_URL + '/api/signup/admins', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -318,23 +321,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"name": name,
 						"user_name": user_name,
 						"password": password,
+						"image_url": image
 					}),
 					redirect: "follow",
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataAdmin());
-			},
+				.then((response) => {
+					console.log(response.status);
+					if (response.status === 201) { 
+						setStore({ admin_auth: true });
+					}
+					return response.json();
+				})
+				.then((data) => {
+					if (data.access_token) {
+						localStorage.setItem("token", data.access_token);
+						console.log("Token de acceso:", data.access_token);
+						getActions().loadSomeDataAdmin();
+					}
 			
-			editAdmin: (adminModif, id) => {
-				const requestOptions = {
-					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(adminModif)
-				};
-				fetch(process.env.BACKEND_URL + `/api/edit/admins/${id}`, requestOptions)
-					.then(response => response.json())
-					.then(data => console.log("Admin updated:", data))
-					.catch(error => console.error("Error updating admin:", error));
+					if (data.admin) {
+						console.log("Detalles del administrador:", data.admin);
+						return data.admin;
+					}
+				})
+				.catch((error) => {
+					console.error("Error al crear el administrador:", error);
+					return null; 
+				});
 			},
 
 			traer_admin: (id) => {
@@ -475,69 +488,77 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			loadSomeDataCategory: () => {
-				console.log("Se cargó la página");
-				fetch(process.env.BACKEND_URL + "/api/categories")
-					.then((response) => response.json())
-					.then((data) => {
-						setStore({ categories: data })
-					})
-					.catch((error) => console.error("Error al cargar categorias:", error));
+				const store = getStore();
+				if (store.categories.length === 0) { // Fetch only if categories array is empty
+					console.log("Loading categories...");
+					fetch(process.env.BACKEND_URL + "/api/categories")
+						.then((response) => response.json())
+						.then((data) => {
+							setStore({ categories: data });
+							console.log("Categories loaded:", data);
+						})
+						.catch((error) => console.error("Error loading categories:", error));
+				}
 			},
 
-			addNewCategory: (name) => {
-				const token = localStorage.getItem('token'); // Match with 'setItem' key
-
-   				 if (!token) { 
-       			 console.error('JWT token is missing. User might not be authenticated.');
-        		return; }
-			
-				name = name.trim(); // Trim any whitespace from the category name
-			
-				if (!name) {
-					console.error('Category name is required'); // Log error if the name is empty
-					return; // Exit if the name is invalid
+			addNewCategory: (name, imageUrl) => {
+				const token = localStorage.getItem('token');
+				if (!token) {
+					console.error('JWT token is missing. User might not be authenticated.');
+					return;
 				}
 			
-				console.log("Sending category name:", name); // Log the name being sent
-				console.log("Using JWT token:", token); // Log the token being used
+				// Create FormData to handle file uploads and text data together
+				const formData = new FormData();
+				formData.append("name", name);
+				formData.append("image_url", imageUrl);  // Append image URL correctly
 			
 				fetch(process.env.BACKEND_URL + '/api/create/categories', {
 					method: 'POST',
 					headers: {
-						"Content-Type": "application/json", // Specify the content type
-						"Authorization": `Bearer ${token}` // Include the JWT token for authentication
+						"Authorization": `Bearer ${token}`,  // Only Authorization header is needed with FormData
 					},
-					body: JSON.stringify({ "name": name }), // Send the category name in the body
+					body: formData,  // Send FormData
 				})
 				.then((response) => {
 					if (!response.ok) {
 						return response.json().then(err => {
-							throw new Error(err.message || 'Failed to create category'); // Throw an error with the message from the server
+							throw new Error(err.message || 'Failed to create category');
 						});
 					}
-					return response.json(); // Parse the response as JSON
+					return response.json();
 				})
 				.then((data) => {
-					console.log('Category created:', data); // Log success response
-					getActions().loadSomeDataCategory(); // Load updated categories
+					console.log('Category created:', data);
+					getActions().loadSomeDataCategory();  // Refresh categories
 				})
 				.catch((error) => {
-					console.error('Error creating category:', error); // Log any errors that occur
+					console.error('Error creating category:', error);
 				});
 			},
 			
 			editCategory: (categoryModif, id) => {
 				const requestOptions = {
 					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify(categoryModif)
 				};
+			
 				fetch(process.env.BACKEND_URL + `/api/edit/categories/${id}`, requestOptions)
-					.then(response => response.json())
+					.then(response => {
+						if (!response.ok) {
+							return response.json().then(err => {
+								throw new Error(err.message || 'Failed to update category');
+							});
+						}
+						return response.json();
+					})
 					.then(data => console.log("Category updated:", data))
 					.catch(error => console.error("Error updating category:", error));
 			},
-
+			
 			removeCategory: (idToDelete) => {
 				fetch(process.env.BACKEND_URL + "/api/categories/" + idToDelete, {
 					method: "DELETE",

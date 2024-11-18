@@ -8,6 +8,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False, unique=True)
     restaurants = db.relationship('RestaurantCategory', back_populates='category')
+    image_url = db.Column(db.String(120), unique=False, nullable=True)
     
     def __repr__(self):
         return f'<Category {self.name}>'
@@ -16,6 +17,8 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "image_url": self.image_url
+
         }
     
 class Ocasiones1(db.Model):
@@ -46,6 +49,7 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "image_url": self.image_url,
         }
 
 class Client(db.Model):
@@ -196,6 +200,20 @@ class Message(db.Model):
     message_time = db.Column(db.Time, nullable=False)
 
     id_chat = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
+    def __repr__(self):
+        return f'<Message {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "id_comensal": self.id_comensal,
+            "id_restaurant": self.id_restaurant,
+            "id_chat": self.id_chat,
+            "message": self.message,
+            "origin": self.origin,
+            "message_date": self.message_date.isoformat(),
+            "message_time": self.message_time.isoformat()
+        }
 
 class RestaurantCategory(db.Model):
     __tablename__ = 'restaurant_category_association'
@@ -214,51 +232,5 @@ class ClientOcasiones(db.Model):
     client = db.relationship('Client', backref=db.backref('ocasiones', lazy='dynamic'))
     ocasion = db.relationship('Ocasiones1', backref=db.backref('clients', lazy='dynamic'))
 
-def save_restaurant(body):
-    restaurant = Restaurant.query.filter_by(email=body["email"]).first()
-    
-    if restaurant is None:
-        # Create new restaurant
-        restaurant = Restaurant(
-            email=body["email"],
-            guests_capacity=body["guests_capacity"],
-            location=body["location"],
-            name=body["name"],
-            phone_number=body["phone_number"],
-            password=body["password"],
-            image_url=body["image_url"],
-            latitude=body["latitude"],
-            longitude=body["longitude"],
-            is_active=True
-        )
-        db.session.add(restaurant)
-        db.session.commit()
-        return restaurant, "Restaurante creado"
-    
-    # If restaurant exists, update it
-    restaurant.guests_capacity = body.get("guests_capacity", restaurant.guests_capacity)
-    restaurant.location = body.get("location", restaurant.location)
-    restaurant.name = body.get("name", restaurant.name)
-    restaurant.phone_number = body.get("phone_number", restaurant.phone_number)
-    restaurant.password = body.get("password", restaurant.password)
-    restaurant.image_url = body.get("image_url", restaurant.image_url)
-    restaurant.latitude = body.get("latitude", restaurant.latitude)
-    restaurant.longitude = body.get("longitude", restaurant.longitude)
-    
-    db.session.commit()
-    return restaurant, "Restaurante actualizado con éxito"
 
-    def __repr__(self):
-        return f'<Message {self.id}>'
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "id_comensal": self.id_comensal,
-            "id_restaurant": self.id_restaurant,
-            "id_chat": self.id_chat,
-            "message": self.message,
-            "origin": self.origin,
-            "message_date": self.message_date.isoformat(),
-            "message_time": self.message_time.isoformat()
-        }

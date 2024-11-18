@@ -1,66 +1,170 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { NavbarAdmin } from "./navbaradmin";
+import { Navigate } from "react-router-dom";
 
 export const Crudcategoria = () => {
     const { store, actions } = useContext(Context);
-    console.log(store.categories);
+    const navigate = useNavigate();
+    const params = useParams();
 
-    useEffect(()=> {
-        console.log(store.categories_auth);
-        actions.loadSomeDataCategory()
-    } ,[])
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+
+    useEffect(() => {
+        actions.loadSomeDataCategory();
+    }, []);
+
+    const handleToggleOffcanvas = (state) => {
+        setIsOffcanvasOpen(state);
+    };
 
     return (
         <>
-            <Link to={"/create/categories"}>
-                <button type="button" className="btn btn-primary" >
-                    crear nueva categoria
-                </button>
-            </Link>
+            {store.admin_auth ? null : <Navigate to="/adminlogin" />}
+            <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+                <NavbarAdmin id={params.id} onToggle={handleToggleOffcanvas} />
 
-            <ul className="list-group">
-                {store.categories.map((item, index) => {
-                    return (
-                        <li key={index} className="list-group-item d-flex justify-content-between">
-                            
-                            <div className="d-flex">
-                                <div style={{ marginLeft: "10px", display: "flex", flexDirection: "column", padding: "5px" }}>
-                                    <h3>{item.name}</h3>
+                <div
+                    className="page-content"
+                    style={{
+                        paddingTop: "80px",
+                        padding: "2rem",
+                        marginLeft: isOffcanvasOpen ? "300px" : "0",
+                        transition: "margin-left 0.3s ease-in-out",
+                    }}
+                >
+                    <h1
+                        style={{
+                            paddingTop: "4rem",
+                            fontSize: "2rem",
+                            fontFamily: "Nunito, sans-serif",
+                            color: "#012970",
+                        }}
+                    >
+                        Categories
+                    </h1>
+                    <div style={{ marginBottom: "2rem" }}>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => navigate(`/create/categories/${params.id}`)}
+                            style={{
+                                backgroundColor: "#e75b1e",
+                                border: "none",
+                                padding: "0.5rem 1rem",
+                                fontSize: "16px",
+                                borderRadius: "5px",
+                            }}
+                        >
+                            Create New Category
+                        </button>
+                    </div>
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(3, 1fr)",
+                            gap: "1.5rem",
+                        }}
+                    >
+                        {store.categories.map((item, index) => (
+                            <div
+                                key={index}
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    backgroundColor: "#ffffff",
+                                    borderRadius: "9px",
+                                    padding: "1.5rem",
+                                    boxShadow: "rgb(0 0 255 / 9%) 0px 1px 6px 4px",
+                                    maxWidth: "400px",
+                                    transition: "transform 0.3s ease-in-out",
+                                }}
+                                onMouseOver={(e) =>
+                                    (e.currentTarget.style.transform = "translateY(-5px)")
+                                }
+                                onMouseOut={(e) =>
+                                    (e.currentTarget.style.transform = "translateY(0)")
+                                }
+                            >
+                                {/* Datos de la categoría */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        paddingBottom: "1rem",
+                                    }}
+                                >
+                                    <div style={{ flex: 1, paddingRight: "1rem" }}>
+                                        <h3
+                                            style={{
+                                                fontSize: "1.2rem",
+                                                fontWeight: "bold",
+                                                color: "#012970",
+                                                marginBottom: "0.5rem",
+                                                fontFamily: '"Poppins", sans-serif',
+                                            }}
+                                        >
+                                            {item.name}
+                                        </h3>
+                                    </div>
+                                    {item.image_url && (
+                                        <img
+                                            src={item.image_url}
+                                            alt={item.name}
+                                            style={{
+                                                width: "115px",
+                                                height: "115px",
+                                                borderRadius: "11%",
+                                                objectFit: "cover",
+                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                {/* Botones */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        gap: "10px",
+                                        marginTop: "auto",
+                                    }}
+                                >
+                                    <button
+                                        onClick={() => {actions.removeCategory(item.id);
+                                        actions.loadSomeDataCategory();
+                                            
+                                        }}
+                                        style={{
+                                            backgroundColor: "#e75b1e",
+                                            color: "#fff",
+                                            padding: "0.5rem 1rem",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
+                                    <button
+                                        onClick={() => navigate(`/edit/categories/${item.id}/${params.id}`)}
+                                        style={{
+                                            backgroundColor: "#6c757d",
+                                            color: "#fff",
+                                            padding: "0.5rem 1rem",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        Edit
+                                    </button>
                                 </div>
                             </div>
-
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-
-                            {/* <Link to={"/categories/" + item.id}>
-                                    <button style={{ backgroundColor: "white", border: "0px" }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16" style={{ marginRight: "25px" }}>
-                                            <path fillRule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5"/>
-                                            <path fillRule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0z"/>
-                                        </svg>
-                                    </button>
-                                </Link> */}
-                                <Link to={"/edit/categories/" + item.id}>
-                                    <button style={{ backgroundColor: "white", border: "0px" }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" className="bi bi-pencil-fill" viewBox="0 0 16 16" style={{ marginRight: "25px" }}>
-                                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
-                                        </svg>
-                                    </button>
-                                </Link>
-
-                                <button onClick={() => actions.removeCategory(item.id)} style={{ backgroundColor: "white", border: "0px" }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" className="bi bi-trash-fill">
-                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
-                                    </svg>
-                                </button>
-                            </div>
-
-                        </li>
-                    );
-                })}
-            </ul>
-            <Link to="/">Volver al inicio</Link>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

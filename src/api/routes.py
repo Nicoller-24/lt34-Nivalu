@@ -46,8 +46,10 @@ def get_restaurant(restaurant_id):
 def signup():
     body = request.get_json()
 
+    # Verifica si ya existe un restaurante con ese email
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
     if restaurant is None:
+        # Crea un nuevo restaurante
         restaurant = Restaurant(
             email=body["email"],
             guests_capacity=body["guests_capacity"],
@@ -63,18 +65,31 @@ def signup():
         db.session.add(restaurant)
         db.session.commit()
 
+        # Genera el token de acceso
         access_token = create_access_token(identity=restaurant.id)
 
+        # Crea la respuesta con todos los datos del restaurante
         response_body = {
             "msg": "Restaurante creado",
-            "access_token": access_token
+            "access_token": access_token,
+            "restaurant": {
+                "id": restaurant.id,
+                "email": restaurant.email,
+                "guests_capacity": restaurant.guests_capacity,
+                "location": restaurant.location,
+                "name": restaurant.name,
+                "phone_number": restaurant.phone_number,
+                "image_url": restaurant.image_url,
+                "latitude": restaurant.latitude,
+                "longitude": restaurant.longitude,
+                "is_active": restaurant.is_active
+            }
         }
         return jsonify(response_body), 201  
     else:
-        return jsonify({"msg": "El restaurante ya existe"}), 409  
+        return jsonify({"msg": "El restaurante ya existe"}), 409
+ 
 
-    
-    
 
 @api.route('/restaurant/<int:restaurant_id>', methods=['PUT'])
 def update_restaurant(restaurant_id):
@@ -210,9 +225,9 @@ def login_restaurant():
     if email != restaurant.email or password != restaurant.password:
         return jsonify({"msg": "Bad email or password"}), 401
     
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token, restaurant_id= restaurant.id)
-   
+    # Usar el id del restaurante como identidad en el token
+    access_token = create_access_token(identity=restaurant.id)
+    return jsonify(access_token=access_token, restaurant_id=restaurant.id)
 
 
 
@@ -229,7 +244,8 @@ def login():
     if email != user.email or password != user.password:
         return jsonify({"msg": "Bad email or password"}), 401
 
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=user.id)
+
     return jsonify(access_token=access_token, user_id= user.id)
 
 @api.route('/admins', methods=['GET'])
@@ -251,22 +267,38 @@ def get_admin(admin_id):
 @api.route("/signup/admins", methods=["POST"])
 def signup_admin():
     body = request.get_json()
-    
+
     admin = Admin1.query.filter_by(email=body["email"]).first()
     if admin is None:
         admin = Admin1(
             email=body["email"],
             name=body["name"],
             user_name=body["user_name"],
-            image_url=body.get("image_url", ""),  # Store image URL
+            image_url=body.get("image_url", ""),  
             password=body["password"],
             is_active=True
         )
         db.session.add(admin)
         db.session.commit()
-        return jsonify({"msg": "Usuario admin creado"}), 200
+
+        access_token = create_access_token(identity=admin.id)
+
+        response_body = {
+            "msg": "Administrador creado",
+            "access_token": access_token,
+            "admin": {
+                "id": admin.id,
+                "email": admin.email,
+                "name": admin.name,
+                "user_name": admin.user_name,
+                "image_url": admin.image_url,
+                "is_active": admin.is_active
+            }
+        }
+        return jsonify(response_body), 201
     else:
-        return jsonify({"msg": "El usuario admin ya existe"}), 401
+        return jsonify({"msg": "El administrador ya existe"}), 409
+
     
 @api.route('edit/admins/<int:admin_id>', methods=['PUT'])
 def update_admin(admin_id):  
@@ -316,9 +348,12 @@ def login_admin():
     if admin is None:
         return jsonify({"msg": "Could not find an admin with that email."}), 401
 
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token), 200  # Return 200 status for successful login
+    if email != admin.email or password != admin.password:
+        return jsonify({"msg": "Bad email or password"}), 401
 
+    access_token = create_access_token(identity=admin.id)
+
+    return jsonify(access_token=access_token, admin_id=admin.id), 200
 
 @api.route('/reservations', methods=['GET'])
 def get_reservations():
@@ -340,12 +375,32 @@ def get_reservationsUser(client_id):
 
 @api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
 def get_reservationsRestaurant(restaurant_id):
-    reservationsRestaurant = Reservations.query.filter_by(restaurant_id= restaurant_id).all()  # Obtener todas las reservas del restaurante
-    if not reservationsRestaurant:
-        return jsonify({"message": "Reservations not found"}), 404
-    
-    # Serializar cada reserva en una lista de JSON
-    return jsonify([reservation.serialize() for reservation in reservationsRestaurant]), 200
+    try:
+        reservationsRestaurant = Reservations.query.filter_by(restaurant_id=restaurant_id).all()  # Obtener todas las reservas del restaurante
+        if not reservationsRestaurant:
+            return jsonify({"message": "Reservations not found"}), 404
+
+       
+        serialized_reservations = []
+        for reservation in reservationsRestaurant:
+           
+            client = Client.query.get(reservation.client_id)
+            client_details = {
+                "name": client.name,
+                "last_name": client.last_name,
+                "email": client.email,
+                "phone_number": client.phone_number
+            } if client else None
+
+            serialized_reservations.append({
+                **reservation.serialize(),
+                "client_details": client_details
+            })
+
+        return jsonify(serialized_reservations), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @api.route('/reservations/accept/<int:reservation_id>', methods=['PUT'])
 def accept_reservation(reservation_id):
@@ -490,22 +545,22 @@ def get_category(category_id):
 @api.route("/create/categories", methods=["POST"])
 @jwt_required()
 def create_category():
-    body = request.get_json()
-    print("Received body:", body)  # Log the received data
+    name = request.form.get("name")
+    image_url = request.form.get("image_url")  # Access image_url from form data
 
-    if "name" not in body:
+    if not name:
         return jsonify({"msg": "Falta el nombre de la categoría"}), 400
 
-    category = Category.query.filter_by(name=body["name"]).first()
+    # Check if category exists
+    category = Category.query.filter_by(name=name).first()
     
     if category is None:
-        category = Category(name=body["name"])
+        # Create a new category with name and image_url
+        category = Category(name=name, image_url=image_url)
         db.session.add(category)
         db.session.commit()
-        response_body = {"msg": "Categoria creado"}
-        return jsonify(response_body), 200
+        return jsonify({"msg": "Categoria creado", "category": category.serialize()}), 200
     else:
-        print("Category already exists:", body["name"])  # Log existing category case
         return jsonify({"msg": "La categoria ya existe"}), 400
 
 @api.route('edit/categories/<int:category_id>', methods=['PUT'])
@@ -514,17 +569,18 @@ def update_categories(category_id):
     category = Category.query.filter_by(id=category_id).first()
 
     if category is None:
-        return jsonify({"error": "Categoria no encontrado"}), 404
+        return jsonify({"error": "Categoria no encontrada"}), 404
 
+    # Update the name if provided
     if "name" in body:
-        existing_category = Category.query.filter_by(name=body["name"]).first()  
-        if existing_category and existing_category.id != category_id:
-            return jsonify({"error": "La categoria ya está en uso"}), 400
-        
-        category.name = body["name"] 
+        category.name = body["name"]
+
+    # Update the image_url if provided
+    if "image_url" in body:
+        category.image_url = body["image_url"]
 
     db.session.commit()
-    return jsonify({"msg": "Categoria actualizada!", "category": category.serialize()}), 200 
+    return jsonify({"msg": "Categoria actualizada!", "category": category.serialize()}), 200
     
 @api.route('/categories/<int:category_id>', methods=['DELETE'])
 def delete_category(category_id):
@@ -655,11 +711,29 @@ def get_chats_restaurant(id_restaurant):
 
 @api.route('/chat/client/<int:id_comensal>', methods=['GET'])
 def get_chats_client(id_comensal):
-    
-    chat = Chat.query.filter_by(id_comensal=id_comensal)
-    chats = list(map(lambda item: item.serialize(), chat)) 
+    chats = Chat.query.filter_by(id_comensal=id_comensal).all()
 
-    return jsonify(chats), 200
+    response_data = []
+    for chat in chats:
+        chat_data = chat.serialize()
+
+        restaurant = Restaurant.query.get(chat.id_restaurant)
+        
+        if restaurant:
+            chat_data["restaurant_details"] = {
+                "name": restaurant.name,
+                "location": restaurant.location,
+                "email": restaurant.email,
+                "phone_number": restaurant.phone_number,
+                "guests_capacity": restaurant.guests_capacity
+            }
+        else:
+            chat_data["restaurant_details"] = None 
+
+        response_data.append(chat_data)
+
+    return jsonify(response_data), 200
+
 
 @api.route('/messages/<int:restaurant_id>/<int:client_id>/<int:chat_id>', methods=['GET'])
 def get_messages(restaurant_id, client_id, chat_id):

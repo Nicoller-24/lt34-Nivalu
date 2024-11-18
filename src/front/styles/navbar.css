@@ -1,0 +1,42 @@
+/* Estilo general del navbar y offcanvas */
+
+.offcanvas {
+    position: fixed;
+    top: 72px; /* Ajusta según la altura del navbar */
+    left: 0;
+    width: 250px;
+    height: calc(100% - 72px);
+    background-color: #f8f9fa;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1040;
+}
+
+.offcanvas.active {
+    transform: translateX(0);
+}
+
+.offcanvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.offcanvas-body {
+    padding: 1rem;
+}
+
+.offcanvas-body ul {
+    padding-left: 0;
+}
+
+.offcanvas-body li {
+    margin-bottom: 1rem;
+}
+
+/* Clase para empujar el contenido */
+.offcanvas-active .container-fluid {
+    margin-left: 250px;
+}
