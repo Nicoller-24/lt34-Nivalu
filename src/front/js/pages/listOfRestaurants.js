@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "../../styles/home.css";
 import { useParams } from "react-router-dom";
 import { NavbarClient } from "../component/navbarclient"; // Usamos el NavbarClient
+import { FilterRestaurantsByLocation } from "../component/filterRestaurantsByLocation";
 
 export const ListOfRestaurants = () => {
     const { store, actions } = useContext(Context);

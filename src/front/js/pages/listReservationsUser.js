@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import { NavbarClient } from "../component/navbarclient";
 import App from "../component/App"; // Componente que devuelve la recomendación
 
+
 export const ListReservationsUser = () => {
     const { store, actions } = useContext(Context);
     const [reservations, setReservations] = useState([]);

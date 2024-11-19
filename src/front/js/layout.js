@@ -30,6 +30,7 @@ import { Mapautocompletate } from "./component/mapautocompletate.js";
 import App from "./component/App.js";
 import Chat from "./component/chat.js";
 import Chatrestaurant from "./component/chatrestaurant.js";
+import { FilterRestaurantsByLocation } from "./component/filterRestaurantsByLocation.js";
 import { Restaurantview } from "./pages/restaurantview.js";
 
 import { Crudadmin } from "./component/crudadmin";
@@ -68,8 +69,7 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                
-                {store.restaurant_auth  || store.admin_auth ? null  : <Navbar style={{display: "none"}}/>}
+                {/* {store.restaurant_auth  || store.admin_auth ? null  : <Navbar style={{display: "none"}}/>} */}
                 
 
                     <Routes>
@@ -109,7 +109,10 @@ const Layout = () => {
                         <Route element={<Adminlogin />} path="/adminlogin/" />
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
-                        <Route element={<SuccessPage />} path="/reservaExitosa/:id"/>
+                        <Route element={<SuccessPage />} path="/reservaExitosa/:id"/>                      
+                        <Route element={<FilterRestaurantsByLocation />} path="/filterNearbyRestaurants"/>
+
+
                         <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant/:id"/>
                         <Route element={<ClientDetails />} path="/clientdetails/:id"/>
 
