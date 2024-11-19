@@ -101,7 +101,7 @@ export const Home = () => {
       <section id="banner">
         <header>
           <div className="logo">
-            <img src={logo} alt="Logo" style={{ width: "100px", height: "auto", marginBottom: "10px" }} />
+            <img src={logo} alt="Logo" style={{ width: "150px", height: "auto", marginBottom: "10px" }} />
           </div>
           <nav>
             <ul>
