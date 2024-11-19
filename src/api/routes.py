@@ -13,12 +13,12 @@ from werkzeug.security import check_password_hash
 from flask import Flask
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(_name_)
 CORS(app)  # This will allow all origins
 from datetime import datetime, timedelta, timezone
 
 
-api = Blueprint('api', __name__)
+api = Blueprint('api', _name_)
 CORS(api)
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -148,28 +148,46 @@ def get_client(client_id):
         return jsonify({"error": "Cliente no se encontró"}), 404
     return jsonify(client.serialize()), 200
 
-@api.route("/signup/client", methods=["POST"])  
-def signup_client(): 
+@api.route("/signup/client", methods=["POST"])
+def signup_client():
     body = request.get_json()
+
+    # Verifica si ya existe un cliente con ese email
     client = Client.query.filter_by(email=body["email"]).first()
     if client is None:
+        # Crea un nuevo cliente
         client = Client(
-            id=body["id"],
             name=body["name"],
-            last_name=body["last_name"],  
+            last_name=body["last_name"],
             identification_number=body["identification_number"],
             email=body["email"],
             phone_number=body["phone_number"],
-            password=body["password"],
-            
+            password=body["password"],  
             is_active=True
         )
         db.session.add(client)
         db.session.commit()
-        response_body = {"msg": "Usuario creado con éxito"}
-        return jsonify(response_body), 201 
+
+        # Genera el token de acceso
+        access_token = create_access_token(identity=client.id)
+
+        # Crea la respuesta con todos los datos del cliente
+        response_body = {
+            "msg": "Cliente creado con éxito",
+            "access_token": access_token,
+            "client": {
+                "id": client.id,
+                "name": client.name,
+                "last_name": client.last_name,
+                "identification_number": client.identification_number,
+                "email": client.email,
+                "phone_number": client.phone_number,
+                "is_active": client.is_active
+            }
+        }
+        return jsonify(response_body), 201
     else:
-        return jsonify({"msg": "Ya se encuentra un usuario registrado"}), 409  # Cambiado a 409
+        return jsonify({"msg": "El cliente ya está registrado"}), 409
 
 @api.route('/client/<int:client_id>', methods=['PUT'])
 def update_client(client_id):  
@@ -805,5 +823,3 @@ def delete_chat_and_messages(id):
         response_body = {"msg": "No se encontró el chat"}
     
     return jsonify(response_body), 200
-
-

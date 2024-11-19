@@ -104,7 +104,7 @@ const Layout = () => {
                         <Route element={<Crearocasion />} path="/create/ocasiones/:id" />
                         <Route element={<Crudocasion />} path="/ocasiones/:id" />
                         <Route element={<EditOcasion />} path="/edit/ocasiones/:id/:id_admin" />
-                        <Route element={<ListOfRestaurants />} path="/listOfRestaurants" />
+                        <Route element={<ListOfRestaurants />} path="/listOfRestaurants/:id" />
                         <Route element={<Adminlogin />} path="/adminlogin/" />
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
