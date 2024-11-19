@@ -384,12 +384,42 @@ def get_reservations():
 
 @api.route('/reservations/<client_id>', methods=['GET'])
 def get_reservationsUser(client_id):
-    reservationsUser = Reservations.query.filter_by(client_id=client_id).all()  # Obtener todas las reservas del usuario
-    if not reservationsUser:
-        return jsonify({"message": "Reservations not found"}), 404
-    
-    # Serializar cada reserva en una lista de JSON
-    return jsonify([reservation.serialize() for reservation in reservationsUser]), 200
+    try:
+        # Obtener todas las reservas del cliente
+        reservationsUser = Reservations.query.filter_by(client_id=client_id).all()
+        if not reservationsUser:
+            return jsonify({"message": "Reservations not found"}), 404
+
+        # Serializar cada reserva y agregar detalles del restaurante y la ocasión
+        serialized_reservations = []
+        for reservation in reservationsUser:
+            # Obtener detalles del restaurante
+            restaurant = Restaurant.query.get(reservation.restaurant_id)
+            restaurant_details = {
+                "name": restaurant.name,
+                "location": restaurant.location,
+                "email": restaurant.email,
+                "phone_number": restaurant.phone_number,
+            } if restaurant else None
+
+            # Obtener detalles de la ocasión
+            occasion = Ocasiones1.query.get(reservation.ocasiones_id)
+            occasion_details = {
+                "name": occasion.name,
+            } if occasion else None
+
+            # Agregar los detalles del restaurante y la ocasión a la reserva serializada
+            serialized_reservations.append({
+                **reservation.serialize(),
+                "restaurant_details": restaurant_details,
+                "occasion_details": occasion_details,
+            })
+
+        return jsonify(serialized_reservations), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 @api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
 def get_reservationsRestaurant(restaurant_id):
@@ -743,7 +773,8 @@ def get_chats_client(id_comensal):
                 "location": restaurant.location,
                 "email": restaurant.email,
                 "phone_number": restaurant.phone_number,
-                "guests_capacity": restaurant.guests_capacity
+                "guests_capacity": restaurant.guests_capacity,
+                "image_url": restaurant.image_url
             }
         else:
             chat_data["restaurant_details"] = None 

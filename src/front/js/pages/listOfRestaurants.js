@@ -155,7 +155,7 @@ export const ListOfRestaurants = () => {
                                     }}
                                 />
                             </div>
-                            <Link to={`/aboutRestaurants/?id_restaurant=${restaurant.id}`}>
+                            <Link to={`/aboutRestaurants/${params.id}/?id_restaurant=${restaurant.id}`}>
                                 <button 
                                     style={{
                                         backgroundColor: "#e75b1e",

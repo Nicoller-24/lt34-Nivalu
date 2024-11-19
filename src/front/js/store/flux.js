@@ -124,18 +124,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			// Update user by id
-			updateUser: (userModif, id) => {
-				const requestOptions = {
+			updateUser: (updateData, id) => {
+				return fetch(`${process.env.BACKEND_URL}/api/client/${id}`, {
 					method: 'PUT',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(userModif)
-				};
-				fetch(process.env.BACKEND_URL + `/api/client/${id}`, requestOptions)
-					.then(response => response.json())
-					.then(data => console.log("User updated:", data))
-					.catch(error => console.error("Error updating user:", error));
+					body: JSON.stringify(updateData)
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error(`Error en la solicitud: ${response.statusText}`);
+						}
+						return response.json();
+					})
+					.then((data) => {
+						console.log("User updated successfully:", data);
+						return data;
+					})
+					.catch((error) => {
+						console.error("Error updating user:", error);
+						throw error; // Propaga el error para manejarlo en el componente
+					});
 			},
-
+			
 			loginClient: async (email, password) => {
 				try {
 					const requestOptions = {

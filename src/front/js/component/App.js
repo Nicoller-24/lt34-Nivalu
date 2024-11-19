@@ -1,8 +1,9 @@
 // App.js
 import React, { useState } from 'react';
 import { getChatCompletion } from './openaiAPI';
+import PropTypes from 'prop-types';
 
-function App() {
+function App(props) {
   const [titulo, setTitulo] = useState('');
   const [recomendacion, setRecomendacion] = useState('');
 
@@ -13,15 +14,12 @@ function App() {
 
   // Construcción del mensaje de usuario
   const buildUserMessage = () => {
-    const haveVerb = "tengo";
-    const age = getRandomItem(["18", "24", "28", "32", "38" , "45", "50"]);
-    const years = "años y";
-    const occasion = getRandomItem(["me retiro", "me ascendieron", "me graduo", "cumplo años", "me comprometo"]);
-    const recommendationQuestion = "que me recomienda hacer antes o después de la reserva de";
-    const mealType = getRandomItem(["almuerzo", "cena", "desayuno"]);
-    const finalSentence = "que tengo";
+    const haveVerb = "tengo una reservación para";
+    const occasion = props.ocassion
+    const recommendationQuestion = "que me recomiendas hacer antes o después de la reserva si es en esta fecha y hora";
+    const mealType = props.time
 
-    return `${haveVerb} ${age} ${years} ${occasion}, ${recommendationQuestion} ${mealType} ${finalSentence}`;
+    return `${haveVerb}  ${occasion}, ${recommendationQuestion} ${mealType}`;
   };
 
   const handleSendMessage = async () => {
@@ -55,12 +53,22 @@ function App() {
 
   return (
     <div>
-      <button onClick={handleSendMessage}>Recomienda</button>
+      <button
+      style={{
+        backgroundColor: "#e75b1e",
+        color: "white",
+        border: "none",
+        borderRadius: "5px",
+        padding: "0.5rem 1rem",
+        cursor: "pointer",
+        transition: "background-color 0.3s ease",
+        }}
+      onClick={handleSendMessage}>Recomends</button>
       {titulo && recomendacion && (
         <div>
-          <h2>Título:</h2>
+          <h2>Title:</h2>
           <p>{titulo}</p>
-          <h2>Recomendación:</h2>
+          <h2>Recommendation:</h2>
           <p>{recomendacion}</p>
         </div>
       )}

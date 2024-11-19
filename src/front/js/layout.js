@@ -47,6 +47,7 @@ import RestaurantCategorySelector from "./component/setrestaurantcategory";
 import { Crearocasion } from "./component/crearocasion";
 import { Crudocasion } from "./component/crudocasion";
 import { EditOcasion } from "./component/editocasion";
+import ClientDetails from "./component/clientprofile.js";
 
 
 import { Navbar } from "./component/navbar";
@@ -81,7 +82,7 @@ const Layout = () => {
                         
                         <Route element={<AddClients />} path="/adduser" />
                         <Route element={<UserList />} path="/userList" />
-                        <Route element={<EditClient />} path="/updateInfo" />
+                        <Route element={<EditClient />} path="/updateInfo/:id" />
                         <Route element={<Crudrestaurante />} path="/restaurants/:id" />
                         <Route element={<Crearrestaurante />} path="/signup/restaurants" />
                         <Route element={<Single />} path="/single/:theid" />
@@ -89,11 +90,11 @@ const Layout = () => {
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
                         <Route element={<Restaurantselect />} path="/restauranteselect" />
                         <Route element={<Signuprestaurant />} path="/signuprestaurant" />
-                        <Route element={<AboutRestaurant />} path="/aboutRestaurants" />
+                        <Route element={<AboutRestaurant />} path="/aboutRestaurants/:id" />
                         <Route element={<Mapautocompletate />} path="/mapa" />
-                        <Route element={<ListReservationsUser />} path="/listReservationsUser" />
+                        <Route element={<ListReservationsUser />} path="/listReservationsUser/:id" />
                         <Route element={<App/>} path="/openai" />
-                        <Route element={<Chat/>} path="/client/chat/:id_restaurant/:id_client" />
+                        <Route element={<Chat/>} path="/client/chat/:idclient" />
                         <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
                         <Route element={<Restaurantview/>} path="/restaurant/view" />
 
@@ -108,8 +109,9 @@ const Layout = () => {
                         <Route element={<Adminlogin />} path="/adminlogin/" />
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
-                        <Route element={<SuccessPage />} path="/reservaExitosa"/>
+                        <Route element={<SuccessPage />} path="/reservaExitosa/:id"/>
                         <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant/:id"/>
+                        <Route element={<ClientDetails />} path="/clientdetails/:id"/>
 
 
 

@@ -1,137 +1,177 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-
+import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
+import { NavbarClient } from "../component/navbarclient";
 
-export const EditClient = () => { 
-	const { store, actions } = useContext(Context);
-	const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const index = queryParams.get("index"); 
-	console.log(index);
-	
+export const EditClient = () => {
+    const params = useParams();
+    const { store, actions } = useContext(Context);
 
-	// Validar si store.users, debe estar en el store de flux y si el index existe
-	
     const [updateData, setUpdateData] = useState({
         name: '',
         last_name: '',
         email: '',
-		identification_number: '',
-		phone_number: '',
-        password: '',
+        identification_number: '',
+        phone_number: ''
     });
+    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
-    const handleSubmit = (i) => {
-        i.preventDefault();
-		console.log()
-		if (index) {
-            actions.updateUser(updateData, index); // Llamar a updateUser con los datos, debe estar en flux la accion
+    const fetchClient = () => {
+        fetch(`${process.env.BACKEND_URL}/api/client/${params.id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setUpdateData({
+                    name: data.name || '',
+                    last_name: data.last_name || '',
+                    email: data.email || '',
+                    identification_number: data.identification_number || '',
+                    phone_number: data.phone_number || '',
+                });
+            })
+            .catch((error) => console.error("Error loading client:", error));
+    };
+
+    useEffect(() => {
+        fetchClient();
+    }, [params.id]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (
+            !updateData.name ||
+            !updateData.last_name ||
+            !updateData.email ||
+            !updateData.identification_number ||
+            !updateData.phone_number
+        ) {
+            alert("All fields are required.");
+            return;
         }
-        setUpdateData({
-            name: '',
-        	last_name: '',
-        	email: '',
-			identification_number: '',
-			phone_number: '',
-        	password: '',
-        });
+
+        actions.updateUser(updateData, params.id)
+            .then(() => alert("Client updated successfully."))
+            .catch((error) => {
+                alert("Error updating client.");
+                console.error(error);
+            });
+    };
+
+    const handleOffcanvasToggle = (isOpen) => {
+        setOffcanvasOpen(isOpen);
     };
 
     return (
-        <div className="p-3 m-auto w-75">
-            <div>
-				<h1 className="mx-auto">Actualización de datos </h1>
-			</div>
-			
-			<div>
-				<form onSubmit={handleSubmit}>
-					<div className="form-group p-1">
-						<label htmlFor="name">Nombre</label>
-						<input
-							type="text"
-							name="name"
-							placeholder="Nombre"
-							value={updateData.name}
-							onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
-
-					<div className="form-group p-1">
-						<label htmlFor="last_name">Apellido</label>
-						<input
-							type="text"
-							name="last_name"
-							placeholder="Apellido"
-							value={updateData.last_name}
-							onChange={(e) => setUpdateData({ ...updateData, last_name: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
-
-					<div className="form-group">
-						<label htmlFor="email">Correo Electrónico</label>
-						<input
-							type="email"
-							name="email"
-							placeholder="Email"
-							value={updateData.email}
-							onChange={(e) => setUpdateData({ ...updateData, email: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
-
-					<div className="form-group">
-						<label htmlFor="identification_number">Número de Identificación</label>
-						<input
-							type="text"
-							name="identification_number"
-							placeholder="Identificación"
-							value={updateData.identification_number}
-							onChange={(e) => setUpdateData({ ...updateData, identification_number: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
-
-					<div className="form-group">
-						<label htmlFor="phone_number">Número de Teléfono</label>
-						<input
-							type="text"
-							name="phone_number"
-							placeholder="Número de Teléfono"
-							value={updateData.phone_number}
-							onChange={(e) => setUpdateData({ ...updateData, phone_number: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
-
-					<div className="form-group">
-						<label htmlFor="password">Contraseña</label>
-						<input
-							type="password"
-							name="password"
-							placeholder="Contraseña"
-							value={updateData.password}
-							onChange={(e) => setUpdateData({ ...updateData, password: e.target.value })}
-							required
-							className="form-control"
-						/>
-					</div>
-					
-					
-					
-						<button type="button" className="btn btn-info">Volver</button>
-						<button type="submit" className="btn btn-success m-3">Modificar Usuario</button>
-					
-				</form>
-			</div>
+        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+            <NavbarClient id={params.id} onToggle={handleOffcanvasToggle} />
+            <div
+                className="page-content"
+                style={{
+                    padding: "2rem",
+                    transition: "margin-left 0.3s ease",
+                    marginLeft: offcanvasOpen ? "300px" : "0",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1rem",
+                }}
+            >
+                <h1
+                    style={{
+                        fontSize: "2rem",
+                        fontFamily: "Nunito, sans-serif",
+                        color: "#012970",
+                    }}
+                >
+                    Edit Your Profile
+                </h1>
+                <div
+                    style={{
+                        padding: "1rem",
+                        boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
+                        borderRadius: "10px",
+                        backgroundColor: "#ffffff",
+                    }}
+                >
+                    <h3 style={{ fontFamily: '"Poppins", sans-serif', color: "#012970", fontWeight: "500" }}>
+                        Account Details
+                    </h3>
+                    <form style={{ fontFamily: '"Open Sans", sans-serif' }} onSubmit={handleSubmit}>
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "1rem" }}>
+                            <div style={{ flex: 1 }}>
+                                <label>First Name</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={updateData.name}
+                                    onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
+                                />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <label>Last Name</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={updateData.last_name}
+                                    onChange={(e) => setUpdateData({ ...updateData, last_name: e.target.value })}
+                                />
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "1rem" }}>
+                            <div style={{ flex: 1 }}>
+                                <label>Email</label>
+                                <input
+                                    type="email"
+                                    className="form-control"
+                                    value={updateData.email}
+                                    onChange={(e) => setUpdateData({ ...updateData, email: e.target.value })}
+                                />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <label>Identification Number</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={updateData.identification_number}
+                                    onChange={(e) =>
+                                        setUpdateData({ ...updateData, identification_number: e.target.value })
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "1rem" }}>
+                            <div style={{ flex: 1 }}>
+                                <label>Phone Number</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={updateData.phone_number}
+                                    onChange={(e) => setUpdateData({ ...updateData, phone_number: e.target.value })}
+                                />
+                            </div>
+                        </div>
+                        <button
+                            type="submit"
+                            style={{
+                                marginTop: "1rem",
+                                width: "22%",
+                                padding: "0.5rem",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                backgroundColor: "#e75b1e",
+                            }}
+                        >
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 };
