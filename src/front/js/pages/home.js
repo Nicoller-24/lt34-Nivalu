@@ -5,6 +5,10 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Context } from "../store/appContext";
+import logo from "../../img/nivalulogo.jpg";
+import lr from "../../img/lr.jpeg";
+import nicole from "../../img/nicole.jpeg";
+import valentina from "../../img/valentina.jpeg";
 
 export const Home = () => {
   const { store, actions } = useContext(Context);
@@ -97,7 +101,7 @@ export const Home = () => {
       <section id="banner">
         <header>
           <div className="logo">
-            <span>NIVALU</span>
+            <img src={logo} alt="Logo" style={{ width: "100px", height: "auto", marginBottom: "10px" }} />
           </div>
           <nav>
             <ul>
@@ -255,8 +259,8 @@ export const Home = () => {
         </p>
         <div className="team-container">
           <div className="team-member">
-            <img src="/workspaces/lt34-Nivalu/src/front/img/nicole.jpeg" alt="John Doggett" />
-            <h4>John Doggett</h4>
+            <img src={nicole} alt="nicole" />
+            <h4>Nicolle</h4>
             <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
             <div className="social-icons">
               <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -265,8 +269,8 @@ export const Home = () => {
             </div>
           </div>
           <div className="team-member">
-            <img src="/workspaces/lt34-Nivalu/src/front/img/lr.jpeg" alt="Jeffrey Spender" />
-            <h4>Jeffrey Spender</h4>
+            <img src={valentina} alt="valentina"/>  
+            <h4>Valentina</h4>
             <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
             <div className="social-icons">
               <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -275,8 +279,8 @@ export const Home = () => {
             </div>
           </div>
           <div className="team-member">
-            <img src="" alt="Monica Reyes" />
-            <h4>Monica Reyes</h4>
+            <img src={lr} alt="lr"/>
+            <h4>Luis Rico</h4>
             <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
             <div className="social-icons">
               <a href="#"><i class="fab fa-facebook-f"></i></a>
