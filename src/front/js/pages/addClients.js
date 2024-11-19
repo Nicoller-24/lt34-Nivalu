@@ -1,132 +1,149 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export const AddClients = () => { 
+export const AddClients = () => {
+    const [inputName, setInputName] = useState("");
+    const [inputLastName, setInputLastName] = useState("");
+    const [inputEmail, setInputEmail] = useState("");
+    const [inputPhone, setInputPhone] = useState("");
+    const [inputPassword, setInputPassword] = useState("");
+    const [inputIdentificationNumber, setInputIdentificationNumber] = useState("");
+    const navigate = useNavigate();
     const { store, actions } = useContext(Context);
+    const [authClientId, setAuthClientId] = useState(null);
 
-    const [formInfo, setFormInfo] = useState({
-        name: '',
-        last_name: '',
-        email: '',
-        identification_number: '',
-        phone_number: '',
-        password: ''
-    });
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        actions.addUser(formInfo);
-        setFormInfo({
-            name: '',
-            last_name: '',
-            email: '',
-            identification_number: '',
-            phone_number: '',
-            password: ''
-        });
-    };
+    useEffect(() => {
+        if (authClientId) {
+            navigate(`/listOfRestaurants/${authClientId}`);
+        }
+    }, [authClientId, navigate]);
 
     return (
-        <div className="p-3 m-auto w-75">
-            <div>
-                <h1 className="mx-auto">Creacion de comensal</h1>
-                
-            </div>
-            
-            <div>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group p-1">
-                        <label htmlFor="name">Nombre</label>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Nombre"
-                            value={formInfo.name}
-                            onChange={(e) => setFormInfo({ ...formInfo, name: e.target.value })}
-                            required
-                            className="form-control"
-                        />
-                    </div>
-
-                    <div className="form-group p-1">
-                        <label htmlFor="last_name">Apellido</label>
-                        <input
-                            type="text"
-                            name="last_name"
-                            placeholder="Apellido"
-                            value={formInfo.last_name}
-                            onChange={(e) => setFormInfo({ ...formInfo, last_name: e.target.value })}
-                            required
-                            className="form-control"
-                        />
-                    </div>
-                    
+        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+            <div style={{
+                maxWidth: "600px",
+                margin: "0 auto",
+                padding: "2rem",
+                boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
+                borderRadius: "10px",
+                backgroundColor: "#ffffff"
+            }}>
+                <h3 style={{
+                    fontFamily: '"Poppins", sans-serif',
+                    color: "#012970",
+                    fontWeight: "500",
+                    textAlign: "center"
+                }}>Create New Client</h3>
+                <form>
                     <div className="form-group">
-                        <label htmlFor="email">Correo Electrónico</label>
+                        <label>Name</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={inputName}
+                            onChange={(e) => setInputName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Last Name</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={inputLastName}
+                            onChange={(e) => setInputLastName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Email</label>
                         <input
                             type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={formInfo.email}
-                            onChange={(e) => setFormInfo({ ...formInfo, email: e.target.value })}
-                            required
                             className="form-control"
+                            value={inputEmail}
+                            onChange={(e) => setInputEmail(e.target.value)}
                         />
                     </div>
-
-                    <div className="form-group p-1">
-                        <label htmlFor="identification_number">Cedula</label>
-                        <input
-                            type="text"
-                            name="identification_number"
-                            placeholder="Cedula"
-                            value={formInfo.identification_number}
-                            onChange={(e) => setFormInfo({ ...formInfo, identification_number: e.target.value })}
-                            required
-                            className="form-control"
-                        />
-                    </div>
-
-                    <div className="form-group p-1">
-                        <label htmlFor="phone_number">Phone Number</label>
-                        <input
-                            type="text"
-                            name="phone_number"
-                            placeholder="Phone Number"
-                            value={formInfo.phone_number}
-                            onChange={(e) => setFormInfo({ ...formInfo, phone_number: e.target.value })}
-                            required
-                            className="form-control"
-                        />
-                    </div>
-
                     <div className="form-group">
-                        <label htmlFor="password">Contraseña</label>
+                        <label>Phone Number</label>
                         <input
-                            type="text"
-                            name="password"
-                            placeholder="Contraseña"
-                            value={formInfo.password}
-                            onChange={(e) => setFormInfo({ ...formInfo, password: e.target.value })}
-                            required
+                            type="tel"
                             className="form-control"
+                            value={inputPhone}
+                            onChange={(e) => setInputPhone(e.target.value)}
                         />
                     </div>
+                    <div className="form-group">
+                        <label>Identification Number</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={inputIdentificationNumber}
+                            onChange={(e) => setInputIdentificationNumber(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            value={inputPassword}
+                            onChange={(e) => setInputPassword(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        className="btn"
+                        style={{
+                            marginTop: "1rem",
+                            width: "100%",
+                            padding: "0.5rem",
+                            borderRadius: "5px",
+                            backgroundColor: "#e75b1e",
+                            color: "#fff"
+                        }}
+                        onClick={async () => {
+                            const newClient = await actions.addUser(
+                                inputName,
+                                inputLastName,
+                                inputEmail,
+                                inputIdentificationNumber,
+                                inputPhone,
+                                inputPassword
+                            );
 
-                    <button type="submit" className="btn btn-success">Agregar Usuario</button>
+                            if (newClient) {
+                                setAuthClientId(newClient.id);
+                            }
 
+                            setInputName("");
+                            setInputLastName("");
+                            setInputEmail("");
+                            setInputPhone("");
+                            setInputPassword("");
+                            setInputIdentificationNumber("");
+                        }}
+                    >
+                        Create Client
+                    </button>
+                    <Link to={"/"}>
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            style={{
+                                marginTop: "0.5rem",
+                                width: "100%",
+                                padding: "0.5rem",
+                                backgroundColor: "#6c757d",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer"
+                            }}
+                        >
+                            Or Go Back
+                        </button>
+                    </Link>
                 </form>
-
-				<div>
-                    
-                    
-					<Link to="/users">
-                    <button type="button" className="btn btn-info">Volver</button>
-               		</Link>
-
-				</div>
-
             </div>
         </div>
     );
