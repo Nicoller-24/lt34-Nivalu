@@ -37,7 +37,7 @@ export const Home = () => {
 
   useEffect(() => {
     const dynamicText = document.getElementById("dynamic-text");
-    const words = ["Friends", "Family", "Officemates"];
+    const words = ["Amigos", "Familia", "4geeks"];
     let wordIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -134,12 +134,11 @@ export const Home = () => {
         </header>
         <div className="banner-content">
           <h1>
-            Dinner with us <span id="dynamic-text"></span>
+            Bienvenido a Nivalu <span id="dynamic-text"></span>
           </h1>
-          <p className="subheading">Accidental appearances</p>
+          <p className="subheading">La pagina #1 en reservas de restaurantes</p>
           <p className="description">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diem
-            nonummy nibh euismod.
+            Reserva tu restaurante en tan solo 2 clicks
           </p>
           <Link to="/listOfRestaurants">
             <button className="btn btn-primary">Hacer Reserva</button>
@@ -152,20 +151,10 @@ export const Home = () => {
       <section id="about-us">
         <div className="about-container">
           <div className="about-text">
-            <h2 className="about-title">About Us</h2>
-            <h3>It started, quite simply, like this...</h3>
+            <h2 className="about-title">Nosotros</h2>
+            <h3>Todo comenzo, sencillamente, asi...</h3>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod incididunt ut labore et dolore magna aliqua. Ut enim ad
-              minim veniam, nostrud exercitation ullamco.
-            </p>
-            <p>
-              Aenean commodo ligula eget dolor aenean massa. Cum sociis natoque
-              penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-              quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-              Nulla consequat massa quis enim. Donec vitae sapien ut libero
-              venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget
-              eros.
+            En Nivalu, nos dedicamos a ofrecer experiencias culinarias únicas que conectan a las personas con la comida y la cultura. Nuestra misión es crear un espacio donde amigos, familias y compañeros puedan disfrutar de momentos especiales mientras saborean platos exquisitos elaborados con ingredientes frescos y de alta calidad. Inspirados por la pasión y la creatividad, combinamos tradición e innovación para ofrecer una experiencia inolvidable. ¡Únete a nosotros y descubre por qué la comida es mucho más que un simple alimento!
             </p>
           </div>
           <div className="about-images">
@@ -185,11 +174,12 @@ export const Home = () => {
 
       <section id="todays-special">
         <div className="special-container">
-          <h2 className="special-title">Today's Special</h2>
+          <h2 className="special-title">Categorias de Restaurantes</h2>
           <p className="special-description">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod incididunt ut labore et dolore magna aliqua. Ut enim ad
-            minim veniam, nostrud exercitation ullamco.
+          Te invitamos a descubrir las delicias que hemos preparado 
+          </p>
+          <p className="special-description">
+          Escoge la categoria de restaurante que gustes y descubre las opciones que tenemos para ti!
           </p>
           <Slider {...settings} className="special-slider">
             {store.categories.length > 0 ? (
@@ -218,7 +208,7 @@ export const Home = () => {
       </section>
       <section id="our-menu">
         <div className="menu-container">
-          <h2 className="menu-title">Our Menu</h2>
+          <h2 className="menu-title">Restaurantes por categoria</h2>
           <p>
             There are many variations of passages of Lorem Ipsum available, but
             the majority have suffered alteration in some form.
@@ -253,7 +243,7 @@ export const Home = () => {
       </section>
 
       <section id="our-team">
-        <h2 className="section-title">Our Team</h2>
+        <h2 className="section-title">Quienes somos?</h2>
         <p className="section-description">
           There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
         </p>

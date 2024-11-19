@@ -288,7 +288,7 @@ header nav ul li a:hover {
 
 .menu-title {
   font-size: 2.5em;
-  color: #f97304;
+  color: #e75b1e;
   margin-bottom: 20px;
 }
 
@@ -307,8 +307,8 @@ header nav ul li a:hover {
 
 .menu-tab {
   background: none;
-  border: 2px solid #f97304;
-  color: #f97304;
+  border: 2px solid #e75b1e;
+  color: #e75b1e;
   padding: 10px 20px;
   font-size: 1em;
   cursor: pointer;
@@ -317,7 +317,7 @@ header nav ul li a:hover {
 
 .menu-tab.active,
 .menu-tab:hover {
-  background-color: #f97304;
+  background-color: #e75b1e;
   color: #fff;
 }
 
@@ -365,7 +365,7 @@ header nav ul li a:hover {
 .menu-item-price {
   font-size: 1.2em;
   font-weight: bold;
-  color: #f97304;
+  color:#e75b1e;
 }
 
 .menu-item-details {
@@ -383,8 +383,8 @@ header nav ul li a:hover {
 
 .category-tab {
   background: none;
-  border: 2px solid #f97304;
-  color: #f97304;
+  border: 2px solid #e75b1e;
+  color: #e75b1e;
   padding: 10px 20px;
   margin: 0 5px;
   cursor: pointer;
@@ -394,7 +394,7 @@ header nav ul li a:hover {
 
 .category-tab.active,
 .category-tab:hover {
-  background-color: #f97304;
+  background-color: #e75b1e;
   color: #fff;
 }
 
@@ -476,5 +476,5 @@ header nav ul li a:hover {
 }
 
 #our-team .team-member .social-icons a:hover {
-  color: #ff6700;
+  color: #e75b1e;
 }
