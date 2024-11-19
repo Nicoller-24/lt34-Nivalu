@@ -12,6 +12,8 @@ from flask import jsonify, request
 from werkzeug.security import check_password_hash
 from flask import Flask
 from flask_cors import CORS
+from geopy.distance import geodesic
+
 
 app = Flask(__name__)
 CORS(app)  # This will allow all origins
@@ -265,22 +267,38 @@ def get_admin(admin_id):
 @api.route("/signup/admins", methods=["POST"])
 def signup_admin():
     body = request.get_json()
-    
+
     admin = Admin1.query.filter_by(email=body["email"]).first()
     if admin is None:
         admin = Admin1(
             email=body["email"],
             name=body["name"],
             user_name=body["user_name"],
-            image_url=body.get("image_url", ""),  # Store image URL
+            image_url=body.get("image_url", ""),  
             password=body["password"],
             is_active=True
         )
         db.session.add(admin)
         db.session.commit()
-        return jsonify({"msg": "Usuario admin creado"}), 200
+
+        access_token = create_access_token(identity=admin.id)
+
+        response_body = {
+            "msg": "Administrador creado",
+            "access_token": access_token,
+            "admin": {
+                "id": admin.id,
+                "email": admin.email,
+                "name": admin.name,
+                "user_name": admin.user_name,
+                "image_url": admin.image_url,
+                "is_active": admin.is_active
+            }
+        }
+        return jsonify(response_body), 201
     else:
-        return jsonify({"msg": "El usuario admin ya existe"}), 401
+        return jsonify({"msg": "El administrador ya existe"}), 409
+
     
 @api.route('edit/admins/<int:admin_id>', methods=['PUT'])
 def update_admin(admin_id):  
@@ -330,9 +348,12 @@ def login_admin():
     if admin is None:
         return jsonify({"msg": "Could not find an admin with that email."}), 401
 
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token), 200  # Return 200 status for successful login
+    if email != admin.email or password != admin.password:
+        return jsonify({"msg": "Bad email or password"}), 401
 
+    access_token = create_access_token(identity=admin.id)
+
+    return jsonify(access_token=access_token, admin_id=admin.id), 200
 
 @api.route('/reservations', methods=['GET'])
 def get_reservations():
@@ -354,12 +375,32 @@ def get_reservationsUser(client_id):
 
 @api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
 def get_reservationsRestaurant(restaurant_id):
-    reservationsRestaurant = Reservations.query.filter_by(restaurant_id= restaurant_id).all()  # Obtener todas las reservas del restaurante
-    if not reservationsRestaurant:
-        return jsonify({"message": "Reservations not found"}), 404
-    
-    # Serializar cada reserva en una lista de JSON
-    return jsonify([reservation.serialize() for reservation in reservationsRestaurant]), 200
+    try:
+        reservationsRestaurant = Reservations.query.filter_by(restaurant_id=restaurant_id).all()  # Obtener todas las reservas del restaurante
+        if not reservationsRestaurant:
+            return jsonify({"message": "Reservations not found"}), 404
+
+       
+        serialized_reservations = []
+        for reservation in reservationsRestaurant:
+           
+            client = Client.query.get(reservation.client_id)
+            client_details = {
+                "name": client.name,
+                "last_name": client.last_name,
+                "email": client.email,
+                "phone_number": client.phone_number
+            } if client else None
+
+            serialized_reservations.append({
+                **reservation.serialize(),
+                "client_details": client_details
+            })
+
+        return jsonify(serialized_reservations), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @api.route('/reservations/accept/<int:reservation_id>', methods=['PUT'])
 def accept_reservation(reservation_id):
@@ -766,5 +807,32 @@ def delete_chat_and_messages(id):
         response_body = {"msg": "No se encontró el chat"}
     
     return jsonify(response_body), 200
+
+@api.route('/restaurants_nearby', methods=['GET'])
+def get_nearby_restaurants():
+    client_lat = request.args.get('lat')
+    client_lon = request.args.get('lon')
+
+    # Verificar si las coordenadas existen
+    if client_lat is None or client_lon is None:
+        return jsonify({"error": "Missing latitude or longitude"}), 400
+
+    # Convertir a float después de validar
+    client_lat = float(client_lat)
+    client_lon = float(client_lon)
+
+    distance_threshold = 5  # 5 km de radio
+    restaurants = Restaurant.query.all()
+    nearby_restaurants = []
+
+    for restaurant in restaurants:
+        if restaurant.latitude and restaurant.longitude:
+            rest_location = (float(restaurant.latitude), float(restaurant.longitude))
+            client_location = (client_lat, client_lon)
+            distance = geodesic(client_location, rest_location).km
+            if distance <= distance_threshold:
+                nearby_restaurants.append(restaurant.serialize())
+
+    return jsonify(nearby_restaurants)
 
 

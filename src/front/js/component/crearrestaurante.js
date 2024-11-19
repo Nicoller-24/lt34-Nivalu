@@ -57,17 +57,20 @@ export const Crearrestaurante = () => {
 
     return (
         <>  
+         <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+
+
             <div style={{ display: "flex", gap: "20px", padding: "2rem" }}>
                 {/* Left Section - Profile Image */}
                 <div style={{
                     width: "30%",
                     padding: "1rem",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                    boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
                     borderRadius: "10px",
-                    backgroundColor: "#f8f9fa",
+                    backgroundColor: "white",
                     textAlign: "center"
                 }}>
-                    <h3>Restaurant Photo</h3>
+                    <h3 style={{fontFamily: '"Poppins", sans-serif', color: "#012970", fontWeight: "500"}}>Restaurant Photo</h3>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
@@ -77,19 +80,19 @@ export const Crearrestaurante = () => {
                             marginBottom: "1rem"
                         }} />
                     )}
-                    <input type="file" onChange={uploadImage} style={{ marginTop: "1rem" }} />
+                    <input className="form-control" type="file" onChange={uploadImage} style={{ marginTop: "1rem" }} />
                 </div>
 
                 {/* Right Section - Restaurant Details */}
                 <div style={{
                     flex: 1,
                     padding: "1rem",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                    boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
                     borderRadius: "10px",
                     backgroundColor: "#ffffff"
                 }}>
-                    <h3>Create New Restaurant</h3>
-                    <form>
+                    <h3 style={{fontFamily: '"Poppins", sans-serif', color: "#012970", fontWeight: "500"}}>Create New Restaurant</h3>
+                    <form style={{fontFamily: '"Open Sans", sans-serif'}}>
                         <div style={{ display: "flex", gap: "20px" }}>
                             <div style={{ flex: 1 }}>
                                 <label>Name</label>
@@ -148,8 +151,15 @@ export const Crearrestaurante = () => {
                         </div>
                         <button
                             type="button"
-                            className="btn btn-primary"
-                            style={{ marginTop: "1rem", width: "100%", padding: "0.5rem", borderRadius: "5px" }}
+                            className="btn"
+                            style={{ 
+                                marginTop: "1rem", 
+                                width: "100%", 
+                                padding: "0.5rem", 
+                                borderRadius: "5px" ,
+                                backgroundColor: "#e75b1e",
+                                color: "#fff"
+                            }}
                             onClick={async () => {
                                 const newRestaurant = await actions.addNewRestaurant(
                                     inputEmail,
@@ -198,6 +208,7 @@ export const Crearrestaurante = () => {
                     </form>
                 </div>
             </div>
+         </div>
         </>
     );
 };

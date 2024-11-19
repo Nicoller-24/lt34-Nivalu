@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
+import { Context } from "./store/appContext";
+import { useContext } from "react";
 
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
@@ -28,6 +30,7 @@ import { Mapautocompletate } from "./component/mapautocompletate.js";
 import App from "./component/App.js";
 import Chat from "./component/chat.js";
 import Chatrestaurant from "./component/chatrestaurant.js";
+import { FilterRestaurantsByLocation } from "./component/filterRestaurantsByLocation.js";
 import { Restaurantview } from "./pages/restaurantview.js";
 
 import { Crudadmin } from "./component/crudadmin";
@@ -56,6 +59,8 @@ const Layout = () => {
     //the basename is used when your project is published in a subdirectory and not in the root of the domain
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
+    const { store, actions } = useContext(Context);
+
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
@@ -63,11 +68,13 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    {/* <Navbar></Navbar> */}
+                {store.restaurant_auth  || store.admin_auth ? null  : <Navbar style={{display: "none"}}/>}
+                
+
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
-                        <Route element={<Crudadmin />} path="/admins" />
+                        <Route element={<Crudadmin />} path="/admins/list/:id" />
                         <Route element={<Crearadmin />} path="/signup/admins" />
                         <Route element={<Oneadmin />} path="/admins/:id" />
                         <Route element={<EditAdmin />} path="/edit/admins/:id" />
@@ -90,19 +97,23 @@ const Layout = () => {
                         <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
                         <Route element={<Restaurantview/>} path="/restaurant/view" />
 
-                        <Route element={<Crearcategoria />} path="/create/categories" />
-                        <Route element={<Crudcategoria />} path="/categories" />
-                        <Route element={<EditCategory />} path="/edit/categories/:id" />
+                        <Route element={<Crearcategoria />} path="/create/categories/:id" />
+                        <Route element={<Crudcategoria />} path="/categories/:id" />
+                        <Route element={<EditCategory />} path="/edit/categories/:id/:id_admin" />
                         <Route path="/restaurant/:restaurant_id/category" element={<RestaurantCategorySelector />} />
-                        <Route element={<Crearocasion />} path="/create/ocasiones" />
-                        <Route element={<Crudocasion />} path="/ocasiones" />
-                        <Route element={<EditOcasion />} path="/edit/ocasiones/:id" />
+                        <Route element={<Crearocasion />} path="/create/ocasiones/:id" />
+                        <Route element={<Crudocasion />} path="/ocasiones/:id" />
+                        <Route element={<EditOcasion />} path="/edit/ocasiones/:id/:id_admin" />
                         <Route element={<ListOfRestaurants />} path="/listOfRestaurants" />
                         <Route element={<Adminlogin />} path="/adminlogin/" />
                         <Route element={<Adminhomepage />} path="/adminhomepage/" />
                         <Route element={<LoginClient />} path="/loginClients" />
                         <Route element={<SuccessPage />} path="/reservaExitosa"/>
-                        <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant"/>
+                        
+                        <Route element={<FilterRestaurantsByLocation />} path="/filterNearbyRestaurants"/>
+
+
+                        <Route element={<ListReservationsRestaurant />} path="/reservationsRestaurant/:id"/>
 
 
 

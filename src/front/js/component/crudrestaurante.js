@@ -1,18 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import RestaurantCategorySelector from "./setrestaurantcategory";
 import { jwtDecode } from "jwt-decode";
 import { NavbarRestaurant } from "./navbarestaurant";
+import { Navigate } from "react-router-dom";
 
 export const Crudrestaurante = () => {
     const { store, actions } = useContext(Context);
     const params = useParams();
-    const navigate = useNavigate();
     
-    const [selectedCategories, setSelectedCategories] = useState([]);
-    const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
     const [authRestaurantId, setAuthRestaurantId] = useState(null);
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -23,22 +22,45 @@ export const Crudrestaurante = () => {
         actions.loadSomeData();
     }, []);
 
-    const handleCategorySelect = (categories) => {
-        setSelectedCategories(categories);
+    const handleToggleOffcanvas = (state) => {
+        setIsOffcanvasOpen(state);
+    };
+
+    const handleCategorySelect = (categoryId) => {
+        console.log(`Selected category: ${categoryId}`);
     };
 
     return (
-        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh"}}>
-            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
-            <NavbarRestaurant id={params.id} />
+        <>
+        {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+        <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+            <NavbarRestaurant id={params.id} onToggle={handleToggleOffcanvas} />
 
-            <div className="page-content" style={{ padding: "2rem" }}>
+            <div 
+                className="page-content" 
+                style={{ 
+                    paddingTop: "80px", 
+                    padding: "2rem", 
+                    marginLeft: isOffcanvasOpen ? "300px" : "0",
+                    transition: "margin-left 0.3s ease-in-out",
+                }}
+            >
+                <h1
+                    style={{
+                        paddingTop: "4rem",
+                        fontSize: "2rem",
+                        fontFamily: "Nunito, sans-serif",        
+                        color: "#012970"
+                    }}
+                >
+                    Restaurants
+                </h1>
                 <div style={{
+                    marginTop: "2rem",
                     display: "grid",
                     gridTemplateColumns: "repeat(3, 1fr)",
                     gap: "1.5rem",
                 }}>
-
                     {store.restaurants.map((item, index) => (
                         <div
                             key={index}
@@ -46,15 +68,16 @@ export const Crudrestaurante = () => {
                                 display: "flex",
                                 flexDirection: "column",
                                 backgroundColor: "#ffffff",
-                                borderRadius: "12px",
+                                borderRadius: "9px",
                                 padding: "1.5rem",
-                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                boxShadow: "rgb(0 0 255 / 9%) 0px 1px 6px 4px",
                                 maxWidth: "400px",
-                                transition: "transform 0.3s",
+                                transition: "transform 0.3s ease-in-out",
                             }}
                             onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-5px)"}
                             onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
                         >
+                            {/* Datos del restaurante */}
                             <div style={{
                                 display: "flex",
                                 justifyContent: "space-between",
@@ -65,26 +88,37 @@ export const Crudrestaurante = () => {
                                     <h3 style={{
                                         fontSize: "1.2rem",
                                         fontWeight: "bold",
-                                        color: "#333",
-                                        marginBottom: "0.5rem"
+                                        color: "#012970",
+                                        marginBottom: "0.5rem",
+                                        fontFamily: '"Poppins", sans-serif'
                                     }}>{item.name}</h3>
                                     <div style={{ display: "flex", alignItems: "center", fontSize: "0.9rem", color: "#555", marginBottom: "0.5rem" }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="#899bbd"
+                                            className="bi bi-geo-alt-fill"
+                                            viewBox="0 0 16 16"
+                                            style={{ marginRight: "8px" }} // Espacio entre ícono y texto
+                                        >
                                             <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
                                         </svg>
-                                        <p style={{ marginLeft: "8px" }}>{item.location}</p>
+                                        <span style={{fontFamily: '"Open Sans", sans-serif', fontSize: "14px"}}>{item.location}</span>
                                     </div>
                                     <div style={{ display: "flex", alignItems: "center", fontSize: "0.9rem", color: "#555", marginBottom: "0.5rem" }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-telephone-fill" viewBox="0 0 16 16">
-                                            <path fillRule="evenodd" d="M1.885.511a1 1 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
-                                        </svg>
-                                        <p style={{ marginLeft: "8px" }}>{item.phone_number}</p>
-                                    </div>
-                                    <div style={{ display: "flex", alignItems: "center", fontSize: "0.9rem", color: "#555", marginBottom: "0.5rem" }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-envelope-fill" viewBox="0 0 16 16">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="#899bbd"
+                                            className="bi bi-envelope-fill"
+                                            viewBox="0 0 16 16"
+                                            style={{ marginRight: "8px" }}
+                                        >
                                             <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z" />
                                         </svg>
-                                        <p style={{ marginLeft: "8px" }}>{item.email}</p>
+                                        <span style={{fontFamily: '"Open Sans", sans-serif', fontSize: "14px"}}>{item.email}</span>
                                     </div>
                                 </div>
                                 <img
@@ -99,35 +133,42 @@ export const Crudrestaurante = () => {
                                     }}
                                 />
                             </div>
+
+                            {/* Botones */}
                             {authRestaurantId === item.id && (
-                                <div style={{
-                                    display: "flex",
-                                    gap: "0.5rem",
-                                    flexWrap: "wrap",
-                                    marginTop: "auto",
-                                    justifyContent: "space-between"
-                                }}>
-                                    <Link to={`/restaurant/${item.id}`}>
-                                        <button className="btn btn-info">View Details</button>
-                                    </Link>
-                                    <Link to={`/edit/restaurant/${item.id}`}>
-                                        <button className="btn btn-success">Edit</button>
-                                    </Link>
-                                    <button onClick={() => actions.removeRestaurant(item.id)} className="btn btn-danger">
+                                <div
+                                    style={{
+                                        display: "grid",
+                                        gridTemplateColumns: "repeat(2, 1fr)", // Dos columnas
+                                        gap: "0.5rem",
+                                        marginTop: "auto",
+                                    }}
+                                >
+                                    <button 
+                                        onClick={() => actions.removeRestaurant(item.id)} 
+                                        style={{
+                                            backgroundColor: "#e75b1e",
+                                            color: "#fff",
+                                            padding: "0.5rem 1rem",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            textAlign: "center",
+                                        }}
+                                    >
                                         Delete
                                     </button>
-                                    <button onClick={() => setSelectedRestaurantId(item.id)} className="btn btn-primary">
-                                        Select Categories
-                                    </button>
+                                    <RestaurantCategorySelector
+                                        restaurantId={item.id}
+                                        onCategorySelect={handleCategorySelect}
+                                    />
                                 </div>
                             )}
                         </div>
                     ))}
                 </div>
-                {selectedRestaurantId && (
-                    <RestaurantCategorySelector restaurantId={selectedRestaurantId} onCategorySelect={handleCategorySelect} />
-                )}
             </div>
         </div>
+        </>
     );
 };
