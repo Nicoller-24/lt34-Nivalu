@@ -247,6 +247,45 @@ export const Home = () => {
           </div>
         </div>
       </section>
+
+      <section id="our-team">
+        <h2 className="section-title">Our Team</h2>
+        <p className="section-description">
+          There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
+        </p>
+        <div className="team-container">
+          <div className="team-member">
+            <img src="/workspaces/lt34-Nivalu/src/front/img/nicole.jpeg" alt="John Doggett" />
+            <h4>John Doggett</h4>
+            <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
+            <div className="social-icons">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          <div className="team-member">
+            <img src="/workspaces/lt34-Nivalu/src/front/img/lr.jpeg" alt="Jeffrey Spender" />
+            <h4>Jeffrey Spender</h4>
+            <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
+            <div className="social-icons">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          <div className="team-member">
+            <img src="" alt="Monica Reyes" />
+            <h4>Monica Reyes</h4>
+            <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
+            <div className="social-icons">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
