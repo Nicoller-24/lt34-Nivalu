@@ -137,7 +137,7 @@ export const Home = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diem
             nonummy nibh euismod.
           </p>
-          <Link to="/aboutRestaurants">
+          <Link to="/listOfRestaurants">
             <button className="btn btn-primary">Hacer Reserva</button>
           </Link>
         </div>
