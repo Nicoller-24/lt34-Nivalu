@@ -13,12 +13,14 @@ from werkzeug.security import check_password_hash
 from flask import Flask
 from flask_cors import CORS
 
-app = Flask(_name_)
+
+
+app = Flask(__name__)
 CORS(app)  # This will allow all origins
 from datetime import datetime, timedelta, timezone
 
 
-api = Blueprint('api', _name_)
+api = Blueprint('api', __name__)
 CORS(api)
 
 @api.route('/hello', methods=['POST', 'GET'])
