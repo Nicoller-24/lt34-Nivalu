@@ -68,8 +68,7 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                
-                {store.restaurant_auth  || store.admin_auth ? null  : <Navbar style={{display: "none"}}/>}
+                {/* {store.restaurant_auth  || store.admin_auth ? null  : <Navbar style={{display: "none"}}/>} */}
                 
 
                     <Routes>
