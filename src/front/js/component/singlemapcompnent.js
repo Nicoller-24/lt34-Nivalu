@@ -35,7 +35,6 @@ const SingleMapComponent = ({ initialPosition, onLocationSelect, mapSize }) => {
     };
 
     return (
-        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
             <GoogleMap
                 mapContainerStyle={mapSize} // Tamaño dinámico basado en las props
                 center={markerPosition || initialPosition}
@@ -46,7 +45,6 @@ const SingleMapComponent = ({ initialPosition, onLocationSelect, mapSize }) => {
             >
                 {markerPosition && <Marker position={markerPosition} />}
             </GoogleMap>
-        </LoadScript>
     );
 };
 

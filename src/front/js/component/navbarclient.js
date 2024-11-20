@@ -168,7 +168,7 @@ export const NavbarClient = ({ id, onToggle }) => {
                                 }}
                             >
                                 <li><Link className="dropdown-item" to={`/clientdetails/${id}`} style={{ color: "#050090" }}>View Profile</Link></li>
-                                <li><Link className="dropdown-item" to={`/edit/restaurant/${id}`} style={{ color: "#050090" }}>Settings</Link></li>
+                                <li><Link className="dropdown-item" to={`/updateInfo/${id}`} style={{ color: "#050090" }}>Settings</Link></li>
                                 <li><hr className="dropdown-divider" /></li>
                                 {store.client_auth ? (
                                     <li onClick={logout} className="dropdown-item" style={{ color: "#050090" }}>
@@ -218,6 +218,14 @@ export const NavbarClient = ({ id, onToggle }) => {
                                 <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
                             </svg>
                              View Restaurants
+                        </Link>
+                    </li>
+                    <li>
+                        <Link className="dropdown-item" to={`/filterNearbyRestaurants/${id}`} style={{ color: "#012970" }}>
+                            <svg style={{ verticalAlign: "-4px", marginRight: "8px"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#899bbd" className="bi bi-list-ul" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                            </svg>
+                             Nearby Restaurants
                         </Link>
                     </li>
                     <li>

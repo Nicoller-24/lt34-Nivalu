@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import "../../styles/login.css"; 
 import logo from "../../img/nivalulogo.jpg";
+import { Link } from "react-router-dom";
 
 export const LoginClient = () => {
     const [email, setEmail] = useState('');
