@@ -177,11 +177,17 @@ export const Singlerestaurant = () => {
                                 </p>
                             </div>
 
-                            {initialPosition && (
+                            {initialPosition ? (
                                 <div style={{ marginTop: "1rem" }}>
-                                    <SingleMapComponent initialPosition={initialPosition} />
+                                    <SingleMapComponent
+                                    initialPosition={initialPosition}
+                                    mapSize={{ width: "100%", height: "300px" }}
+                                    />
                                 </div>
-                            )}
+                                ) : (
+                                <p>Loading map...</p>
+                                )}
+
 
                             <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
                                 <Link to={`/restaurant/chat/${params.id}`}>
