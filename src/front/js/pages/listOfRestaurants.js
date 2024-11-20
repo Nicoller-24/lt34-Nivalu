@@ -3,8 +3,7 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import "../../styles/home.css";
 import { useParams } from "react-router-dom";
-import { NavbarClient } from "../component/navbarclient"; // Usamos el NavbarClient
-import { FilterRestaurantsByLocation } from "../component/filterRestaurantsByLocation";
+import { NavbarClient } from "../component/navbarclient"; 
 
 export const ListOfRestaurants = () => {
     const { store, actions } = useContext(Context);

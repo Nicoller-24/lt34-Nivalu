@@ -54,15 +54,7 @@ export const AddClients = () => {
                             onChange={(e) => setInputLastName(e.target.value)}
                         />
                     </div>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            value={inputEmail}
-                            onChange={(e) => setInputEmail(e.target.value)}
-                        />
-                    </div>
+                   
                     <div className="form-group">
                         <label>Phone Number</label>
                         <input
@@ -70,6 +62,15 @@ export const AddClients = () => {
                             className="form-control"
                             value={inputPhone}
                             onChange={(e) => setInputPhone(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            className="form-control"
+                            value={inputEmail}
+                            onChange={(e) => setInputEmail(e.target.value)}
                         />
                     </div>
                     <div className="form-group">
@@ -105,8 +106,8 @@ export const AddClients = () => {
                             const newClient = await actions.addUser(
                                 inputName,
                                 inputLastName,
-                                inputEmail,
                                 inputIdentificationNumber,
+                                inputEmail,
                                 inputPhone,
                                 inputPassword
                             );
