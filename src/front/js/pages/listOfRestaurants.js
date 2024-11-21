@@ -50,7 +50,9 @@ export const ListOfRestaurants = () => {
                         fontSize: "2rem",
                         fontFamily: "Nunito, sans-serif",        
                         color: "#012970",
-                        marginBottom: "1rem"
+                        marginBottom: "1rem",
+                        paddingTop: "4rem"
+
                     }}
                 >
                     Restaurants

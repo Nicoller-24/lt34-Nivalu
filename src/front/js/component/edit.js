@@ -131,7 +131,7 @@ export const Edit = () => {
 
     return (
         <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
-            {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+            {store.restaurant_auth ? null : <Navigate to="/loginrestaurant" />}
             <NavbarRestaurant id={params.id} onToggle={handleOffcanvasToggle} />
 
             <div

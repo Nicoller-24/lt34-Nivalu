@@ -84,7 +84,7 @@ const Chatrestaurant = () => {
 
   return (
     <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
-      {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+      {store.restaurant_auth ? null : <Navigate to="/loginrestaurant" />}
       <NavbarRestaurant id={params.id} onToggle={handleToggleOffcanvas} />
       <div
         className="page-content"
@@ -105,6 +105,7 @@ const Chatrestaurant = () => {
             fontFamily: "Nunito, sans-serif",
             color: "#012970",
             marginBottom: "1rem",
+            paddingTop: "4rem"
           }}
         >
           Chats
@@ -221,10 +222,22 @@ const Chatrestaurant = () => {
                       {messages.map((item, index) => (
                         <li key={index} className="clearfix">
                           {item.origin === "Restaurant" ? (
-                            <div className="message other-message float-right">{item.message}</div>
-                          ) : (
-                            <div className="message my-message">{item.message}</div>
-                          )}
+                      <li key={index} className="clearfix">
+                        <div className="message-data text-right">
+                          <span className="message-data-time">{item.message_time}</span>
+                        </div>
+                        <div className="message other-message float-right">
+                          {item.message}
+                        </div>
+                      </li>
+                    ) : (
+                      <li key={index} className="clearfix">
+                        <div className="message-data">
+                          <span className="message-data-time">{item.message_time}</span>
+                        </div>
+                        <div className="message my-message">{item.message}</div>
+                      </li>
+                    )}
                         </li>
                       ))}
                     </ul>

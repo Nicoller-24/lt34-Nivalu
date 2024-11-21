@@ -149,6 +149,7 @@ export const Crearcategoria = () => {
                                 />
                             </div>
                             <button
+                                onClick={()=> actions.loadSomeDataCategory()}
                                 type="submit"
                                 style={{
                                     marginTop: "1rem",

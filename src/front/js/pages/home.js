@@ -37,7 +37,7 @@ export const Home = () => {
 
   useEffect(() => {
     const dynamicText = document.getElementById("dynamic-text");
-    const words = ["Amigos", "Familia", "4geeks"];
+    const words = ["Friends", "Family", "4geeks"];
     let wordIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -106,42 +106,27 @@ export const Home = () => {
           <nav>
             <ul>
               <li>
-                <Link to="/restaurant/view">restaurant view</Link>
+                <Link to="/adminlogin">Admins</Link>
               </li>
               <li>
-                <Link to="/adminhomepage">admins</Link>
+                <Link to="/loginrestaurant">Restaurants</Link>
               </li>
               <li>
-                <Link to="/restauranteselect">restaurantes</Link>
-              </li>
-              <li>
-                <Link to="/userList">comensales</Link>
-              </li>
-              <li>
-                <Link to="/openai">Open AI</Link>
-              </li>
-              <li>
-                <Link to="/listOfRestaurants">Lista de Restaurantes</Link>
-              </li>
-              <li>
-                <Link to="/listReservationsUser">Acive reservations Client</Link>
-              </li>
-              <li>
-                <Link to="/reservationsRestaurant">Acive reservations Restaurant</Link>
+                <Link to="/loginClients">Diners</Link>
               </li>
             </ul>
           </nav>
         </header>
         <div className="banner-content">
           <h1>
-            Bienvenido a Nivalu <span id="dynamic-text"></span>
+            Welcome to Nivalu <span id="dynamic-text"></span>
           </h1>
-          <p className="subheading">La pagina #1 en reservas de restaurantes</p>
+          <p className="subheading">The #1 restaurant reservation platform</p>
           <p className="description">
-            Reserva tu restaurante en tan solo 2 clicks
+            Book your restaurant in just 2 clicks
           </p>
-          <Link to="/listOfRestaurants">
-            <button className="btn btn-primary">Hacer Reserva</button>
+          <Link to="/loginClients">
+            <button className="btn btn-primary">Make a Reservation</button>
           </Link>
         </div>
         <div className="scroll-indicator">
@@ -151,10 +136,10 @@ export const Home = () => {
       <section id="about-us">
         <div className="about-container">
           <div className="about-text">
-            <h2 className="about-title">Nosotros</h2>
-            <h3>Todo comenzo, sencillamente, asi...</h3>
+            <h2 className="about-title">About Us</h2>
+            <h3>It all started, simply, like this...</h3>
             <p>
-            En Nivalu, nos dedicamos a ofrecer experiencias culinarias únicas que conectan a las personas con la comida y la cultura. Nuestra misión es crear un espacio donde amigos, familias y compañeros puedan disfrutar de momentos especiales mientras saborean platos exquisitos elaborados con ingredientes frescos y de alta calidad. Inspirados por la pasión y la creatividad, combinamos tradición e innovación para ofrecer una experiencia inolvidable. ¡Únete a nosotros y descubre por qué la comida es mucho más que un simple alimento!
+              At Nivalu, we are dedicated to offering unique culinary experiences that connect people with food and culture. Our mission is to create a space where friends, families, and colleagues can enjoy special moments while savoring exquisite dishes made with fresh, high-quality ingredients. Inspired by passion and creativity, we blend tradition and innovation to deliver an unforgettable experience. Join us and discover why food is so much more than just sustenance!
             </p>
           </div>
           <div className="about-images">
@@ -171,15 +156,14 @@ export const Home = () => {
           </div>
         </div>
       </section>
-
       <section id="todays-special">
         <div className="special-container">
-          <h2 className="special-title">Categorias de Restaurantes</h2>
+          <h2 className="special-title">Restaurant Categories</h2>
           <p className="special-description">
-          Te invitamos a descubrir las delicias que hemos preparado 
+            Explore the delights we've prepared for you
           </p>
           <p className="special-description">
-          Escoge la categoria de restaurante que gustes y descubre las opciones que tenemos para ti!
+            Choose the restaurant category you like and discover the options we have for you!
           </p>
           <Slider {...settings} className="special-slider">
             {store.categories.length > 0 ? (
@@ -208,7 +192,7 @@ export const Home = () => {
       </section>
       <section id="our-menu">
         <div className="menu-container">
-          <h2 className="menu-title">Restaurantes por categoria</h2>
+          <h2 className="menu-title">Restaurants by Category</h2>
           <p>
             There are many variations of passages of Lorem Ipsum available, but
             the majority have suffered alteration in some form.
@@ -241,31 +225,21 @@ export const Home = () => {
           </div>
         </div>
       </section>
-
       <section id="our-team">
-        <h2 className="section-title">Quienes somos?</h2>
-        <p className="section-description">
-          There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
-        </p>
+        <h2 className="section-title" style={{marginBottom: "62px"}}>Who are we?</h2>
         <div className="team-container">
           <div className="team-member">
             <img src={nicole} alt="nicole" />
-            <h4>Nicolle</h4>
-            <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
+            <h4>Nicolle Rodríguez</h4>
+            <p>I am a responsible and dedicated individual who is deeply committed to my work and personal growth. I have a strong passion for continuous learning and improving my skills. Additionally, I hold a technical degree in software programming</p>
             <div className="social-icons">
-              <a href="#"><i class="fab fa-facebook-f"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
           </div>
           <div className="team-member">
             <img src={valentina} alt="valentina"/>  
-            <h4>Valentina</h4>
+            <h4>Valentina Rodríguez</h4>
             <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
             <div className="social-icons">
-              <a href="#"><i class="fab fa-facebook-f"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
           </div>
           <div className="team-member">
@@ -273,9 +247,6 @@ export const Home = () => {
             <h4>Luis Rico</h4>
             <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
             <div className="social-icons">
-              <a href="#"><i class="fab fa-facebook-f"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
           </div>
         </div>

@@ -52,6 +52,8 @@ const ClientDetails = ({ clientId }) => {
                         fontSize: "2rem",
                         fontFamily: "Nunito, sans-serif",
                         color: "#012970",
+                        paddingTop: "4rem"
+
                     }}
                 >
                     Client Details

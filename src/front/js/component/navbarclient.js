@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import logo from "../../img/nivalulogo.jpg";
+
 
 export const NavbarClient = ({ id, onToggle }) => {
     const { store, actions } = useContext(Context);
@@ -72,8 +74,7 @@ export const NavbarClient = ({ id, onToggle }) => {
             >
                 <div className="container-fluid d-flex justify-content-between align-items-center">
                     <div className="navbar-brand d-flex align-items-center">
-                        <img src="https://via.placeholder.com/40" alt="Logo" style={{ width: "40px", height: "40px" }} />
-                        <h1 className="ms-2" style={{ fontSize: "1.5rem", color: "#050090" }}>Nivalu</h1>
+                    <img src={logo} alt="Logo" style={{ width: "125px", height: "40px" }} />
                         <button
                             className="offcanvas-button ms-2"
                             onClick={toggleOffcanvas}
@@ -130,10 +131,6 @@ export const NavbarClient = ({ id, onToggle }) => {
                                         minWidth: "200px", 
                                     }}
                                 >
-                                    <li className="dropdown-header">
-                                        You have, {chats.length} chats
-                                        <Link to={`/client/chat/${id}`}><span className="badge rounded-pill bg-primary p-2 ms-2">View all</span></Link>
-                                    </li>
                                     {chats.map((item, index) => (
                                         <li key={index}>
                                             <Link to={`/client/chat/${id}`} className="dropdown-item">

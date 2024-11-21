@@ -2,10 +2,13 @@ import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { Link, useParams } from "react-router-dom";
 import { NavbarAdmin } from "./navbaradmin";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const EditOcasion = () => {
     const { actions } = useContext(Context);
     const params = useParams();
+    const navigate = useNavigate();
 
     const [updateData, setUpdateData] = useState({
         name: "",
@@ -17,16 +20,18 @@ export const EditOcasion = () => {
         setIsOffcanvasOpen(state);
     };
 
-    // Fetch occasion data when the component mounts
     useEffect(() => {
         if (params.id) {
             actions.traer_ocasion(params.id).then((ocasion) => {
-                setUpdateData({
-                    name: ocasion.name || "",
-                });
+                // Solo actualiza si el campo está vacío
+                if (!updateData.name) {
+                    setUpdateData({
+                        name: ocasion.name || "",
+                    });
+                }
             });
         }
-    }, [params.id, actions]);
+    }, [params.id, actions, updateData.name]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -36,7 +41,8 @@ export const EditOcasion = () => {
         setUpdateData({
             name: "",
         });
-		actions.loadSomeDataCategory();
+        actions.loadSomeDataCategory();
+        navigate(`/ocasiones/${params.id_admin}`)
     };
 
     return (

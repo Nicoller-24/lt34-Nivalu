@@ -85,6 +85,8 @@ export const EditClient = () => {
                         fontSize: "2rem",
                         fontFamily: "Nunito, sans-serif",
                         color: "#012970",
+                        paddingTop: "4rem"
+
                     }}
                 >
                     Edit Your Profile

@@ -73,6 +73,8 @@ export const ListReservationsUser = () => {
                             fontFamily: "Nunito, sans-serif",
                             color: "#012970",
                             marginBottom: "1rem",
+                            paddingTop: "4rem"
+
                         }}
                     >
                         Your Reservations
@@ -184,6 +186,7 @@ export const ListReservationsUser = () => {
                             borderRadius: "10px",
                             padding: "1rem",
                             position: "relative",
+                            marginTop: "3rem"
                         }}
                     >
                         <button

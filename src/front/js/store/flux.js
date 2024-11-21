@@ -544,9 +544,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 			},
 			
-			loadSomeDataCategory: () => {
+			loadSomeDataCategory: (forceReload = false) => {
 				const store = getStore();
-				if (store.categories.length === 0) { // Fetch only if categories array is empty
+				// Fetch if forced or if categories array is empty
+				if (forceReload || store.categories.length === 0) {
 					console.log("Loading categories...");
 					fetch(process.env.BACKEND_URL + "/api/categories")
 						.then((response) => response.json())
@@ -557,6 +558,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						.catch((error) => console.error("Error loading categories:", error));
 				}
 			},
+			
 
 			addNewCategory: (name, imageUrl) => {
 				const token = localStorage.getItem('token');
@@ -565,33 +567,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return;
 				}
 			
-				// Create FormData to handle file uploads and text data together
 				const formData = new FormData();
 				formData.append("name", name);
-				formData.append("image_url", imageUrl);  // Append image URL correctly
+				formData.append("image_url", imageUrl);
 			
 				fetch(process.env.BACKEND_URL + '/api/create/categories', {
 					method: 'POST',
 					headers: {
-						"Authorization": `Bearer ${token}`,  // Only Authorization header is needed with FormData
+						"Authorization": `Bearer ${token}`,
 					},
-					body: formData,  // Send FormData
+					body: formData,
 				})
-				.then((response) => {
-					if (!response.ok) {
-						return response.json().then(err => {
-							throw new Error(err.message || 'Failed to create category');
-						});
-					}
-					return response.json();
-				})
-				.then((data) => {
-					console.log('Category created:', data);
-					getActions().loadSomeDataCategory();  // Refresh categories
-				})
-				.catch((error) => {
-					console.error('Error creating category:', error);
-				});
+					.then((response) => {
+						if (!response.ok) {
+							return response.json().then(err => {
+								throw new Error(err.message || 'Failed to create category');
+							});
+						}
+						return response.json();
+					})
+					.then((data) => {
+						console.log('Category created:', data);
+						// Force reload categories
+						getActions().loadSomeDataCategory(true);
+					})
+					.catch((error) => {
+						console.error('Error creating category:', error);
+					});
 			},
 			
 			editCategory: (categoryModif, id) => {
@@ -612,19 +614,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 						return response.json();
 					})
-					.then(data => console.log("Category updated:", data))
+					.then(data => {
+						console.log("Category updated:", data);
+						// Force reload categories
+						getActions().loadSomeDataCategory(true);
+					})
 					.catch(error => console.error("Error updating category:", error));
 			},
+			
 			
 			removeCategory: (idToDelete) => {
 				fetch(process.env.BACKEND_URL + "/api/categories/" + idToDelete, {
 					method: "DELETE",
 					redirect: "follow",
 				})
-					.then((response) => response.text())
-					.then(() => getActions().loadSomeDataCategory());
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("Failed to delete category");
+						}
+						return response.text();
+					})
+					.then(() => {
+						console.log(`Category with id ${idToDelete} deleted`);
+						// Force reload categories
+						getActions().loadSomeDataCategory(true);
+					})
+					.catch(error => console.error("Error deleting category:", error));
 			},
-
+			
 			traer_categoria: (id) => {
 				return fetch(`${process.env.BACKEND_URL}/api/categories/${id}`)
 					.then((response) => response.json())
@@ -638,25 +655,43 @@ const getState = ({ getStore, getActions, setStore }) => {
 			editCategory: (categoryModif, id) => {
 				const requestOptions = {
 					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify(categoryModif)
 				};
-				fetch(`${process.env.BACKEND_URL}/api/edit/categories/${id}`, requestOptions)
-					.then(response => response.json())
-					.then(data => console.log("Category updated:", data))
+			
+				fetch(process.env.BACKEND_URL + `/api/edit/categories/${id}`, requestOptions)
+					.then(response => {
+						if (!response.ok) {
+							return response.json().then(err => {
+								throw new Error(err.message || 'Failed to update category');
+							});
+						}
+						return response.json();
+					})
+					.then(data => {
+						console.log("Category updated:", data);
+						// Force reload categories
+						getActions().loadSomeDataCategory(true);
+					})
 					.catch(error => console.error("Error updating category:", error));
 			},
+			
 
-			loadSomeDataOcasion: () => {
-				console.log("Se cargó la página");
-				fetch(process.env.BACKEND_URL + "/api/ocasiones")
-					.then((response) => response.json())
-					.then((data) => {
-						setStore({ ocasiones: data })
-					})
-					.catch((error) => console.error("Error al cargar ocasiones:", error));
+			loadSomeDataOcasion: async () => {
+				try {
+					console.log("Se cargó la página");
+					const response = await fetch(process.env.BACKEND_URL + "/api/ocasiones");
+					if (!response.ok) throw new Error("Error al cargar ocasiones");
+					const data = await response.json();
+					setStore({ ocasiones: data });
+					console.log("Ocasiones cargadas:", data);
+				} catch (error) {
+					console.error("Error al cargar ocasiones:", error);
+				}
 			},
-
+			
 			// addNewOcasion:(name,) => {
 			// 	fetch(process.env.BACKEND_URL + '/api/create/ocasiones', {
 			// 		method: 'POST',
@@ -713,18 +748,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
-			editOcasion: (ocasionModif, id) => {
+			editOcasion: async (ocasionModif, id) => {
 				const requestOptions = {
 					method: 'PUT',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(ocasionModif)
+					body: JSON.stringify(ocasionModif),
 				};
-				fetch(process.env.BACKEND_URL + `/api/edit/ocasiones/${id}`, requestOptions)
-					.then(response => response.json())
-					.then(data => console.log("Ocasion updated:", data))
-					.catch(error => console.error("Error updating ocasion:", error));
+			
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/edit/ocasiones/${id}`, requestOptions);
+					if (!response.ok) throw new Error("Failed to update occasion");
+					const data = await response.json();
+					console.log("Ocasion updated:", data);
+			
+					// Reload data after updating
+					await getActions().loadSomeDataOcasion();
+			
+					return data; 
+				} catch (error) {
+					console.error("Error updating occasion:", error);
+					return null; // Return false if there's an error
+				}
 			},
-
+			
+			
 			removeOcasion: (idToDelete) => {
 				fetch(process.env.BACKEND_URL + "/api/ocasiones/" + idToDelete, {
 					method: "DELETE",
