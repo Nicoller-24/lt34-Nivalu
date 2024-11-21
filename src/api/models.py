@@ -81,16 +81,16 @@ class Client(db.Model):
 
 class Restaurant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=False, nullable=False)
-    location = db.Column(db.String(80), unique=False, nullable=False)
-    phone_number = db.Column(db.String(80), unique=False, nullable=False)
+    name = db.Column(db.String(80), unique=False, nullable=True)
+    location = db.Column(db.String(80), unique=False, nullable=True)
+    phone_number = db.Column(db.String(80), unique=False, nullable=True)
     email = db.Column(db.String(80), unique=True, nullable=False)
-    guests_capacity = db.Column(db.String(80), unique=False, nullable=False)
+    guests_capacity = db.Column(db.String(80), unique=False, nullable=True)
     password = db.Column(db.String(80), unique=False, nullable=False)
-    image_url = db.Column(db.String(120), unique=False, nullable=False)
+    image_url = db.Column(db.String(120), unique=False, nullable=True)
     latitude = db.Column(db.Numeric, nullable=True)
     longitude = db.Column(db.Numeric, nullable=True)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), unique=False, nullable=True)
     categories = db.relationship('RestaurantCategory', back_populates='restaurant')
 
     chats = db.relationship('Chat', backref='restaurant', lazy=True)
