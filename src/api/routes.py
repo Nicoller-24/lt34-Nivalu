@@ -14,6 +14,8 @@ from flask import Flask
 from geopy.distance import geodesic
 
 
+
+
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "https://expert-journey-g457779ww9673p94g-3000.app.github.dev"}})
 from datetime import datetime, timedelta, timezone
@@ -131,28 +133,46 @@ def get_client(client_id):
         return jsonify({"error": "Cliente no se encontró"}), 404
     return jsonify(client.serialize()), 200
 
-@api.route("/signup/client", methods=["POST"])  
-def signup_client(): 
+@api.route("/signup/client", methods=["POST"])
+def signup_client():
     body = request.get_json()
+
+    # Verifica si ya existe un cliente con ese email
     client = Client.query.filter_by(email=body["email"]).first()
     if client is None:
+        # Crea un nuevo cliente
         client = Client(
-            id=body["id"],
             name=body["name"],
-            last_name=body["last_name"],  
+            last_name=body["last_name"],
             identification_number=body["identification_number"],
             email=body["email"],
             phone_number=body["phone_number"],
-            password=body["password"],
-            
+            password=body["password"],  
             is_active=True
         )
         db.session.add(client)
         db.session.commit()
-        response_body = {"msg": "Usuario creado con éxito"}
-        return jsonify(response_body), 201 
+
+        # Genera el token de acceso
+        access_token = create_access_token(identity=client.id)
+
+        # Crea la respuesta con todos los datos del cliente
+        response_body = {
+            "msg": "Cliente creado con éxito",
+            "access_token": access_token,
+            "client": {
+                "id": client.id,
+                "name": client.name,
+                "last_name": client.last_name,
+                "identification_number": client.identification_number,
+                "email": client.email,
+                "phone_number": client.phone_number,
+                "is_active": client.is_active
+            }
+        }
+        return jsonify(response_body), 201
     else:
-        return jsonify({"msg": "Ya se encuentra un usuario registrado"}), 409  # Cambiado a 409
+        return jsonify({"msg": "El cliente ya está registrado"}), 409
 
 @api.route('/client/<int:client_id>', methods=['PUT'])
 def update_client(client_id):  
@@ -347,12 +367,42 @@ def get_reservations():
 
 @api.route('/reservations/<client_id>', methods=['GET'])
 def get_reservationsUser(client_id):
-    reservationsUser = Reservations.query.filter_by(client_id=client_id).all()  # Obtener todas las reservas del usuario
-    if not reservationsUser:
-        return jsonify({"message": "Reservations not found"}), 404
-    
-    # Serializar cada reserva en una lista de JSON
-    return jsonify([reservation.serialize() for reservation in reservationsUser]), 200
+    try:
+        # Obtener todas las reservas del cliente
+        reservationsUser = Reservations.query.filter_by(client_id=client_id).all()
+        if not reservationsUser:
+            return jsonify({"message": "Reservations not found"}), 404
+
+        # Serializar cada reserva y agregar detalles del restaurante y la ocasión
+        serialized_reservations = []
+        for reservation in reservationsUser:
+            # Obtener detalles del restaurante
+            restaurant = Restaurant.query.get(reservation.restaurant_id)
+            restaurant_details = {
+                "name": restaurant.name,
+                "location": restaurant.location,
+                "email": restaurant.email,
+                "phone_number": restaurant.phone_number,
+            } if restaurant else None
+
+            # Obtener detalles de la ocasión
+            occasion = Ocasiones1.query.get(reservation.ocasiones_id)
+            occasion_details = {
+                "name": occasion.name,
+            } if occasion else None
+
+            # Agregar los detalles del restaurante y la ocasión a la reserva serializada
+            serialized_reservations.append({
+                **reservation.serialize(),
+                "restaurant_details": restaurant_details,
+                "occasion_details": occasion_details,
+            })
+
+        return jsonify(serialized_reservations), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 @api.route('/reservationsRestaurant/<restaurant_id>', methods=['GET'])
 def get_reservationsRestaurant(restaurant_id):
@@ -706,7 +756,8 @@ def get_chats_client(id_comensal):
                 "location": restaurant.location,
                 "email": restaurant.email,
                 "phone_number": restaurant.phone_number,
-                "guests_capacity": restaurant.guests_capacity
+                "guests_capacity": restaurant.guests_capacity,
+                "image_url": restaurant.image_url
             }
         else:
             chat_data["restaurant_details"] = None 

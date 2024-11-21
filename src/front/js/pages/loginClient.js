@@ -1,22 +1,24 @@
 import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "../../styles/login.css"; 
 import logo from "../../img/nivalulogo.jpg";
-
+import { Link } from "react-router-dom";
 
 export const LoginClient = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { store, actions } = useContext(Context);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Usamos useNavigate para la redirección
 
-    const sendData = (e) => {
+    // Función para manejar el inicio de sesión
+    function sendData(e) {
         e.preventDefault();
+
         actions.loginClient(email, password).then(success => {
             if (success) {
-                navigate("/");
+                // Si el login es exitoso, redirigimos a /listOfRestaurants/:id
+                navigate( `/listOfRestaurants/${store.sessionUserId}`);
             } else {
                 alert("Inicio de sesión fallido");
             }
