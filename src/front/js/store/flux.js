@@ -34,6 +34,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			ocasion: {},
 		
 			sessionUserId: null,
+			client_auth: false,
 			sessionRestaurantId: null,
 			sessionAdminId: null, 
 			client_auth: false,
@@ -124,29 +125,52 @@ const getState = ({ getStore, getActions, setStore }) => {
 						} else {
 						throw new Error("Login fallido");
 						}
-					
-					
+						return response.json();
 					})
-					.then(data => {
-						localStorage.setItem("token",data.access_token);
-						// Almacena client_id y restaurant_id en el store
-						setStore({ auth: true, sessionUserId: data.user_id});
-
-						console.log(data)
-						return true; 
+					.then((data) => {
+						console.log("User updated successfully:", data);
+						return data;
 					})
-
-					.catch(error => {
-						console.error("Error en login:", error);
-						return false;  // Fallo
+					.catch((error) => {
+						console.error("Error updating user:", error);
+						throw error; // Propaga el error para manejarlo en el componente
 					});
 			},
+			
+			loginClient: async (email, password) => {
+				try {
+					const requestOptions = {
+						method: 'POST',
+						headers: {'Content-Type': 'application/json'},
+						body: JSON.stringify({
+							"email": email,
+							"password": password
+						})
+					};
+			
+					const response = await fetch(`${process.env.BACKEND_URL}/api/loginClient`, requestOptions);
+					
+					if (response.status === 200) {
+						const data = await response.json();
+						localStorage.setItem("token", data.access_token);
+						setStore({ auth: true, client_auth: true, sessionUserId: data.user_id });
+						console.log(data);  
+						return true;  
+					} else {
+						throw new Error("Login fallido");
+					}
+			
+				} catch (error) {
+					console.error("Error en login:", error);
+					return false;  
+				}
+			},
+			
 
 			logoutClient: () => {
 				localStorage.removeItem("token")
-				setStore( {auth : false});
+				setStore( {client_auth : false});
 			},
-			
 
 
 			getMessage: async () => {
@@ -180,20 +204,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeData());
 			},
-			addNewRestaurant: (email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
+			// addNewRestaurant: async (email, password) => {
+			// 	const response = await fetch(`${process.env.BACKEND_URL}/api/signup/restaurant`, {
+			// 		method: "POST",
+			// 		headers: { "Content-Type": "application/json" },
+			// 		body: JSON.stringify({ email, password }),
+			// 	});
+			// 	if (response.ok) {
+			// 		const data = await response.json();
+			// 		return data.restaurant; // Return restaurant details
+			// 	}
+			// 	return null;
+			// },
+
+			addNewRestaurant: (email, password) => {
 				return fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
 						"email": email,
-						"guests_capacity": guests_capacity,
-						"location": location,
-						"name": name,
-						"phone_number": phone_number,
+						// "guests_capacity": guests_capacity,
+						// "location": location,
+						// "name": name,
+						// "phone_number": phone_number,
 						"password": password,
-						"image_url": image,
-						"latitude": latitude,
-						"longitude": longitude
+						// "image_url": image,
+						// "latitude": latitude,
+						// "longitude": longitude
 					}),
 					redirect: "follow",
 				})
@@ -221,8 +258,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error al crear el restaurante:", error);
 					return null; // Devolvemos null en caso de error para manejarlo en el frontend
 				});
-			}
-			,
+			},
+
 			traer_restaurante: (id) => {
 				return fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())
