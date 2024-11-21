@@ -41,6 +41,7 @@ export const ListReservationsRestaurant = () => {
 
     return (
         <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
+        {store.restaurant_auth ? null : <Navigate to="/loginrestaurant" />}
             
             <NavbarRestaurant id={store.sessionRestaurantId} onToggle={handleOffcanvasToggle} />
 
@@ -57,7 +58,8 @@ export const ListReservationsRestaurant = () => {
                         style={{
                             fontSize: "2rem",
                             fontFamily: "Nunito, sans-serif",        
-                            color: "#012970"
+                            color: "#012970",
+
                         }}
                     >
                         Reservation Requests

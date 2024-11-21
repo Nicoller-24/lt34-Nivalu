@@ -99,6 +99,8 @@ const Chat = () => {
             fontFamily: "Nunito, sans-serif",
             color: "#012970",
             marginBottom: "1rem",
+            paddingTop: "4rem"
+
           }}
         >
           Chats
@@ -209,12 +211,22 @@ const Chat = () => {
                       {messages.map((item, index) => (
                         <li key={index} className="clearfix">
                           {item.origin === "Client" ? (
-                            <div className="message other-message float-right">
-                              {item.message}
-                            </div>
-                          ) : (
-                            <div className="message my-message">{item.message}</div>
-                          )}
+                      <li key={index} className="clearfix">
+                        <div className="message-data text-right">
+                          <span className="message-data-time">{item.message_time}</span>
+                        </div>
+                        <div className="message other-message float-right">
+                          {item.message}
+                        </div>
+                      </li>
+                    ) : (
+                      <li key={index} className="clearfix">
+                        <div className="message-data">
+                          <span className="message-data-time">{item.message_time}</span>
+                        </div>
+                        <div className="message my-message">{item.message}</div>
+                      </li>
+                    )}
                         </li>
                       ))}
                     </ul>

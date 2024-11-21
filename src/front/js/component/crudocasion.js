@@ -13,7 +13,7 @@ export const Crudocasion = () => {
 
     useEffect(() => {
         actions.loadSomeDataOcasion();
-    }, []);
+    }, [store.ocasiones]);     
 
     const handleToggleOffcanvas = (state) => {
         setIsOffcanvasOpen(state);

@@ -32,7 +32,7 @@ export const Crudrestaurante = () => {
 
     return (
         <>
-        {store.restaurant_auth ? null : <Navigate to="/restauranteselect" />}
+        {store.restaurant_auth ? null : <Navigate to="/loginrestaurant" />}
         <div style={{ backgroundColor: "#f4f8fb", minHeight: "100vh" }}>
             <NavbarRestaurant id={params.id} onToggle={handleToggleOffcanvas} />
 

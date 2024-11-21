@@ -2,10 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { NavbarAdmin } from "./navbaradmin";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const EditCategory = () => {
 	const { actions } = useContext(Context);
 	const params = useParams();
+    const navigate = useNavigate();
 
 
 	const [updateData, setUpdateData] = useState({
@@ -77,7 +80,10 @@ export const EditCategory = () => {
 		if (params.id) {
 			actions.editCategory(updateData, params.id); // Save updates
 			actions.loadSomeDataCategory();
-			console.log("Form submitted with data:", updateData); // Debugging
+			console.log("Form submitted with data:", updateData); 
+            navigate(`/categories/${params.id_admin}`);
+
+
 		}
 	};
 

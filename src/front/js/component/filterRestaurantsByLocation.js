@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { NavbarClient } from "./navbarclient";
+import { Link } from "react-router-dom";
 
 export const FilterRestaurantsByLocation = () => {
     const [restaurants, setRestaurants] = useState([]);
@@ -181,7 +182,23 @@ export const FilterRestaurantsByLocation = () => {
                                             }}
                                         />
                                     </div>
+                                    <Link to={`/aboutRestaurants/${params.id}/?id_restaurant=${restaurant.id}`}>
+                                <button 
+                                    style={{
+                                        backgroundColor: "#e75b1e",
+                                        color: "#fff",
+                                        padding: "0.5rem 1rem",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Book your table now
+                                </button>
+                            </Link>
                                 </div>
+                                
                             ))}
                         </div>
 

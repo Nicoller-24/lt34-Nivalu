@@ -100,7 +100,6 @@ class Restaurant(db.Model):
         return f'<Restaurant {self.email}>'
 
     def serialize(self):
-        categories_list = [category.category.serialize() for category in self.categories]
         return {
             "id": self.id,
             "name": self.name,

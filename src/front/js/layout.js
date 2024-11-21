@@ -90,7 +90,7 @@ const Layout = () => {
                         <Route element={<Singlerestaurant />} path="/restaurant/:id" />
                         <Route element={<Edit />} path="/edit/restaurant/:id" />
                         <Route element={<Restaurantselect />} path="/restauranteselect" />
-                        <Route element={<Signuprestaurant />} path="/signuprestaurant" />
+                        <Route element={<Signuprestaurant />} path="/loginrestaurant" />
                         <Route element={<AboutRestaurant />} path="/aboutRestaurants/:id" />
                         <Route element={<Mapautocompletate />} path="/mapa" />
                         <Route element={<ListReservationsUser />} path="/listReservationsUser/:id" />
