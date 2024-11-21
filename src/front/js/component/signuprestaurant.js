@@ -78,6 +78,13 @@ export const Signuprestaurant = () => {
                                     Volver
                                 </button>
                             </Link>
+
+                            <Link to="/signup/restaurants" className="link-orange">
+                                <span className="small">
+                                    
+                                you don't have an account with Nivel yet
+                                </span>
+                            </Link>
                         </div>
                     </div>
                 </div>

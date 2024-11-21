@@ -49,6 +49,7 @@ export const Home = () => {
 			<Link to="/listOfRestaurants">
 				<button className="btn btn-primary">Lista de Restaurantes</button>
 			</Link>
+			
 			<Link to="/listReservationsUser"><button className="btn btn-primary">Acive reservations Client</button>
 			</Link>
 

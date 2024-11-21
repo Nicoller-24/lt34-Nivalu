@@ -205,7 +205,7 @@ export const Crearadmin = () => {
                                     cursor: "pointer",
                                 }}
                             >
-                                Or Go Back
+                                Go back 
                             </button>
                         </Link>
                     </form>

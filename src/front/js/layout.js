@@ -18,6 +18,7 @@ import { AboutRestaurant } from "./pages/aboutRestaurant.js";
 import { ListReservationsUser } from "./pages/listReservationsUser.js";
 import { SuccessPage } from "./pages/successPage.js";
 import { ListReservationsRestaurant } from "./pages/listReservationsRestaurant.js";
+import { CompleteProfile } from "./pages/completeProfile.js";
 
 
 import { Crudrestaurante } from "./component/crudrestaurante";
@@ -82,7 +83,7 @@ const Layout = () => {
                         
                         <Route element={<AddClients />} path="/adduser" />
                         <Route element={<UserList />} path="/userList" />
-                        <Route element={<EditClient />} path="/updateInfo" />
+                        <Route element={<EditClient />} path="/updateInfo/:id" />
                         <Route element={<Crudrestaurante />} path="/restaurants/:id" />
                         <Route element={<Crearrestaurante />} path="/signup/restaurants" />
                         <Route element={<Single />} path="/single/:theid" />
@@ -97,6 +98,8 @@ const Layout = () => {
                         <Route element={<Chat/>} path="/client/chat/:id_restaurant/:id_client" />
                         <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
                         <Route element={<Restaurantview/>} path="/restaurant/view" />
+                       
+
 
                         <Route element={<Crearcategoria />} path="/create/categories/:id" />
                         <Route element={<Crudcategoria />} path="/categories/:id" />

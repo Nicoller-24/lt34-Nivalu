@@ -74,6 +74,12 @@ export const Adminlogin = () => {
                                     Volver
                                 </button>
                             </Link>
+
+                            <Link to="/signup/admins" className="link-orange">
+                                <span className="small">
+                                    ¿Aún no tienes una cuenta? ¡Regístrate!
+                                </span>
+                            </Link>
                         </div>
                     </div>
                 </div>

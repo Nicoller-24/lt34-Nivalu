@@ -36,6 +36,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			sessionUserId: null,
 			sessionRestaurantId: null,
 			sessionAdminId: null, 
+			client_auth: false,
 		},		
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -63,47 +64,45 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			// Add a user
-			addUser: (newUserData) => {
-				console.log("adduser")
-				const requestOptions = {
+			
+			addUser: ( email, password) => {
+				return fetch(process.env.BACKEND_URL + '/api/signup/client', {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						...newUserData,
-						id: newUserData.identification_number
-					  })
-				};
-				fetch(process.env.BACKEND_URL + '/api/signup/client', requestOptions)
-					.then(response => response.json())
-					.then(data => console.log("User added:", data))
-					.catch(error => console.error("Error adding user:", error));
-			},
+						
+						
+						"email": email,
+						
+						"password": password
+					}),
+					redirect: "follow",
+				})
+				.then((response) => {
+					console.log(response.status);
+					if (response.status === 201) { 
+						setStore({ client_auth: true });
+					}
+					return response.json();
+				})
+				.then((data) => {
+					if (data.access_token) {
+						localStorage.setItem("token", data.access_token);
+						console.log("Token de acceso:", data.access_token);
+						getActions().loadUsers();
+					}
+			
+					// Si la respuesta contiene el objeto del restaurante, lo devolvemos para su uso
+					if (data.client) {
 
-			// Delete a user by index
-			deleteUser: (index) => {
-				const store = getStore();
-				const idToDelete = store.users[index].id;
-				console.log("Deleting user with id:", idToDelete);
-
-				// Update store before sending DELETE request
-				setStore({ users: store.users.filter((user, i) => i !== index) });
-
-				fetch(process.env.BACKEND_URL +`/api/client/${idToDelete}`, { method: 'DELETE' })
-					.then(() => console.log(`User ${idToDelete} deleted`))
-					.catch(error => console.error("Error deleting user:", error));
-			},
-
-			// Update user by id
-			updateUser: (userModif, id) => {
-				const requestOptions = {
-					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(userModif)
-				};
-				fetch(process.env.BACKEND_URL + `/api/client/${id}`, requestOptions)
-					.then(response => response.json())
-					.then(data => console.log("User updated:", data))
-					.catch(error => console.error("Error updating user:", error));
+						console.log("Detalles del restaurante:", data.client);
+						return data.client;
+					}
+				})
+				.catch((error) => {
+					console.error("Error al crear el restaurante:", error);
+					return null; // Devolvemos null en caso de error para manejarlo en el frontend
+				});
 			},
 
 			loginClient: (email, password) => {
