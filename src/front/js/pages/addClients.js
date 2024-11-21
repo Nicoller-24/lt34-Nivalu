@@ -3,19 +3,18 @@ import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export const AddClients = () => {
-    const [inputName, setInputName] = useState("");
-    const [inputLastName, setInputLastName] = useState("");
+   
+   
     const [inputEmail, setInputEmail] = useState("");
-    const [inputPhone, setInputPhone] = useState("");
     const [inputPassword, setInputPassword] = useState("");
-    const [inputIdentificationNumber, setInputIdentificationNumber] = useState("");
+   
     const navigate = useNavigate();
     const { store, actions } = useContext(Context);
     const [authClientId, setAuthClientId] = useState(null);
 
     useEffect(() => {
         if (authClientId) {
-            navigate(`/listOfRestaurants/${authClientId}`);
+            navigate(`/updateInfo/${authClientId}`);
         }
     }, [authClientId, navigate]);
 
@@ -36,34 +35,12 @@ export const AddClients = () => {
                     textAlign: "center"
                 }}>Create New Client</h3>
                 <form>
-                    <div className="form-group">
-                        <label>Name</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={inputName}
-                            onChange={(e) => setInputName(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Last Name</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={inputLastName}
-                            onChange={(e) => setInputLastName(e.target.value)}
-                        />
-                    </div>
                    
-                    <div className="form-group">
-                        <label>Phone Number</label>
-                        <input
-                            type="tel"
-                            className="form-control"
-                            value={inputPhone}
-                            onChange={(e) => setInputPhone(e.target.value)}
-                        />
-                    </div>
+                   
+                  
+                   
+                   
+                  
                     <div className="form-group">
                         <label>Email</label>
                         <input
@@ -73,15 +50,7 @@ export const AddClients = () => {
                             onChange={(e) => setInputEmail(e.target.value)}
                         />
                     </div>
-                    <div className="form-group">
-                        <label>Identification Number</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={inputIdentificationNumber}
-                            onChange={(e) => setInputIdentificationNumber(e.target.value)}
-                        />
-                    </div>
+                   
                     <div className="form-group">
                         <label>Password</label>
                         <input
@@ -104,11 +73,11 @@ export const AddClients = () => {
                         }}
                         onClick={async () => {
                             const newClient = await actions.addUser(
-                                inputName,
-                                inputLastName,
-                                inputIdentificationNumber,
+                              
+                              
+                               
                                 inputEmail,
-                                inputPhone,
+                               
                                 inputPassword
                             );
 
@@ -116,12 +85,10 @@ export const AddClients = () => {
                                 setAuthClientId(newClient.id);
                             }
 
-                            setInputName("");
-                            setInputLastName("");
                             setInputEmail("");
-                            setInputPhone("");
+                            
                             setInputPassword("");
-                            setInputIdentificationNumber("");
+                           
                         }}
                     >
                         Create Client

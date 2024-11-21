@@ -22,6 +22,8 @@ export const FilterRestaurantsByLocation = () => {
                 zoom: 14,
             });
             setMap(map);
+
+
         }
     };
 

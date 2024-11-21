@@ -18,6 +18,7 @@ import { AboutRestaurant } from "./pages/aboutRestaurant.js";
 import { ListReservationsUser } from "./pages/listReservationsUser.js";
 import { SuccessPage } from "./pages/successPage.js";
 import { ListReservationsRestaurant } from "./pages/listReservationsRestaurant.js";
+import { CompleteProfile } from "./pages/completeProfile.js";
 
 
 import { Crudrestaurante } from "./component/crudrestaurante";
@@ -97,6 +98,8 @@ const Layout = () => {
                         <Route element={<Chat/>} path="/client/chat/:idclient" />
                         <Route element={<Chatrestaurant/>} path="/restaurant/chat/:id" />
                         <Route element={<Restaurantview/>} path="/restaurant/view" />
+                       
+
 
                         <Route element={<Crearcategoria />} path="/create/categories/:id" />
                         <Route element={<Crudcategoria />} path="/categories/:id" />

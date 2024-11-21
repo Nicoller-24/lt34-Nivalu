@@ -37,6 +37,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			client_auth: false,
 			sessionRestaurantId: null,
 			sessionAdminId: null, 
+			client_auth: false,
 		},		
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -63,76 +64,66 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch(error => console.error("Error loading users:", error));
 			},
 
-			addUser: (name, last_name, identification_number, email, phone_number, password) => {
+			// Add a user
+			
+			addUser: ( email, password) => {
 				return fetch(process.env.BACKEND_URL + '/api/signup/client', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						"name": name,
-						"last_name": last_name,
-						"identification_number": identification_number,
+						
+						
 						"email": email,
-						"phone_number": phone_number,
+						
 						"password": password
 					}),
 					redirect: "follow",
 				})
 				.then((response) => {
-					console.log("HTTP Status:", response.status);
-			
-					if (!response.ok) {
-						// Lanza un error si el código HTTP no es exitoso
-						return response.json().then((error) => {
-							throw new Error(error.msg || "Error desconocido");
-						});
+					console.log(response.status);
+					if (response.status === 201) { 
+						setStore({ client_auth: true });
 					}
-			
 					return response.json();
 				})
 				.then((data) => {
 					if (data.access_token) {
 						localStorage.setItem("token", data.access_token);
 						console.log("Token de acceso:", data.access_token);
-						getActions().loadSomeData(); // Opcional: Carga de datos adicionales
+						getActions().loadUsers();
 					}
 			
+					// Si la respuesta contiene el objeto del restaurante, lo devolvemos para su uso
 					if (data.client) {
-						console.log("Detalles del cliente:", data.client);
-						setStore({ client_auth: true }); // Autenticación habilitada
+
+						console.log("Detalles del restaurante:", data.client);
 						return data.client;
 					}
-			
-					throw new Error("Respuesta inesperada del servidor");
 				})
 				.catch((error) => {
-					console.error("Error al crear el cliente:", error.message || error);
-					return null; // Retorna null para manejar el error en el frontend
+					console.error("Error al crear el restaurante:", error);
+					return null; // Devolvemos null en caso de error para manejarlo en el frontend
 				});
 			},
-			// Delete a user by index
-			deleteUser: (index) => {
-				const store = getStore();
-				const idToDelete = store.users[index].id;
-				console.log("Deleting user with id:", idToDelete);
 
-				// Update store before sending DELETE request
-				setStore({ users: store.users.filter((user, i) => i !== index) });
-
-				fetch(process.env.BACKEND_URL +`/api/client/${idToDelete}`, { method: 'DELETE' })
-					.then(() => console.log(`User ${idToDelete} deleted`))
-					.catch(error => console.error("Error deleting user:", error));
-			},
-
-			// Update user by id
-			updateUser: (updateData, id) => {
-				return fetch(`${process.env.BACKEND_URL}/api/client/${id}`, {
-					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(updateData)
-				})
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error(`Error en la solicitud: ${response.statusText}`);
+			loginClient: (email, password) => {
+					
+				const resquestOptions = {
+					method: 'POST',
+					headers: {'content-Type' : 'application/json'},
+					body: JSON.stringify({
+						"email": email,
+						"password" : password
+					})
+				};
+				return fetch(`${process.env.BACKEND_URL}/api/loginClient`, resquestOptions)
+					.then(response => {
+						console.log (response.status)
+						if (response.status == 200){
+							setStore( {auth : true});
+							return response.json();
+						} else {
+						throw new Error("Login fallido");
 						}
 						return response.json();
 					})

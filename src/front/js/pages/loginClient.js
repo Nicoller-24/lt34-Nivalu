@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
-import "../../styles/login.css"; 
+import "../../styles/login.css";
 import logo from "../../img/nivalulogo.jpg";
 import { Link } from "react-router-dom";
 
@@ -62,11 +62,11 @@ export const LoginClient = () => {
                                 </button>
                             </form>
                             <hr />
-                            <Link to="/adduser">
-                                            <span className="small">
-                                                Aun no tienes una cuenta? Registrate!
-                                            </span>
-                             </Link>
+                            <Link to="/adduser" className="link-orange">
+                                <span className="small">
+                                    ¿Aún no tienes una cuenta? ¡Regístrate!
+                                </span>
+                            </Link>
                         </div>
                     </div>
                 </div>

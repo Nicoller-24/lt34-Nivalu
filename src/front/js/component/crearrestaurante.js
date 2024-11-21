@@ -202,7 +202,7 @@ export const Crearrestaurante = () => {
                                     cursor: "pointer"
                                 }}
                             >
-                                Or Go Back
+                                Go back
                             </button>
                         </Link>
                     </form>

@@ -20,3 +20,13 @@ body {
     background-color: #d14812;
     border-color: #d14812;
 }
+
+.link-orange {
+    color: #ff5722;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.link-orange:hover {
+    text-decoration: underline;
+}

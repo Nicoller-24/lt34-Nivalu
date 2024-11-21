@@ -43,7 +43,7 @@ export const Crudadmin = () => {
                             color: "#012970",
                         }}
                     >
-                        Administradores
+                        Administrators
                     </h1>
                     <div
                         style={{

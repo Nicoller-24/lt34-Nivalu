@@ -142,11 +142,8 @@ def signup_client():
     if client is None:
         # Crea un nuevo cliente
         client = Client(
-            name=body["name"],
-            last_name=body["last_name"],
-            identification_number=body["identification_number"],
             email=body["email"],
-            phone_number=body["phone_number"],
+            
             password=body["password"],  
             is_active=True
         )
@@ -162,45 +159,39 @@ def signup_client():
             "access_token": access_token,
             "client": {
                 "id": client.id,
-                "name": client.name,
-                "last_name": client.last_name,
-                "identification_number": client.identification_number,
                 "email": client.email,
-                "phone_number": client.phone_number,
                 "is_active": client.is_active
             }
         }
         return jsonify(response_body), 201
     else:
         return jsonify({"msg": "El cliente ya está registrado"}), 409
-
-@api.route('/client/<int:client_id>', methods=['PUT'])
-def update_client(client_id):  
+    
+@api.route("/signup/client", methods=['PUT'])
+def complete_profile():
     body = request.get_json()
+    
+    # Aquí el cliente ya debe estar autenticado y tener su ID
+    client_id = body.get("client_id")  # El client_id es proporcionado por el front-end (puedes obtenerlo de un token o sesión)
+
     client = Client.query.filter_by(id=client_id).first()
 
     if client is None:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
-    if "email" in body:
-        existing_client = Client.query.filter_by(email=body["email"]).first()  
-        if existing_client and existing_client.id != client_id:
-            return jsonify({"error": "El correo ya está en uso"}), 400
-        client.email = body["email"]  # Revicion de existencia de usuarios por email
-
+    # Actualizar los datos del cliente que faltan
     if "name" in body:
         client.name = body["name"]
     if "last_name" in body:
-        client.last_name = body["last_name"]  
+        client.last_name = body["last_name"]
     if "identification_number" in body:
-        client.identification_number = body["identification_number"] 
+        client.identification_number = body["identification_number"]
     if "phone_number" in body:
-        client.phone_number = body["phone_number"]  
-    if "password" in body:
-        client.password = body["password"]
+        client.phone_number = body["phone_number"]
 
     db.session.commit()
-    return jsonify({"msg": "Usuario actualizado!", "client": client.serialize()}), 200
+
+    return jsonify({"msg": "Perfil actualizado correctamente!", "client": client.serialize()}), 200
 
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def delete_client_user(client_id):
