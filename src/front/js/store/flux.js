@@ -105,6 +105,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return null; // Devolvemos null en caso de error para manejarlo en el frontend
 				});
 			},
+			updateUser: (updateData, id) => {
+				return fetch(`${process.env.BACKEND_URL}/api/signup/client/${id}`, {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(updateData)
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error(`Error en la solicitud: ${response.statusText}`);
+						}
+						return response.json();
+					})
+					.then((data) => {
+						console.log("User updated successfully:", data);
+						return data;
+					})
+					.catch((error) => {
+						console.error("Error updating user:", error);
+						throw error; // Propaga el error para manejarlo en el componente
+					});
+			},
 
 			loginClient: (email, password) => {
 					

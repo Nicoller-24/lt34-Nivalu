@@ -1,20 +1,8 @@
 """empty message
 
-<<<<<<<< HEAD:migrations/versions/76447d885c90_.py
-Revision ID: 76447d885c90
+Revision ID: 74c018835b94
 Revises: 
-Create Date: 2024-11-19 03:47:15.606113
-========
-<<<<<<<< HEAD:migrations/versions/92ba6a64fb82_.py
-Revision ID: 92ba6a64fb82
-Revises: 
-Create Date: 2024-11-21 01:19:32.922166
-========
-Revision ID: 614e5831af9b
-Revises: 
-Create Date: 2024-11-19 22:13:04.437210
->>>>>>>> develop:migrations/versions/614e5831af9b_.py
->>>>>>>> develop:migrations/versions/614e5831af9b_.py
+Create Date: 2024-11-21 02:49:27.384752
 
 """
 from alembic import op
@@ -22,15 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-<<<<<<<< HEAD:migrations/versions/76447d885c90_.py
-revision = '76447d885c90'
-========
-<<<<<<<< HEAD:migrations/versions/92ba6a64fb82_.py
-revision = '92ba6a64fb82'
-========
-revision = '614e5831af9b'
->>>>>>>> develop:migrations/versions/614e5831af9b_.py
->>>>>>>> develop:migrations/versions/614e5831af9b_.py
+revision = '74c018835b94'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -51,10 +31,10 @@ def upgrade():
     )
     op.create_table('client',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=120), nullable=False),
-    sa.Column('last_name', sa.String(length=120), nullable=False),
-    sa.Column('identification_number', sa.String(length=120), nullable=False),
-    sa.Column('phone_number', sa.String(length=120), nullable=False),
+    sa.Column('name', sa.String(length=120), nullable=True),
+    sa.Column('last_name', sa.String(length=120), nullable=True),
+    sa.Column('identification_number', sa.String(length=120), nullable=True),
+    sa.Column('phone_number', sa.String(length=120), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password', sa.String(length=80), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),

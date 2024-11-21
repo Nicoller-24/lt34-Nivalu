@@ -167,12 +167,10 @@ def signup_client():
     else:
         return jsonify({"msg": "El cliente ya está registrado"}), 409
     
-@api.route("/signup/client", methods=['PUT'])
-def complete_profile():
+@api.route("/signup/client/<int:client_id>", methods=['PUT'])
+def complete_profile(client_id):
     body = request.get_json()
     
-    # Aquí el cliente ya debe estar autenticado y tener su ID
-    client_id = body.get("client_id")  # El client_id es proporcionado por el front-end (puedes obtenerlo de un token o sesión)
 
     client = Client.query.filter_by(id=client_id).first()
 
