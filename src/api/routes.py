@@ -11,12 +11,11 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from flask import jsonify, request
 from werkzeug.security import check_password_hash
 from flask import Flask
-from flask_cors import CORS
 from geopy.distance import geodesic
 
 
 app = Flask(__name__)
-CORS(app)  # This will allow all origins
+CORS(app, resources={r"/api/*": {"origins": "https://expert-journey-g457779ww9673p94g-3000.app.github.dev"}})
 from datetime import datetime, timedelta, timezone
 
 
@@ -44,50 +43,32 @@ def get_restaurant(restaurant_id):
 
 @api.route("/signup/restaurant", methods=["POST"])
 def signup():
+
     body = request.get_json()
 
-    # Verifica si ya existe un restaurante con ese email
+    if "email" not in body or "password" not in body:
+        return jsonify({"msg": "Email and password are required"}), 400
+
+    # Check if restaurant already exists
     restaurant = Restaurant.query.filter_by(email=body["email"]).first()
-    if restaurant is None:
-        # Crea un nuevo restaurante
-        restaurant = Restaurant(
-            email=body["email"],
-            guests_capacity=body["guests_capacity"],
-            location=body["location"],
-            name=body["name"],
-            phone_number=body["phone_number"],
-            password=body["password"],  
-            image_url=body["image_url"],
-            latitude=body["latitude"],
-            longitude=body["longitude"],
-            is_active=True
-        )
-        db.session.add(restaurant)
-        db.session.commit()
+    if restaurant:
+        return jsonify({"msg": "Restaurant already exists"}), 409
 
-        # Genera el token de acceso
-        access_token = create_access_token(identity=restaurant.id)
+    # Create a new restaurant with minimal fields
+    restaurant = Restaurant(
+        email=body["email"],
+        password=body["password"],
+        is_active=True
+    )
+    db.session.add(restaurant)
+    db.session.commit()
 
-        # Crea la respuesta con todos los datos del restaurante
-        response_body = {
-            "msg": "Restaurante creado",
-            "access_token": access_token,
-            "restaurant": {
-                "id": restaurant.id,
-                "email": restaurant.email,
-                "guests_capacity": restaurant.guests_capacity,
-                "location": restaurant.location,
-                "name": restaurant.name,
-                "phone_number": restaurant.phone_number,
-                "image_url": restaurant.image_url,
-                "latitude": restaurant.latitude,
-                "longitude": restaurant.longitude,
-                "is_active": restaurant.is_active
-            }
-        }
-        return jsonify(response_body), 201  
-    else:
-        return jsonify({"msg": "El restaurante ya existe"}), 409
+    access_token = create_access_token(identity=restaurant.id)
+    return jsonify({
+        "msg": "Restaurant created successfully",
+        "access_token": access_token,
+        "restaurant": restaurant.serialize(),
+    }), 201
  
 
 

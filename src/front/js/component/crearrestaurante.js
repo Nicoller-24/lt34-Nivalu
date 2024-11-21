@@ -23,37 +23,37 @@ export const Crearrestaurante = () => {
 
     useEffect(() => {
         if (authRestaurantId) {
-            navigate(`/restaurants/${authRestaurantId}`);
+            navigate(`/edit/restaurant/${authRestaurantId}`);
         }
     }, [authRestaurantId, navigate]);
 
-    const uploadImage = async (e) => {            
-        const files = e.target.files;            
-        const data = new FormData();             
-        data.append("file", files[0]);           
-        data.append("upload_preset", preset_name);
+    // const uploadImage = async (e) => {            
+    //     const files = e.target.files;            
+    //     const data = new FormData();             
+    //     data.append("file", files[0]);           
+    //     data.append("upload_preset", preset_name);
 
-        setLoading(true);                        
+    //     setLoading(true);                        
 
-        try {
-            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
-                method: "POST",
-                body: data
-            });
+    //     try {
+    //         const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
+    //             method: "POST",
+    //             body: data
+    //         });
 
-            const file = await response.json();     
-            setImage(file.secure_url);              
-            setLoading(false);                      
-        } catch (error) {
-            console.error("Error uploading image:", error);
-            setLoading(false);
-        }
-    };
+    //         const file = await response.json();     
+    //         setImage(file.secure_url);              
+    //         setLoading(false);                      
+    //     } catch (error) {
+    //         console.error("Error uploading image:", error);
+    //         setLoading(false);
+    //     }
+    // };
 
-    const handleAddressSelect = (address, location) => {
-        setSelectedAddress(address);
-        setSelectedLocation(location);
-    };
+    // const handleAddressSelect = (address, location) => {
+    //     setSelectedAddress(address);
+    //     setSelectedLocation(location);
+    // };
 
     return (
         <>  
@@ -62,7 +62,7 @@ export const Crearrestaurante = () => {
 
             <div style={{ display: "flex", gap: "20px", padding: "2rem" }}>
                 {/* Left Section - Profile Image */}
-                <div style={{
+                {/* <div style={{
                     width: "30%",
                     padding: "1rem",
                     boxShadow: "0px 0 30px rgba(1, 41, 112, 0.1)",
@@ -81,7 +81,7 @@ export const Crearrestaurante = () => {
                         }} />
                     )}
                     <input className="form-control" type="file" onChange={uploadImage} style={{ marginTop: "1rem" }} />
-                </div>
+                </div> */}
 
                 {/* Right Section - Restaurant Details */}
                 <div style={{
@@ -94,7 +94,7 @@ export const Crearrestaurante = () => {
                     <h3 style={{fontFamily: '"Poppins", sans-serif', color: "#012970", fontWeight: "500"}}>Create New Restaurant</h3>
                     <form style={{fontFamily: '"Open Sans", sans-serif'}}>
                         <div style={{ display: "flex", gap: "20px" }}>
-                            <div style={{ flex: 1 }}>
+                            {/* <div style={{ flex: 1 }}>
                                 <label>Name</label>
                                 <input
                                     type="text"
@@ -102,7 +102,7 @@ export const Crearrestaurante = () => {
                                     value={inputName}
                                     onChange={(e) => setInputname(e.target.value)}
                                 />
-                            </div>
+                            </div> */}
                             <div style={{ flex: 1 }}>
                                 <label>Email</label>
                                 <input
@@ -113,7 +113,7 @@ export const Crearrestaurante = () => {
                                 />
                             </div>
                         </div>
-                        <div style={{ display: "flex", gap: "20px", marginTop: "1rem" }}>
+                        {/* <div style={{ display: "flex", gap: "20px", marginTop: "1rem" }}>
                             <div style={{ flex: 1 }}>
                                 <label>Phone</label>
                                 <input
@@ -132,14 +132,14 @@ export const Crearrestaurante = () => {
                                     onChange={(e) => setInputGuestCapacity(e.target.value)}
                                 />
                             </div>
-                        </div>
-                        <div style={{ marginTop: "1rem" }}>
+                        </div> */}
+                        {/* <div style={{ marginTop: "1rem" }}>
                             <label>Address</label>
                             <AddressAutocomplete onAddressSelect={handleAddressSelect} />
                             {selectedLocation && (
                                 <MapComponent initialPosition={selectedLocation} />
                             )}
-                        </div>
+                        </div> */}
                         <div style={{ marginTop: "1rem" }}>
                             <label>Password</label>
                             <input
@@ -163,26 +163,26 @@ export const Crearrestaurante = () => {
                             onClick={async () => {
                                 const newRestaurant = await actions.addNewRestaurant(
                                     inputEmail,
-                                    inputGuestCapacity,
-                                    selectedAddress,
-                                    inputName,
-                                    inputPhone,
+                                    // inputGuestCapacity,
+                                    // selectedAddress,
+                                    // inputName,
+                                    // inputPhone,
                                     inputPassword,
-                                    image,
-                                    selectedLocation?.lat,
-                                    selectedLocation?.lng
+                                    // image,
+                                    // selectedLocation?.lat,
+                                    // selectedLocation?.lng
                                 );
 
                                 if (newRestaurant) {
                                     setAuthRestaurantId(newRestaurant.id);
                                 }
 
-                                setInputGuestCapacity("");
-                                setInputname("");
-                                setInputPhone("");
+                                // setInputGuestCapacity("");
+                                // setInputname("");
+                                // setInputPhone("");
                                 setInputEmail("");
                                 setInputPassword("");
-                                setImage("");
+                                // setImage("");
                             }}
                         >
                             Create Restaurant

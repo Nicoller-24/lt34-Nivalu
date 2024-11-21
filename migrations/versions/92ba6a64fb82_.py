@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1124f114a5ff
+Revision ID: 92ba6a64fb82
 Revises: 
-Create Date: 2024-11-19 00:58:56.153027
+Create Date: 2024-11-21 01:19:32.922166
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1124f114a5ff'
+revision = '92ba6a64fb82'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -50,16 +50,16 @@ def upgrade():
     )
     op.create_table('restaurant',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=80), nullable=False),
-    sa.Column('location', sa.String(length=80), nullable=False),
-    sa.Column('phone_number', sa.String(length=80), nullable=False),
+    sa.Column('name', sa.String(length=80), nullable=True),
+    sa.Column('location', sa.String(length=80), nullable=True),
+    sa.Column('phone_number', sa.String(length=80), nullable=True),
     sa.Column('email', sa.String(length=80), nullable=False),
-    sa.Column('guests_capacity', sa.String(length=80), nullable=False),
+    sa.Column('guests_capacity', sa.String(length=80), nullable=True),
     sa.Column('password', sa.String(length=80), nullable=False),
-    sa.Column('image_url', sa.String(length=120), nullable=False),
+    sa.Column('image_url', sa.String(length=120), nullable=True),
     sa.Column('latitude', sa.Numeric(), nullable=True),
     sa.Column('longitude', sa.Numeric(), nullable=True),
-    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )

@@ -181,20 +181,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.text())
 					.then(() => getActions().loadSomeData());
 			},
-			addNewRestaurant: (email, guests_capacity, location, name, phone_number, password, image, latitude, longitude) => {
+			// addNewRestaurant: async (email, password) => {
+			// 	const response = await fetch(`${process.env.BACKEND_URL}/api/signup/restaurant`, {
+			// 		method: "POST",
+			// 		headers: { "Content-Type": "application/json" },
+			// 		body: JSON.stringify({ email, password }),
+			// 	});
+			// 	if (response.ok) {
+			// 		const data = await response.json();
+			// 		return data.restaurant; // Return restaurant details
+			// 	}
+			// 	return null;
+			// },
+
+			addNewRestaurant: (email, password) => {
 				return fetch(process.env.BACKEND_URL + '/api/signup/restaurant', {
 					method: 'POST',
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
 						"email": email,
-						"guests_capacity": guests_capacity,
-						"location": location,
-						"name": name,
-						"phone_number": phone_number,
+						// "guests_capacity": guests_capacity,
+						// "location": location,
+						// "name": name,
+						// "phone_number": phone_number,
 						"password": password,
-						"image_url": image,
-						"latitude": latitude,
-						"longitude": longitude
+						// "image_url": image,
+						// "latitude": latitude,
+						// "longitude": longitude
 					}),
 					redirect: "follow",
 				})
@@ -222,8 +235,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error al crear el restaurante:", error);
 					return null; // Devolvemos null en caso de error para manejarlo en el frontend
 				});
-			}
-			,
+			},
+
 			traer_restaurante: (id) => {
 				return fetch(process.env.BACKEND_URL + "/api/restaurant/" + id)
 					.then((response) => response.json())
