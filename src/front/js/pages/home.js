@@ -5,10 +5,10 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Context } from "../store/appContext";
-import logo from "../../img/nivalulogo.jpg";
 import lr from "../../img/lr.jpeg";
 import nicole from "../../img/nicole.jpeg";
 import valentina from "../../img/valentina.jpeg";
+import logoFondo from "../../img/nivalufondo.png";
 
 export const Home = () => {
   const { store, actions } = useContext(Context);
@@ -101,7 +101,7 @@ export const Home = () => {
       <section id="banner">
         <header>
           <div className="logo">
-            <img src={logo} alt="Logo" style={{ width: "150px", height: "auto", marginBottom: "10px" }} />
+            <img src={logoFondo} alt="Logo" style={{ width: "150px", height: "auto", marginBottom: "10px" }} />
           </div>
           <nav>
             <ul>
@@ -238,14 +238,18 @@ export const Home = () => {
           <div className="team-member">
             <img src={valentina} alt="valentina"/>  
             <h4>Valentina Rodríguez</h4>
-            <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
+            <p>I work as an Executive Admin and Call Center manager. I am passionate about continuous learning and always strive to improve in everything I do. While I have no prior experience in programming, this bootcamp has been a fantastic starting point for me</p>
             <div className="social-icons">
             </div>
           </div>
           <div className="team-member">
             <img src={lr} alt="lr"/>
             <h4>Luis Rico</h4>
-            <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.</p>
+            <p>My name is Luis Alejandro Rico, I’m a 29-year-old Venezuelan living in Panama, and I’m expecting my first child 💪🏼.
+
+I am a dedicated athlete, a lover of technology and innovation (which sparked my interest in programming 🖥️⌨️), nature, and anime, all of which help me balance my professional life with my personal interests.
+
+I believe that hard work, discipline, creativity, and surrounding yourself with good people bring great success in life!</p>
             <div className="social-icons">
             </div>
           </div>
